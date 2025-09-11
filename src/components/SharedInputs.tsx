@@ -39,17 +39,6 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
   setFormState,
   displayMode
 }) => {
-  // Debug logging to see if formData is updating in SharedInputs
-  React.useEffect(() => {
-    console.log('🟢 SharedInputs received formData update:', {
-      targetAudience: formData.targetAudience,
-      keyMessage: formData.keyMessage,
-      callToAction: formData.callToAction,
-      brandValues: formData.brandValues,
-      keywords: formData.keywords
-    });
-  }, [formData]);
-
   // Handler for output structure change
   const handleStructureChange = (values: string[]) => {
     handleChange({

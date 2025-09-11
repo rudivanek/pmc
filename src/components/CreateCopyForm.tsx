@@ -31,16 +31,6 @@ const CreateCopyForm: React.FC<CreateCopyFormProps> = ({
 }) => {
   const [isEvaluatingBusinessDescription, setIsEvaluatingBusinessDescription] = React.useState(false);
 
-  // Debug logging to see if formData is updating
-  React.useEffect(() => {
-    console.log('🔵 CreateCopyForm received formData update:', {
-      businessDescription: formData.businessDescription,
-      pageType: formData.pageType,
-      section: formData.section,
-      language: formData.language
-    });
-  }, [formData]);
-
   // Function to count words in a string
   const countWords = (text: string): number => {
     return text.trim() ? text.trim().split(/\s+/).length : 0;
@@ -164,7 +154,7 @@ const CreateCopyForm: React.FC<CreateCopyFormProps> = ({
               <button
                 type="button"
                 onClick={evaluateBusinessDescription}
-                disabled={isEvaluatingBusinessDescription || !businessDescriptionField.inputValue}
+                disabled={isEvaluatingBusinessDescription || !formData.businessDescription}
                 className="p-1 text-gray-500 dark:text-gray-400 hover:text-primary-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
               >
                 {isEvaluatingBusinessDescription ? (

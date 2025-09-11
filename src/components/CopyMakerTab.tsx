@@ -176,16 +176,6 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
     }));
   }, [setFormState]);
 
-  // Debug logging to see if formState is being passed correctly
-  React.useEffect(() => {
-    console.log('🔴 CopyMakerTab formState prop update:', {
-      language: formState.language,
-      tone: formState.tone,
-      originalCopy: formState.originalCopy,
-      targetAudience: formState.targetAudience
-    });
-  }, [formState]);
-
   // Handle initial copy generation
   const handleGenerate = async () => {
     // Validate required fields before proceeding
