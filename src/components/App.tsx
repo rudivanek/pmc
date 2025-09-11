@@ -643,10 +643,6 @@ ${formState.promptEvaluation.suggestions.map(s => `• ${s}`).join('\n')}
     }
   };
 
-  const handleViewPrompts = () => {
-    onViewPrompts();
-  };
-
   return (
     <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white flex flex-col overflow-x-hidden">
       <Header
