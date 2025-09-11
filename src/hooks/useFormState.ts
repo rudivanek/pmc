@@ -1,7 +1,6 @@
 import { useState, useCallback } from 'react';
 import { FormState, Template, CopySession, SavedOutput, ContentQualityScore, GeneratedContentItem, GeneratedContentItemType } from '../types';
 import { DEFAULT_FORM_STATE } from '../constants';
-import { Prefill } from '../services/supabaseClient';
 import { v4 as uuidv4 } from 'uuid';
 
 export function useFormState() {
@@ -161,15 +160,40 @@ export function useFormState() {
   }, [setFormState]);
 
   /**
-   * Load form state from a prefill
+   * Load form state from a template (replaces loadFormStateFromPrefill)
    */
-  const loadFormStateFromPrefill = useCallback((prefill: Prefill) => {
+  const loadFormStateFromTemplate = useCallback((template: Template) => {
     setFormState(prevState => {
-      // Create a new state object with the prefill data
+      // Create a new state object with the template data
       const newState: FormState = {
         ...DEFAULT_FORM_STATE,
-        // Apply all prefill data
-        ...prefill.data,
+        // Apply template data from form_state_snapshot or individual fields
+        ...(template.form_state_snapshot || {}),
+        // Also apply individual template fields for backward compatibility
+        tab: template.template_type as 'create' | 'improve',
+        language: template.language,
+        tone: template.tone,
+        wordCount: template.word_count,
+        customWordCount: template.custom_word_count || undefined,
+        targetAudience: template.target_audience || undefined,
+        keyMessage: template.key_message || undefined,
+        desiredEmotion: template.desired_emotion || undefined,
+        callToAction: template.call_to_action || undefined,
+        brandValues: template.brand_values || undefined,
+        keywords: template.keywords || undefined,
+        context: template.context || undefined,
+        briefDescription: template.brief_description || undefined,
+        pageType: template.page_type || undefined,
+        section: template.section || undefined,
+        businessDescription: template.business_description || undefined,
+        originalCopy: template.original_copy || undefined,
+        projectDescription: template.project_description || undefined,
+        competitorUrls: template.competitor_urls || ['', '', ''],
+        outputStructure: template.output_structure 
+          ? typeof template.output_structure === 'string'
+            ? JSON.parse(template.output_structure)
+            : template.output_structure
+          : [],
         // Always preserve loading states and other runtime states
         isLoading: false,
         isEvaluating: false,
@@ -178,16 +202,17 @@ export function useFormState() {
         promptEvaluation: undefined
       };
       
-      // Handle originalCopyGuidance from prefill
-      if (prefill.data.originalCopyGuidance) {
+      // Handle originalCopyGuidance from template data
+      const templateData = template.form_state_snapshot || template;
+      if (templateData.originalCopyGuidance) {
         // Store the guidance in form state
-        newState.originalCopyGuidance = prefill.data.originalCopyGuidance;
+        newState.originalCopyGuidance = templateData.originalCopyGuidance;
         
         // Populate the appropriate primary content field based on tab
         if (newState.tab === 'create') {
-          newState.businessDescription = prefill.data.originalCopyGuidance;
+          newState.businessDescription = templateData.originalCopyGuidance;
         } else if (newState.tab === 'improve') {
-          newState.originalCopy = prefill.data.originalCopyGuidance;
+          newState.originalCopy = templateData.originalCopyGuidance;
         }
       }
       
@@ -223,7 +248,6 @@ export function useFormState() {
     loadFormStateFromTemplate,
     loadFormStateFromSession,
     loadFormStateFromSavedOutput,
-    loadFormStateFromPrefill,
     handleScoreChange
   };
 }
