@@ -5,7 +5,6 @@ import { InfoIcon } from 'lucide-react';
 import { Checkbox } from './ui/checkbox';
 import { Label } from './ui/label';
 import { useMemo } from 'react';
-import { useInputField } from '../hooks/useInputField';
 import { toast } from 'react-hot-toast';
 
 interface FeatureTogglesProps {
@@ -21,21 +20,6 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
   handleChange,
   isSmartMode // Add isSmartMode prop
 }) => {
-  // Initialize locationField using useInputField hook
-  const locationField = useInputField({
-    value: formData.location || '',
-    onChange: (value: string) => {
-      // Create proper event structure for handleChange
-      const syntheticEvent = {
-        target: {
-          name: 'location',
-          value: value
-        }
-      } as React.ChangeEvent<HTMLInputElement>;
-      handleChange(syntheticEvent);
-    }
-  });
-
   // We're removing this conditional return so the component is always displayed
   // regardless of Smart Mode or Pro Mode
   
@@ -571,7 +555,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
             name="geoRegions"
             className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
             placeholder="Ej. México, LATAM, Barcelona"
-            value={formData.geoRegions || ''}
+            value={formData.location || ''}
             onChange={handleChange}
           />
           <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
