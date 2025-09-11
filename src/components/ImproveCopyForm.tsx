@@ -175,4 +175,4 @@ const ImproveCopyForm: React.FC<ImproveCopyFormProps> = ({
   );
 };
 
-export default ImproveCopyForm;
+export default CreateCopyForm;

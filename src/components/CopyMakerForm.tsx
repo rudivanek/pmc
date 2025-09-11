@@ -439,7 +439,6 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
               placeholder="e.g., Homepage redesign, Product launch copy, Email campaign"
               value={formState.projectDescription || ''}
               onChange={handleChange}
-              ref={projectDescriptionRef}
             />
             <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
               Internal field for your organization - not sent to AI. Helps you identify and manage projects.
@@ -481,7 +480,6 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
                 placeholder="Enter product or service name"
                 value={formState.productServiceName || ''}
                 onChange={handleChange}
-              />
             </div>
           </div>
 
@@ -497,7 +495,6 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
               placeholder="Brief project description for your reference"
               value={formState.briefDescription || ''}
               onChange={handleChange}
-            />
           </div>
         </div>
       </div>

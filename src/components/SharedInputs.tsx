@@ -154,12 +154,6 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
             <label htmlFor="industryNiche" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Industry/Niche
             </label>
-            <SuggestionButton
-              fieldType="industryNiche"
-              businessDescription={formData.tab === 'create' ? formData.businessDescription || '' : formData.originalCopy || ''}
-              onGetSuggestion={onGetSuggestion}
-              isLoading={isLoadingSuggestions && activeSuggestionField === 'industryNiche'}
-            />
           </div>
           <CategoryTagsInput
             id="industryNiche"
@@ -180,13 +174,6 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
             <label htmlFor="targetAudience" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Target Audience
             </label>
-            <SuggestionButton
-              fieldType="targetAudience"
-              businessDescription={formData.tab === 'create' ? formData.businessDescription || '' : formData.originalCopy || ''}
-              onGetSuggestion={onGetSuggestion}
-              isLoading={isLoadingSuggestions && activeSuggestionField === 'targetAudience'}
-              currentUser={currentUser}
-            />
           </div>
           <textarea
             id="targetAudience"
@@ -205,12 +192,6 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
             <label htmlFor="readerFunnelStage" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Reader's Stage in Funnel
             </label>
-            <SuggestionButton
-              fieldType="readerFunnelStage"
-              businessDescription={formData.tab === 'create' ? formData.businessDescription || '' : formData.originalCopy || ''}
-              onGetSuggestion={onGetSuggestion}
-              isLoading={isLoadingSuggestions && activeSuggestionField === 'readerFunnelStage'}
-            />
           </div>
           <TagInput
             id="readerFunnelStage"
@@ -255,12 +236,6 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
             <label htmlFor="targetAudiencePainPoints" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Target Audience Pain Points
             </label>
-            <SuggestionButton
-              fieldType="targetAudiencePainPoints"
-              businessDescription={formData.tab === 'create' ? formData.businessDescription || '' : formData.originalCopy || ''}
-              onGetSuggestion={onGetSuggestion}
-              isLoading={isLoadingSuggestions && activeSuggestionField === 'targetAudiencePainPoints'}
-            />
           </div>
           <textarea
             id="targetAudiencePainPoints"
@@ -545,12 +520,6 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
             <label htmlFor="keyMessage" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Key Message
             </label>
-            <SuggestionButton
-              fieldType="keyMessage"
-              businessDescription={formData.tab === 'create' ? formData.businessDescription || '' : formData.originalCopy || ''}
-              onGetSuggestion={onGetSuggestion}
-              isLoading={isLoadingSuggestions && activeSuggestionField === 'keyMessage'}
-            />
           </div>
           <textarea
             id="keyMessage"
@@ -572,12 +541,6 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
                 <label htmlFor="desiredEmotion" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Desired Emotion
                 </label>
-                <SuggestionButton
-                  fieldType="desiredEmotion"
-                  businessDescription={formData.tab === 'create' ? formData.businessDescription || '' : formData.originalCopy || ''}
-                  onGetSuggestion={onGetSuggestion}
-                  isLoading={isLoadingSuggestions && activeSuggestionField === 'desiredEmotion'}
-                />
               </div>
               <TagInput
                 id="desiredEmotion"
@@ -595,12 +558,6 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
               <label htmlFor="callToAction" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Call to Action
               </label>
-              <SuggestionButton
-                fieldType="callToAction"
-                businessDescription={formData.tab === 'create' ? formData.businessDescription || '' : formData.originalCopy || ''}
-                onGetSuggestion={onGetSuggestion}
-                isLoading={isLoadingSuggestions && activeSuggestionField === 'callToAction'}
-              />
             </div>
             <input
               type="text"
@@ -621,12 +578,6 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
               <label htmlFor="brandValues" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Brand Values
               </label>
-              <SuggestionButton
-                fieldType="brandValues"
-                businessDescription={formData.tab === 'create' ? formData.businessDescription || '' : formData.originalCopy || ''}
-                onGetSuggestion={onGetSuggestion}
-                isLoading={isLoadingSuggestions && activeSuggestionField === 'brandValues'}
-              />
             </div>
             <TagInput
               id="brandValues"
@@ -645,12 +596,6 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
               <label htmlFor="keywords" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Keywords
               </label>
-              <SuggestionButton
-                fieldType="keywords"
-                businessDescription={formData.tab === 'create' ? formData.businessDescription || '' : formData.originalCopy || ''}
-                onGetSuggestion={onGetSuggestion}
-                isLoading={isLoadingSuggestions && activeSuggestionField === 'keywords'}
-              />
             </div>
             <TagInput
               id="keywords"
@@ -669,12 +614,6 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
               <label htmlFor="context" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Context
               </label>
-              <SuggestionButton
-                fieldType="context"
-                businessDescription={formData.tab === 'create' ? formData.businessDescription || '' : formData.originalCopy || ''}
-                onGetSuggestion={onGetSuggestion}
-                isLoading={isLoadingSuggestions && activeSuggestionField === 'context'}
-              />
             </div>
             <textarea
               id="context"
@@ -695,13 +634,6 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
               <label htmlFor="competitorCopyText" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Competitor Copy (Text)
               </label>
-              <SuggestionButton
-                fieldType="competitorCopyText"
-                businessDescription={formData.tab === 'create' ? formData.businessDescription || '' : formData.originalCopy || ''}
-                onGetSuggestion={onGetSuggestion}
-                isLoading={isLoadingSuggestions && activeSuggestionField === 'competitorCopyText'}
-                currentUser={currentUser}
-              />
             </div>
             <textarea
               id="competitorCopyText"
