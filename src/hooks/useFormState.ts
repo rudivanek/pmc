@@ -24,7 +24,9 @@ function useFormState() {
       // Use form_state_snapshot if available, otherwise construct from individual fields
       let templateData;
       
-      if (template.form_state_snapshot && typeof template.form_state_snapshot === 'object') {
+      if (template.form_state_snapshot && 
+          typeof template.form_state_snapshot === 'object' && 
+          Object.keys(template.form_state_snapshot).length > 0) {
         console.log('✅ Using form_state_snapshot for template data');
         templateData = template.form_state_snapshot;
       } else {
