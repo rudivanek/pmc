@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FormData, PageType, SectionType, ContentQualityScore } from '../types';
 import ContentQualityIndicator from './ui/ContentQualityIndicator';
 import { Zap, InfoIcon } from 'lucide-react';
@@ -16,6 +16,8 @@ interface CreateCopyFormProps {
   displayMode: 'all' | 'populated';
   businessDescriptionRef?: React.RefObject<HTMLTextAreaElement>;
 }
+
+const PAGE_TYPES = ['Home', 'About', 'Services', 'Contact', 'Product', 'Blog'];
 
 const CreateCopyForm: React.FC<CreateCopyFormProps> = ({ 
   formData, 
@@ -95,42 +97,6 @@ const CreateCopyForm: React.FC<CreateCopyFormProps> = ({
   if (displayMode === 'populated' && !hasPopulatedFields()) {
     return null;
   }
-  // Function to evaluate the business description
-  const evaluateBusinessDescription = async () => {
-    // Remove the length check to allow evaluation even with shorter content
-    if (!formData.businessDescription) {
-      return;
-    }
-    
-    setIsEvaluatingBusinessDescription(true);
-    
-    try {
-      const result = await evaluateContentQuality(
-        formData.businessDescription,
-        'Business Description',
-        formData.model,
-        currentUser
-      );
-      
-      // Use the dedicated score change handler if available
-      if (handleScoreChange) {
-        handleScoreChange('businessDescriptionScore', result);
-      } else {
-        // Fall back to the generic change handler if handleScoreChange isn't provided
-        handleChange({ 
-          target: { 
-            name: 'businessDescriptionScore', 
-            value: result 
-          } 
-        } as any);
-      }
-    } catch (error) {
-      console.error('Error evaluating business description:', error);
-    } finally {
-      // Always reset the loading state, even if there was an error
-      setIsEvaluatingBusinessDescription(false);
-    }
-  };
 
   return (
     <div className="space-y-6">
@@ -201,22 +167,6 @@ const CreateCopyForm: React.FC<CreateCopyFormProps> = ({
               </button>
             </Tooltip>
           </div>
-          <div className="flex justify-between items-center mb-1">
-            <label htmlFor="businessDescription" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Business Description
-            </label>
-            <Tooltip content="Evaluate the quality of your business description">
-              <button
-                type="button"
-                onClick={evaluateBusinessDescription}
-                disabled={isEvaluatingBusinessDescription || !businessDescriptionField.inputValue}
-                className="p-1 text-gray-500 dark:text-gray-400 hover:text-primary-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
-              >
-                {isEvaluatingBusinessDescription ? (
-                  "Evaluating..."
-                ) : (
-                  <Zap size={20} />
-                )}
           <textarea
             id="businessDescription"
             name="businessDescription"
