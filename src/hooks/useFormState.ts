@@ -1,4 +1,3 @@
-@@ .. @@
   /**
    * Load form state from a template
    */
