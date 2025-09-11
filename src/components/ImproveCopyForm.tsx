@@ -31,6 +31,16 @@ const ImproveCopyForm: React.FC<ImproveCopyFormProps> = ({
 }) => {
   const [isEvaluatingContent, setIsEvaluatingContent] = useState(false);
 
+  // Debug logging to see if formData is updating
+  React.useEffect(() => {
+    console.log('🟡 ImproveCopyForm received formData update:', {
+      originalCopy: formData.originalCopy,
+      section: formData.section,
+      excludedTerms: formData.excludedTerms,
+      language: formData.language
+    });
+  }, [formData]);
+
   // Function to count words in a string
   const countWords = (text: string): number => {
     return text.trim() ? text.trim().split(/\s+/).length : 0;

@@ -31,6 +31,16 @@ const CreateCopyForm: React.FC<CreateCopyFormProps> = ({
 }) => {
   const [isEvaluatingBusinessDescription, setIsEvaluatingBusinessDescription] = React.useState(false);
 
+  // Debug logging to see if formData is updating
+  React.useEffect(() => {
+    console.log('🔵 CreateCopyForm received formData update:', {
+      businessDescription: formData.businessDescription,
+      pageType: formData.pageType,
+      section: formData.section,
+      language: formData.language
+    });
+  }, [formData]);
+
   // Function to count words in a string
   const countWords = (text: string): number => {
     return text.trim() ? text.trim().split(/\s+/).length : 0;
