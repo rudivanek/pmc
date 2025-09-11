@@ -5,7 +5,6 @@ import { DEFAULT_FORM_STATE } from '../constants';
 import { toast } from 'react-hot-toast';
 import { checkUserAccess, getCustomers } from '../services/supabaseClient';
 import { getSuggestions } from '../services/apiService';
-import { useInputField } from '../hooks/useInputField';
 import TemplateSelector from './TemplateSelector';
 import CreateCopyForm from './CreateCopyForm';
 import ImproveCopyForm from './ImproveCopyForm';
@@ -69,35 +68,6 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
 
   // Get template loading function from useFormState
   const { loadFormStateFromTemplate } = useFormState();
-
-  // Input field hooks
-  const projectDescriptionField = useInputField({
-    value: formState.projectDescription || '',
-    onChange: (value) => handleChange({ target: { name: 'projectDescription', value } } as any)
-  });
-
-  const briefDescriptionField = useInputField({
-    value: formState.briefDescription || '',
-    onChange: (value) => handleChange({ target: { name: 'briefDescription', value } } as any)
-  });
-
-  const productServiceNameField = useInputField({
-    value: formState.productServiceName || '',
-    onChange: (value) => handleChange({ target: { name: 'productServiceName', value } } as any)
-  });
-  
-  // Force sync input fields when form state changes (for template loading)
-  React.useEffect(() => {
-    projectDescriptionField.setInputValue(formState.projectDescription || '');
-  }, [formState.projectDescription]);
-  
-  React.useEffect(() => {
-    briefDescriptionField.setInputValue(formState.briefDescription || '');
-  }, [formState.briefDescription]);
-  
-  React.useEffect(() => {
-    productServiceNameField.setInputValue(formState.productServiceName || '');
-  }, [formState.productServiceName]);
 
   // Load customers on component mount
   React.useEffect(() => {
@@ -467,9 +437,8 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
               required
               className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
               placeholder="e.g., Homepage redesign, Product launch copy, Email campaign"
-              value={projectDescriptionField.inputValue}
-              onChange={projectDescriptionField.handleChange}
-              onBlur={projectDescriptionField.handleBlur}
+              value={formState.projectDescription || ''}
+              onChange={handleChange}
               ref={projectDescriptionRef}
             />
             <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
@@ -510,9 +479,8 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
                 name="productServiceName"
                 className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
                 placeholder="Enter product or service name"
-                value={productServiceNameField.inputValue}
-                onChange={productServiceNameField.handleChange}
-                onBlur={productServiceNameField.handleBlur}
+                value={formState.productServiceName || ''}
+                onChange={handleChange}
               />
             </div>
           </div>
@@ -527,9 +495,8 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
               name="briefDescription"
               className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
               placeholder="Brief project description for your reference"
-              value={briefDescriptionField.inputValue}
-              onChange={briefDescriptionField.handleChange}
-              onBlur={briefDescriptionField.handleBlur}
+              value={formState.briefDescription || ''}
+              onChange={handleChange}
             />
           </div>
         </div>
@@ -593,7 +560,6 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
         handleToggle={handleToggle}
         handleChange={handleChange}
         isSmartMode={isSmartMode}
-        displayMode={displayMode}
       />
 
       {/* Action Buttons */}
