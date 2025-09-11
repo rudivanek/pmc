@@ -83,6 +83,9 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
       setIsNewTemplate(true);
     } else if (initialTemplateName && templateNameField.inputValue === initialTemplateName) {
       setIsNewTemplate(false);
+    }
+  }, [initialTemplateName, templateNameField.inputValue]);
+  
   const handleSave = async () => {
     console.log('Template name:', templateNameField.inputValue);
     console.log('Is public:', isPublic);
