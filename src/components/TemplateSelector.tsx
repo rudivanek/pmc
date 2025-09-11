@@ -199,41 +199,42 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
       return;
     }
 
-    // Find the template across all groups
-    let selectedTemplate = null;
-    for (const group of templateGroups) {
-      const found = group.options.find(template => template.id === templateId);
-      if (found) {
-        selectedTemplate = found;
-        break;
+    // Load the actual template from the database
+    loadTemplateFromDatabase(templateId);
+  };
+  
+  // Function to load template from database
+  const loadTemplateFromDatabase = async (templateId: string) => {
+    try {
+      // Import the getTemplate function
+      const { getTemplate } = await import('../services/supabaseClient');
+      
+      // Fetch the full template data from the database
+      const { data: template, error } = await getTemplate(templateId);
+      
+      if (error) {
+        throw error;
       }
+      
+      if (!template) {
+        toast.error('Template not found');
+        return;
+      }
+      
+      // Use the existing template loading function with the full template data
+      loadFormStateFromTemplate(template);
+      setSelectedTemplateId(templateId);
+      
+      // Switch to all fields view when template is loaded
+      setDisplayMode('all');
+      
+      toast.success(`Loaded "${template.template_name}" template with all field data`);
+      
+    } catch (error: any) {
+      console.error('Error loading template from database:', error);
+      toast.error(`Failed to load template: ${error.message}`);
+      setSelectedTemplateId('');
     }
-    
-    if (!selectedTemplate) {
-      console.error('Template not found:', templateId);
-      return;
-    }
-
-    // Create a template object for loadFormStateFromTemplate
-    const templateObject: Template = {
-      id: templateId,
-      user_id: currentUser?.id || '',
-      template_name: selectedTemplate.label,
-      template_type: 'create',
-      language: 'English',
-      tone: 'Professional',
-      word_count: 'Medium: 100-200',
-      form_state_snapshot: selectedTemplate.data
-    };
-
-    // Use the existing template loading function
-    loadFormStateFromTemplate(templateObject);
-    setSelectedTemplateId(templateId);
-    
-    // Switch to all fields view when template is loaded
-    setDisplayMode('all');
-    
-    toast.success(`Applied "${selectedTemplate.label}" template`);
   };
 
   const handleClearTemplate = () => {
