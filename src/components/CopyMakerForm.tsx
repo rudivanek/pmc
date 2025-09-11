@@ -560,7 +560,6 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
         handleToggle={handleToggle}
         handleChange={handleChange}
         isSmartMode={isSmartMode}
-        displayMode={displayMode}
       />
 
       {/* Action Buttons */}
