@@ -1,7 +1,6 @@
 import React from 'react';
 import { FormData, PageType, SectionType, ContentQualityScore } from '../types';
 import { PAGE_TYPES, SECTION_TYPES } from '../constants';
-import { useInputField } from '../hooks/useInputField';
 import ContentQualityIndicator from './ui/ContentQualityIndicator';
 import { Zap } from 'lucide-react';
 import { evaluateContentQuality } from '../services/apiService';
@@ -32,24 +31,13 @@ const CreateCopyForm: React.FC<CreateCopyFormProps> = ({
 }) => {
   const [isEvaluatingBusinessDescription, setIsEvaluatingBusinessDescription] = React.useState(false);
 
-  // Use the input field hook for the business description text input
-  const businessDescriptionField = useInputField({
-    value: formData.businessDescription || '',
-    onChange: (value) => handleChange({ target: { name: 'businessDescription', value } } as any)
-  });
-  
-  // Force sync when formData changes (for template loading)
-  React.useEffect(() => {
-    businessDescriptionField.setInputValue(formData.businessDescription || '');
-  }, [formData.businessDescription]);
-  
   // Function to count words in a string
   const countWords = (text: string): number => {
     return text.trim() ? text.trim().split(/\s+/).length : 0;
   };
   
   // Get business description word count
-  const businessDescriptionWordCount = countWords(businessDescriptionField.inputValue);
+  const businessDescriptionWordCount = countWords(formData.businessDescription || '');
   
   // Helper function to check if a field is populated
   const isFieldPopulated = (value: any, fieldType: 'string' | 'select' | 'textarea' = 'string'): boolean => {
@@ -74,7 +62,7 @@ const CreateCopyForm: React.FC<CreateCopyFormProps> = ({
   // Function to evaluate the business description
   const evaluateBusinessDescription = async () => {
     // Remove the length check to allow evaluation even with shorter content
-    if (!businessDescriptionField.inputValue) {
+    if (!formData.businessDescription) {
       return;
     }
     
@@ -82,7 +70,7 @@ const CreateCopyForm: React.FC<CreateCopyFormProps> = ({
     
     try {
       const result = await evaluateContentQuality(
-        businessDescriptionField.inputValue,
+        formData.businessDescription,
         'Business Description',
         formData.model,
         currentUser
@@ -183,9 +171,8 @@ const CreateCopyForm: React.FC<CreateCopyFormProps> = ({
             rows={6}
             className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
             placeholder="Describe your business, product, or what you want to create..."
-            value={businessDescriptionField.inputValue}
-            onChange={businessDescriptionField.handleChange}
-            onBlur={businessDescriptionField.handleBlur}
+            value={formData.businessDescription || ''}
+            onChange={handleChange}
             ref={businessDescriptionRef}
           ></textarea>
           
