@@ -31,6 +31,26 @@ function useFormState() {
         templateData = template.form_state_snapshot;
       } else {
         console.log('⚠️ No form_state_snapshot found, constructing from individual fields');
+      console.log('🔍 Available template fields:', {
+        business_description: template.business_description,
+        original_copy: template.original_copy,
+        target_audience: template.target_audience,
+        key_message: template.key_message,
+        call_to_action: template.call_to_action,
+        brand_values: template.brand_values,
+        keywords: template.keywords,
+        context: template.context,
+        brief_description: template.brief_description,
+        project_description: template.project_description,
+        product_service_name: template.product_service_name,
+        industry_niche: template.industry_niche,
+        reader_funnel_stage: template.reader_funnel_stage,
+        competitor_copy_text: template.competitor_copy_text,
+        target_audience_pain_points: template.target_audience_pain_points,
+        preferred_writing_style: template.preferred_writing_style,
+        excluded_terms: template.excluded_terms
+      });
+      
         templateData = {
         tab: template.template_type as TabType || 'copyMaker',
         language: template.language as Language || 'English',
