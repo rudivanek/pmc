@@ -389,6 +389,7 @@ export interface Template {
   public_name?: string;
   public_description?: string;
   form_state_snapshot?: Partial<FormState>; // New field to store complete form state
+  category?: string; // Add category field for template organization
 }
 
 // New SavedOutput interface for saved outputs
