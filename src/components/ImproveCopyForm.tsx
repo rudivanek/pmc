@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { FormData, SectionType, ContentQualityScore, User } from '../types';
-import { useInputField } from '../hooks/useInputField';
 import { SECTION_TYPES } from '../constants';
 import ContentQualityIndicator from './ui/ContentQualityIndicator';
 import { Zap } from 'lucide-react';
@@ -32,24 +31,13 @@ const ImproveCopyForm: React.FC<ImproveCopyFormProps> = ({
 }) => {
   const [isEvaluatingContent, setIsEvaluatingContent] = useState(false);
 
-  // Use the input field hook for the original copy text input
-  const originalCopyField = useInputField({
-    value: formData.originalCopy || '',
-    onChange: (value) => handleChange({ target: { name: 'originalCopy', value } } as any)
-  });
-  
-  // Force sync when formData changes (for template loading)
-  React.useEffect(() => {
-    originalCopyField.setInputValue(formData.originalCopy || '');
-  }, [formData.originalCopy]);
-  
   // Function to count words in a string
   const countWords = (text: string): number => {
     return text.trim() ? text.trim().split(/\s+/).length : 0;
   };
   
   // Get original copy word count
-  const originalCopyWordCount = countWords(originalCopyField.inputValue);
+  const originalCopyWordCount = countWords(formData.originalCopy || '');
 
   // Helper function to check if a field is populated
   const isFieldPopulated = (value: any): boolean => {
@@ -73,7 +61,7 @@ const ImproveCopyForm: React.FC<ImproveCopyFormProps> = ({
   // Function to evaluate the original copy
   const evaluateOriginalCopy = async () => {
     // Remove the length check to allow evaluation even with shorter content
-    if (!originalCopyField.inputValue) {
+    if (!formData.originalCopy) {
       return;
     }
     
@@ -81,7 +69,7 @@ const ImproveCopyForm: React.FC<ImproveCopyFormProps> = ({
     
     try {
       const result = await evaluateContentQuality(
-        originalCopyField.inputValue,
+        formData.originalCopy,
         'Original Copy',
         formData.model,
         currentUser
@@ -142,9 +130,8 @@ const ImproveCopyForm: React.FC<ImproveCopyFormProps> = ({
            required
             className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
             placeholder="Paste your copy or describe what you want to achieve..."
-            value={originalCopyField.inputValue}
-            onChange={originalCopyField.handleChange}
-            onBlur={originalCopyField.handleBlur}
+            value={formData.originalCopy || ''}
+            onChange={handleChange}
             ref={originalCopyRef}
           ></textarea>
           
@@ -157,7 +144,7 @@ const ImproveCopyForm: React.FC<ImproveCopyFormProps> = ({
             {/* Content Quality Indicator for Original Copy */}
             <ContentQualityIndicator 
               score={formData.originalCopyScore} 
-              placeholder="e.g., Hero Section, Benefits, Features, FAQ..."
+              isLoading={isEvaluatingContent} 
             />
           </div>
         </div>
