@@ -23,7 +23,7 @@ import NotFound from './components/NotFound';
 import FAQ from './components/FAQ';
 import BetaThanks from './components/BetaThanks';
 import StepByStepGuide from './components/StepByStepGuide';
-import ManagePrefills from './components/ManagePrefills';
+import ManageTemplates from './components/ManageTemplates';
 import { getLastPrompts, evaluatePrompt } from './services/apiService';
 import { getCopySession, getTemplate, getSavedOutput, saveTemplate, saveSavedOutput } from './services/supabaseClient';
 import { checkUserAccess } from './services/supabaseClient';
@@ -425,10 +425,10 @@ const AppRouter: React.FC = () => {
           } 
         />
         <Route 
-          path="/manage-prefills" 
+          path="/manage-templates" 
           element={
             currentUser ? (
-              <ManagePrefills />
+              <ManageTemplates />
             ) : (
               <Navigate to="/login" replace />
             )

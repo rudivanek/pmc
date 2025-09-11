@@ -36,6 +36,12 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
     onChange: (value) => {}
   });
 
+  // Category field for template organization
+  const categoryField = useInputField({
+    value: '',
+    onChange: (value) => {}
+  });
+
   const [isSaving, setIsSaving] = useState(false);
   const [isNewTemplate, setIsNewTemplate] = useState(true);
   
@@ -66,6 +72,7 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
       setPublicName('');
       setPublicDescription('');
       setForceSaveAsNew(false);
+      categoryField.setInputValue('General'); // Default category
     }
   }, [isOpen]);
   
@@ -92,6 +99,12 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
       return;
     }
     
+    if (!categoryField.inputValue.trim()) {
+      console.log('❌ Validation failed: empty category');
+      alert('Please provide a template category.');
+      return;
+    }
+    
     // Validate public template fields if making public
     if (isPublic && !publicName.trim()) {
       console.log('❌ Validation failed: empty public name');
@@ -114,6 +127,7 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
         descriptionField.inputValue,
         {
           ...formStateToSave,
+          category: categoryField.inputValue.trim(),
           is_public: isPublic,
           public_name: isPublic ? publicName.trim() : undefined,
           public_description: isPublic ? publicDescription.trim() : undefined
@@ -158,6 +172,24 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
             />
           </div>
           
+          <div className="mb-4">
+            <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Category
+            </label>
+            <input
+              type="text"
+              id="category"
+              className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
+              placeholder="e.g., Homepage Templates, Email Marketing, Landing Pages"
+              value={categoryField.inputValue}
+              onChange={categoryField.handleChange}
+              onBlur={categoryField.handleBlur}
+            />
+            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+              Group this template with similar ones for better organization
+            </p>
+          </div>
+
           <div className="mb-4">
             <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Description (Optional)
@@ -287,8 +319,8 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
           </button>
           <button
             onClick={handleSave}
-            className="bg-gray-600 hover:bg-gray-500 text-white px-4 py-2 text-sm flex items-center"
-            disabled={!templateNameField.inputValue.trim() || isSaving || (isPublic && !publicName.trim())}
+            className="bg-gray-600 hover:bg-gray-500 text-white px-4 py-2 text-sm flex items-center disabled:opacity-50"
+            disabled={!templateNameField.inputValue.trim() || !categoryField.inputValue.trim() || isSaving || (isPublic && !publicName.trim())}
           >
             {isSaving ? (
               "Saving..."

@@ -1,34 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { List, Plus, Edit, Trash2, RefreshCw, ArrowLeft, Shield, User, Eye, X, Save, Copy, Search } from 'lucide-react';
-import { getPrefills, Prefill, updatePrefill, createPrefill, deletePrefill } from '../services/supabaseClient';
+import { Settings, Plus, Edit, Trash2, RefreshCw, ArrowLeft, Shield, User, Eye, X, Save, Copy, Search } from 'lucide-react';
+import { getTemplates, Template, createTemplate, updateTemplate, deleteTemplate } from '../services/supabaseClient';
 import { toast } from 'react-hot-toast';
 import { useAuth } from '../hooks/useAuth';
 import LoadingSpinner from './ui/LoadingSpinner';
 
-const ManagePrefills: React.FC = () => {
+const ManageTemplates: React.FC = () => {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [prefills, setPrefills] = useState<Prefill[]>([]);
+  const [templates, setTemplates] = useState<Template[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredPrefills, setFilteredPrefills] = useState<Prefill[]>([]);
+  const [filteredTemplates, setFilteredTemplates] = useState<Template[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  // Filter prefills based on search query
+  // Filter templates based on search query
   useEffect(() => {
     if (!searchQuery.trim()) {
-      setFilteredPrefills(prefills);
+      setFilteredTemplates(templates);
     } else {
-      const filtered = prefills.filter(prefill =>
-        prefill.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        prefill.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        // Search in data fields
-        JSON.stringify(prefill.data).toLowerCase().includes(searchQuery.toLowerCase())
+      const filtered = templates.filter(template =>
+        template.template_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (template.category || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (template.description || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+        // Search in form_state_snapshot fields
+        JSON.stringify(template.form_state_snapshot || {}).toLowerCase().includes(searchQuery.toLowerCase())
       );
-      setFilteredPrefills(filtered);
+      setFilteredTemplates(filtered);
     }
-  }, [searchQuery, prefills]);
+  }, [searchQuery, templates]);
 
   // Check if current user is admin
   const isAdmin = currentUser?.email === 'rfv@datago.net';
@@ -39,8 +40,8 @@ const ManagePrefills: React.FC = () => {
     return new Date(dateString).toLocaleDateString();
   };
 
-  // Fetch prefills data
-  const fetchPrefillsData = async () => {
+  // Fetch templates data
+  const fetchTemplatesData = async () => {
     setLoading(true);
     setError(null);
     
@@ -51,29 +52,29 @@ const ManagePrefills: React.FC = () => {
     }
 
     try {
-      const { data, error: fetchError } = await getPrefills(currentUser.id);
+      const { data, error: fetchError } = await getTemplates(currentUser.id);
       
       if (fetchError) {
         throw fetchError;
       }
       
       if (data) {
-        setPrefills(data);
-        setFilteredPrefills(data);
+        setTemplates(data);
+        setFilteredTemplates(data);
       }
     } catch (err: any) {
-      console.error('Error fetching prefills:', err);
-      setError(`Failed to load prefills: ${err.message}`);
-      toast.error(`Failed to load prefills: ${err.message}`);
+      console.error('Error fetching templates:', err);
+      setError(`Failed to load templates: ${err.message}`);
+      toast.error(`Failed to load templates: ${err.message}`);
     } finally {
       setLoading(false);
     }
   };
 
-  // Load prefills on component mount
+  // Load templates on component mount
   useEffect(() => {
     if (isAdmin) {
-      fetchPrefillsData();
+      fetchTemplatesData();
     }
   }, [isAdmin, currentUser]);
 
@@ -84,46 +85,46 @@ const ManagePrefills: React.FC = () => {
     }
   }, [isAdmin, loading, navigate]);
 
-  // Handle adding a new prefill
-  const handleAddPrefill = () => {
-    navigate('/copy-maker?prefillMode=add');
+  // Handle adding a new template
+  const handleAddTemplate = () => {
+    navigate('/copy-maker?templateMode=add');
   };
 
-  // Handle editing an existing prefill
-  const handleEditPrefill = (prefill: Prefill) => {
-    navigate(`/copy-maker?prefillMode=edit&prefillId=${prefill.id}`);
+  // Handle editing an existing template
+  const handleEditTemplate = (template: Template) => {
+    navigate(`/copy-maker?templateMode=edit&templateId=${template.id}`);
   };
 
-  // Handle cloning a prefill
-  const handleClonePrefill = (prefill: Prefill) => {
-    navigate(`/copy-maker?prefillMode=clone&prefillId=${prefill.id}`);
-    toast(`Cloning "${prefill.label}"...`);
+  // Handle cloning a template
+  const handleCloneTemplate = (template: Template) => {
+    navigate(`/copy-maker?templateMode=clone&templateId=${template.id}`);
+    toast(`Cloning "${template.template_name}"...`);
   };
 
-  // Handle deleting a prefill
-  const handleDeletePrefill = (prefill: Prefill) => {
-    const confirmMessage = `Are you sure you want to delete the prefill "${prefill.label}"?\n\nThis action cannot be undone.`;
+  // Handle deleting a template
+  const handleDeleteTemplate = (template: Template) => {
+    const confirmMessage = `Are you sure you want to delete the template "${template.template_name}"?\n\nThis action cannot be undone.`;
     
     if (window.confirm(confirmMessage)) {
-      deletePrefill(prefill.id).then(({ error }) => {
+      deleteTemplate(template.id!).then(({ error }) => {
         if (error) {
-          console.error('Error deleting prefill:', error);
-          toast.error(`Failed to delete prefill: ${error.message}`);
+          console.error('Error deleting template:', error);
+          toast.error(`Failed to delete template: ${error.message}`);
         } else {
-          toast.success(`Prefill "${prefill.label}" deleted successfully!`);
-          fetchPrefillsData(); // Refresh the list
+          toast.success(`Template "${template.template_name}" deleted successfully!`);
+          fetchTemplatesData(); // Refresh the list
         }
       }).catch((error: any) => {
-        console.error('Error deleting prefill:', error);
-        toast.error(`Failed to delete prefill: ${error.message}`);
+        console.error('Error deleting template:', error);
+        toast.error(`Failed to delete template: ${error.message}`);
       });
     }
   };
 
-  const handleViewPrefillData = (prefill: Prefill) => {
+  const handleViewTemplateData = (template: Template) => {
     // Simple alert to show the data (temporary solution)
-    const dataStr = JSON.stringify(prefill.data, null, 2);
-    alert(`Prefill Data for "${prefill.label}":\n\n${dataStr}`);
+    const dataStr = JSON.stringify(template.form_state_snapshot || template, null, 2);
+    alert(`Template Data for "${template.template_name}":\n\n${dataStr}`);
   };
 
   if (loading) {
@@ -131,7 +132,7 @@ const ManagePrefills: React.FC = () => {
       <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white flex items-center justify-center">
         <div className="text-center">
           <LoadingSpinner />
-          <p className="text-gray-700 dark:text-gray-300 mt-4">Loading prefills...</p>
+          <p className="text-gray-700 dark:text-gray-300 mt-4">Loading templates...</p>
         </div>
       </div>
     );
@@ -174,24 +175,24 @@ const ManagePrefills: React.FC = () => {
               </button>
               <div>
                 <h1 className="text-3xl font-bold flex items-center">
-                  <List size={32} className="text-primary-500 mr-3" />
-                  Manage Prefills
+                  <Settings size={32} className="text-primary-500 mr-3" />
+                  Manage Templates
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400 mt-1">
-                  Administrative panel for prefill management ({prefills.length} prefills)
+                  Administrative panel for template management ({templates.length} templates)
                 </p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
               <button
-                onClick={handleAddPrefill}
+                onClick={handleAddTemplate}
                 className="bg-primary-600 hover:bg-primary-500 text-white px-4 py-2 rounded-md flex items-center"
               >
                 <Plus size={16} className="mr-2" />
-                Add New Prefill
+                Add New Template
               </button>
               <button
-                onClick={fetchPrefillsData}
+                onClick={fetchTemplatesData}
                 className="bg-gray-600 hover:bg-gray-500 text-white px-4 py-2 rounded-md flex items-center"
                 disabled={loading}
               >
@@ -210,7 +211,7 @@ const ManagePrefills: React.FC = () => {
             </div>
             <input
               type="text"
-              placeholder="Search prefills by label, category, or content..."
+              placeholder="Search templates by name, category, or content..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white pl-10 pr-4 py-3 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 block w-full"
@@ -225,16 +226,16 @@ const ManagePrefills: React.FC = () => {
           </div>
         )}
 
-        {/* Prefills Table */}
+        {/* Templates Table */}
         <div className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-800 rounded-lg overflow-hidden">
-          {filteredPrefills.length === 0 && !loading ? (
+          {filteredTemplates.length === 0 && !loading ? (
             <div className="p-8 text-center">
-              <List size={48} className="text-gray-400 mx-auto mb-4" />
+              <Settings size={48} className="text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                {searchQuery ? 'No prefills found' : 'No prefills found'}
+                {searchQuery ? 'No templates found' : 'No templates found'}
               </h3>
               <p className="text-gray-600 dark:text-gray-400">
-                {searchQuery ? 'Try adjusting your search criteria' : 'Click "Add New Prefill" to create one.'}
+                {searchQuery ? 'Try adjusting your search criteria' : 'Click "Add New Template" to create one.'}
               </p>
             </div>
           ) : (
@@ -243,10 +244,13 @@ const ManagePrefills: React.FC = () => {
                 <thead className="bg-gray-50 dark:bg-gray-800">
                   <tr>
                     <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider min-w-[200px]">
-                      Prefill Details
+                      Template Details
                     </th>
                     <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Category
+                    </th>
+                    <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      Type
                     </th>
                     <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Visibility
@@ -263,8 +267,8 @@ const ManagePrefills: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
-                  {filteredPrefills.map((prefill) => (
-                    <tr key={prefill.id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
+                  {filteredTemplates.map((template) => (
+                    <tr key={template.id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
                       <td className="px-2 py-1">
                         <div className="flex items-center">
                           <div className="flex-shrink-0 h-6 w-6">
@@ -274,67 +278,76 @@ const ManagePrefills: React.FC = () => {
                           </div>
                           <div className="ml-2">
                             <div className="text-xs font-medium text-gray-900 dark:text-white">
-                              {prefill.label}
+                              {template.template_name}
                             </div>
-                            <div className="text-xs text-gray-500 dark:text-gray-400">
-                              ID: {prefill.id.substring(0, 8)}...
-                            </div>
+                            {template.description && (
+                              <div className="text-xs text-gray-500 dark:text-gray-400">
+                                {template.description.length > 50 
+                                  ? `${template.description.substring(0, 50)}...`
+                                  : template.description}
+                              </div>
+                            )}
                           </div>
                         </div>
                       </td>
                       <td className="px-2 py-1 whitespace-nowrap">
                         <div className="text-xs text-gray-900 dark:text-white">
-                          {prefill.category}
+                          {template.category || 'Uncategorized'}
                         </div>
                       </td>
                       <td className="px-2 py-1 whitespace-nowrap">
                         <div className="text-xs text-gray-900 dark:text-white">
-                          {prefill.is_public ? ( // Changed from bg-green-100, text-green-800
+                          {template.template_type === 'create' ? 'Create' : 'Improve'}
+                        </div>
+                      </td>
+                      <td className="px-2 py-1 whitespace-nowrap">
+                        <div className="text-xs text-gray-900 dark:text-white">
+                          {template.is_public ? (
                             <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300">
                               Public
                             </span>
                           ) : (
                             <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
                               Private
-                            </span> // Changed from bg-gray-100
+                            </span>
                           )}
                         </div>
                       </td>
                       <td className="px-2 py-1 whitespace-nowrap">
                         <div className="text-xs text-gray-900 dark:text-white">
-                          {prefill.user_id?.substring(0, 8)}...
+                          {template.user_id?.substring(0, 8)}...
                         </div>
                       </td>
                       <td className="px-2 py-1 whitespace-nowrap text-xs text-gray-500 dark:text-gray-400">
-                        {formatDate(prefill.created_at)}
+                        {formatDate(template.created_at)}
                       </td>
                       <td className="px-2 py-1 whitespace-nowrap text-right text-xs font-medium">
                         <div className="flex items-center justify-end space-x-1">
                           <button
-                            onClick={() => handleViewPrefillData(prefill)} // Changed from text-blue-600, hover:bg-blue-50
+                            onClick={() => handleViewTemplateData(template)}
                             className="text-gray-600 hover:text-gray-500 p-1 rounded-md hover:bg-gray-50 dark:hover:bg-gray-900/20 transition-colors"
-                            title="View prefill data"
+                            title="View template data"
                           >
                             <Eye size={12} />
                           </button>
                           <button
-                            onClick={() => handleEditPrefill(prefill)} // Changed from text-primary-600
+                            onClick={() => handleEditTemplate(template)}
                             className="text-primary-600 hover:text-primary-500 p-1 rounded-md hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors"
-                            title="Edit prefill"
+                            title="Edit template"
                           >
                             <Edit size={12} />
                           </button>
                           <button
-                            onClick={() => handleClonePrefill(prefill)}
+                            onClick={() => handleCloneTemplate(template)}
                             className="text-gray-600 hover:text-gray-500 p-1 rounded-md hover:bg-gray-50 dark:hover:bg-gray-900/20 transition-colors"
-                            title="Clone prefill"
+                            title="Clone template"
                           >
                             <Copy size={12} />
                           </button>
                           <button
-                            onClick={() => handleDeletePrefill(prefill)}
+                            onClick={() => handleDeleteTemplate(template)}
                             className="text-red-600 hover:text-red-500 p-1 rounded-md hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-                            title="Delete prefill"
+                            title="Delete template"
                           >
                             <Trash2 size={12} />
                           </button>
@@ -352,4 +365,4 @@ const ManagePrefills: React.FC = () => {
   );
 };
 
-export default ManagePrefills;
+export default ManageTemplates;

@@ -6,7 +6,7 @@ import { toast } from 'react-hot-toast';
 import { checkUserAccess, getCustomers } from '../services/supabaseClient';
 import { getSuggestions } from '../services/apiService';
 import { useInputField } from '../hooks/useInputField';
-import PrefillSelector from './PrefillSelector';
+import TemplateSelector from './TemplateSelector';
 import CreateCopyForm from './CreateCopyForm';
 import ImproveCopyForm from './ImproveCopyForm';
 import SharedInputs from './SharedInputs';
@@ -17,6 +17,7 @@ import SuggestionModal from './SuggestionModal';
 import LoadingSpinner from './ui/LoadingSpinner';
 import { Tooltip } from './ui/Tooltip';
 import { Download, Upload, User as UserIcon, Plus, Zap, Save, Lightbulb, List, Filter } from 'lucide-react';
+import { useFormState } from '../hooks/useFormState';
 
 interface CopyFormProps {
   currentUser?: User;
@@ -31,7 +32,7 @@ interface CopyFormProps {
   isSmartMode: boolean;
   onEvaluateInputs?: () => void;
   onSaveTemplate?: () => void;
-  isPrefillEditingMode?: boolean;
+  isTemplateEditingMode?: boolean;
   projectDescriptionRef?: React.RefObject<HTMLInputElement>;
   businessDescriptionRef?: React.RefObject<HTMLTextAreaElement>;
   originalCopyRef?: React.RefObject<HTMLTextAreaElement>;
@@ -50,7 +51,7 @@ const CopyForm: React.FC<CopyFormProps> = ({
   isSmartMode,
   onEvaluateInputs,
   onSaveTemplate,
-  isPrefillEditingMode = false,
+  isTemplateEditingMode = false,
   projectDescriptionRef,
   businessDescriptionRef,
   originalCopyRef
@@ -66,6 +67,8 @@ const CopyForm: React.FC<CopyFormProps> = ({
   const [currentSuggestionField, setCurrentSuggestionField] = useState<string>('');
   const [displayMode, setDisplayMode] = useState<'all' | 'populated'>('all');
 
+  // Get template loading function from useFormState
+  const { loadFormStateFromTemplate } = useFormState();
   // Input field hooks
   const projectDescriptionField = useInputField({
     value: formState.projectDescription || '',
@@ -342,7 +345,7 @@ const CopyForm: React.FC<CopyFormProps> = ({
   const shouldShowFloatingButtons = () => {
     // Show if we have any substantial content
     return !!(
-      !isPrefillEditingMode && // Don't show in prefill editing mode
+      !isTemplateEditingMode && // Don't show in template editing mode
       formState.businessDescription?.trim() ||
       formState.originalCopy?.trim() ||
       formState.projectDescription?.trim() ||
@@ -401,10 +404,12 @@ const CopyForm: React.FC<CopyFormProps> = ({
       </div>
       
       {/* Prefill Selector */}
-      <PrefillSelector
+      {/* Template Selector */}
+      <TemplateSelector
         formState={formState}
         setFormState={setFormState}
         setDisplayMode={setDisplayMode}
+        loadFormStateFromTemplate={loadFormStateFromTemplate}
       />
 
 
@@ -580,7 +585,7 @@ const CopyForm: React.FC<CopyFormProps> = ({
       />
 
       {/* Action Buttons */}
-      {!isPrefillEditingMode && (
+      {!isTemplateEditingMode && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
           <GenerateButton
             onClick={onGenerate}
