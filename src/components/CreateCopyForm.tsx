@@ -1,7 +1,7 @@
 import React from 'react';
 import { FormData, PageType, SectionType, ContentQualityScore } from '../types';
 import ContentQualityIndicator from './ui/ContentQualityIndicator';
-import { Zap } from 'lucide-react';
+import { Zap, InfoIcon } from 'lucide-react';
 import { evaluateContentQuality } from '../services/apiService';
 import { Tooltip } from './ui/Tooltip';
 
@@ -28,6 +28,8 @@ const CreateCopyForm: React.FC<CreateCopyFormProps> = ({
   displayMode,
   businessDescriptionRef
 }) => {
+  const [isEvaluatingBusinessDescription, setIsEvaluatingBusinessDescription] = useState(false);
+
   // Function to count words in a string
   const countWords = (text: string): number => {
     return text.trim() ? text.trim().split(/\s+/).length : 0;
@@ -43,6 +45,43 @@ const CreateCopyForm: React.FC<CreateCopyFormProps> = ({
     if (typeof value === 'boolean') return value === true;
     if (Array.isArray(value)) return value.length > 0;
     return false;
+  };
+
+  // Function to evaluate the business description
+  const evaluateBusinessDescription = async () => {
+    // Remove the length check to allow evaluation even with shorter content
+    if (!formData.businessDescription) {
+      return;
+    }
+    
+    setIsEvaluatingBusinessDescription(true);
+    
+    try {
+      const result = await evaluateContentQuality(
+        formData.businessDescription,
+        'Business Description',
+        formData.model,
+        currentUser
+      );
+      
+      // Use the dedicated score change handler if available
+      if (handleScoreChange) {
+        handleScoreChange('businessDescriptionScore', result);
+      } else {
+        // Fall back to the generic change handler if handleScoreChange isn't provided
+        handleChange({ 
+          target: { 
+            name: 'businessDescriptionScore', 
+            value: result 
+          } 
+        } as any);
+      }
+    } catch (error) {
+      console.error('Error evaluating business description:', error);
+    } finally {
+      // Always reset the loading state, even if there was an error
+      setIsEvaluatingBusinessDescription(false);
+    }
   };
 
   // Check if any field in this form is populated
@@ -145,6 +184,25 @@ const CreateCopyForm: React.FC<CreateCopyFormProps> = ({
         <div>
           <div className="flex justify-between items-center mb-1">
             <label htmlFor="businessDescription" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Business Description <span className="text-red-500">*</span>
+            </label>
+            <Tooltip content="Evaluate the quality of your business description">
+              <button
+                type="button"
+                onClick={evaluateBusinessDescription}
+                disabled={isEvaluatingBusinessDescription || !formData.businessDescription}
+                className="p-1 text-gray-500 dark:text-gray-400 hover:text-primary-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+              >
+                {isEvaluatingBusinessDescription ? (
+                  "Evaluating..."
+                ) : (
+                  <Zap size={20} />
+                )}
+              </button>
+            </Tooltip>
+          </div>
+          <div className="flex justify-between items-center mb-1">
+            <label htmlFor="businessDescription" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Business Description
             </label>
             <Tooltip content="Evaluate the quality of your business description">
@@ -159,9 +217,6 @@ const CreateCopyForm: React.FC<CreateCopyFormProps> = ({
                 ) : (
                   <Zap size={20} />
                 )}
-              </button>
-            </Tooltip>
-          </div>
           <textarea
             id="businessDescription"
             name="businessDescription"
@@ -170,6 +225,7 @@ const CreateCopyForm: React.FC<CreateCopyFormProps> = ({
             placeholder="Describe your business, product, or what you want to create..."
             value={formData.businessDescription || ''}
             onChange={handleChange}
+            ref={businessDescriptionRef}
           ></textarea>
           
           <div className="flex items-center justify-between mt-1">

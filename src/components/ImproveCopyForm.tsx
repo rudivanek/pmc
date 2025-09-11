@@ -31,6 +31,7 @@ const ImproveCopyForm: React.FC<ImproveCopyFormProps> = ({
 }) => {
   const [isEvaluatingContent, setIsEvaluatingContent] = useState(false);
 
+
   // Function to count words in a string
   const countWords = (text: string): number => {
     return text.trim() ? text.trim().split(/\s+/).length : 0;
@@ -144,7 +145,7 @@ const ImproveCopyForm: React.FC<ImproveCopyFormProps> = ({
             {/* Content Quality Indicator for Original Copy */}
             <ContentQualityIndicator 
               score={formData.originalCopyScore} 
-              placeholder="e.g., Hero Section, Benefits, Features, FAQ..."
+              isLoading={isEvaluatingContent}
             />
           </div>
         </div>
