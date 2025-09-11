@@ -139,6 +139,55 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
     value: formData.context || '',
     onChange: (value) => handleChange({ target: { name: 'context', value } } as any)
   });
+  
+  // Force sync input fields when form data changes (for template loading)
+  React.useEffect(() => {
+    targetAudienceField.setInputValue(formData.targetAudience || '');
+  }, [formData.targetAudience]);
+  
+  React.useEffect(() => {
+    keyMessageField.setInputValue(formData.keyMessage || '');
+  }, [formData.keyMessage]);
+  
+  React.useEffect(() => {
+    desiredEmotionField.setInputValue(formData.desiredEmotion || '');
+  }, [formData.desiredEmotion]);
+  
+  React.useEffect(() => {
+    callToActionField.setInputValue(formData.callToAction || '');
+  }, [formData.callToAction]);
+  
+  React.useEffect(() => {
+    brandValuesField.setInputValue(formData.brandValues || '');
+  }, [formData.brandValues]);
+  
+  React.useEffect(() => {
+    keywordsField.setInputValue(formData.keywords || '');
+  }, [formData.keywords]);
+  
+  React.useEffect(() => {
+    contextField.setInputValue(formData.context || '');
+  }, [formData.context]);
+  
+  React.useEffect(() => {
+    customWordCountField.setInputValue(formData.customWordCount?.toString() || '');
+  }, [formData.customWordCount]);
+  
+  React.useEffect(() => {
+    competitorCopyTextField.setInputValue(formData.competitorCopyText || '');
+  }, [formData.competitorCopyText]);
+  
+  React.useEffect(() => {
+    targetAudiencePainPointsField.setInputValue(formData.targetAudiencePainPoints || '');
+  }, [formData.targetAudiencePainPoints]);
+  
+  React.useEffect(() => {
+    locationField.setInputValue(formData.location || '');
+  }, [formData.location]);
+  
+  React.useEffect(() => {
+    geoRegionsField.setInputValue(formData.geoRegions || '');
+  }, [formData.geoRegions]);
 
   // Use the input field hook for the custom word count field
   const customWordCountField = useInputField({

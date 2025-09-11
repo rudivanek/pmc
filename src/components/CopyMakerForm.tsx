@@ -85,6 +85,19 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
     value: formState.productServiceName || '',
     onChange: (value) => handleChange({ target: { name: 'productServiceName', value } } as any)
   });
+  
+  // Force sync input fields when form state changes (for template loading)
+  React.useEffect(() => {
+    projectDescriptionField.setInputValue(formState.projectDescription || '');
+  }, [formState.projectDescription]);
+  
+  React.useEffect(() => {
+    briefDescriptionField.setInputValue(formState.briefDescription || '');
+  }, [formState.briefDescription]);
+  
+  React.useEffect(() => {
+    productServiceNameField.setInputValue(formState.productServiceName || '');
+  }, [formState.productServiceName]);
 
   // Load customers on component mount
   React.useEffect(() => {

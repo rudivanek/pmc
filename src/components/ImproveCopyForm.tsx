@@ -38,6 +38,11 @@ const ImproveCopyForm: React.FC<ImproveCopyFormProps> = ({
     onChange: (value) => handleChange({ target: { name: 'originalCopy', value } } as any)
   });
   
+  // Force sync when formData changes (for template loading)
+  React.useEffect(() => {
+    originalCopyField.setInputValue(formData.originalCopy || '');
+  }, [formData.originalCopy]);
+  
   // Function to count words in a string
   const countWords = (text: string): number => {
     return text.trim() ? text.trim().split(/\s+/).length : 0;

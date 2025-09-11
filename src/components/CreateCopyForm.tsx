@@ -38,6 +38,11 @@ const CreateCopyForm: React.FC<CreateCopyFormProps> = ({
     onChange: (value) => handleChange({ target: { name: 'businessDescription', value } } as any)
   });
   
+  // Force sync when formData changes (for template loading)
+  React.useEffect(() => {
+    businessDescriptionField.setInputValue(formData.businessDescription || '');
+  }, [formData.businessDescription]);
+  
   // Function to count words in a string
   const countWords = (text: string): number => {
     return text.trim() ? text.trim().split(/\s+/).length : 0;
