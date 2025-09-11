@@ -1,4 +1,14 @@
+import { useState, useCallback } from 'react';
+import { FormState, Template, CopySession, SavedOutput, TabType, Language, Tone, WordCount, PageType } from '../types';
+import { DEFAULT_FORM_STATE } from '../constants';
+
 /**
+ * Custom hook for managing form state with template/session loading capabilities
+ */
+function useFormState() {
+  const [formState, setFormState] = useState<FormState>(DEFAULT_FORM_STATE);
+
+  /**
    * Load form state from a template
    */
   const loadFormStateFromTemplate = useCallback((template: Template) => {
@@ -73,5 +83,74 @@
       return newState;
     });
   }, [setFormState]);
+
+  /**
+   * Load form state from a copy session
+   */
+  const loadFormStateFromSession = useCallback((session: CopySession) => {
+    if (!session || !session.input_data) {
+      return;
+    }
+
+    setFormState(prevState => {
+      const sessionData = session.input_data;
+      
+      const newState: FormState = {
+        ...DEFAULT_FORM_STATE,
+        ...sessionData,
+        
+        // Set the copy result from session
+        copyResult: {
+          improvedCopy: session.improved_copy,
+          alternativeCopy: session.alternative_copy,
+          generatedVersions: [] // Initialize as empty array
+        },
+        
+        // Initialize loading states
+        isLoading: false,
+        isEvaluating: false,
+        generationProgress: []
+      };
+      
+      return newState;
+    });
+  }, []);
+
+  /**
+   * Load form state from a saved output
+   */
+  const loadFormStateFromSavedOutput = useCallback((savedOutput: SavedOutput) => {
+    if (!savedOutput || !savedOutput.input_snapshot) {
+      return;
+    }
+
+    setFormState(prevState => {
+      const inputData = savedOutput.input_snapshot;
+      
+      const newState: FormState = {
+        ...DEFAULT_FORM_STATE,
+        ...inputData,
+        
+        // Set the copy result from saved output
+        copyResult: savedOutput.output_content || DEFAULT_FORM_STATE.copyResult,
+        
+        // Initialize loading states
+        isLoading: false,
+        isEvaluating: false,
+        generationProgress: []
+      };
+      
+      return newState;
+    });
+  }, []);
+
+  return {
+    formState,
+    setFormState,
+    loadFormStateFromTemplate,
+    loadFormStateFromSession,
+    loadFormStateFromSavedOutput
+  };
+}
 
 export default useFormState;
