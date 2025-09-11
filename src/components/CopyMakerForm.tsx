@@ -69,18 +69,18 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
   // Get template loading function from useFormState
   const { loadFormStateFromTemplate } = useFormState();
 
-  // Load customers on mount
+  // Load customers on component mount
   React.useEffect(() => {
     const loadCustomers = async () => {
       if (!currentUser) return;
       
       setLoadingCustomers(true);
       try {
-        const customerData = await getCustomers(currentUser.id);
-        setCustomers(customerData || []);
+        const { data, error } = await getCustomers();
+        if (error) throw error;
+        setCustomers(data || []);
       } catch (error) {
         console.error('Error loading customers:', error);
-        toast.error('Failed to load customers');
       } finally {
         setLoadingCustomers(false);
       }
