@@ -539,7 +539,7 @@ const App: React.FC<AppProps> = ({ onViewPrompts }) => {
         template_type: formStateToSave.tab,
         language: formStateToSave.language,
         tone: formStateToSave.tone,
-        word_count: formStateToSave.wordCount
+        word_count: formStateToSave.wordCount,
         // Public template fields
         is_public: formStateToSave.is_public,
         public_name: formStateToSave.public_name,
