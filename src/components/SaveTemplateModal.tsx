@@ -14,6 +14,9 @@ interface SaveTemplateModalProps {
   initialTemplateName?: string;
   initialDescription?: string;
   formStateToSave: FormState;
+  mode?: 'add' | 'edit' | 'clone';
+  initialLabel?: string;
+  currentUser?: any;
 }
 
 const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
@@ -22,23 +25,21 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
   onSave,
   initialTemplateName = '',
   initialDescription = '',
-  formStateToSave
+  formStateToSave,
+  mode = 'add',
+  initialLabel = '',
+  currentUser
 }) => {
-  const { currentUser } = useAuth();
+  const { currentUser: authUser } = useAuth();
+  const user = currentUser || authUser; // Use passed user or auth user
   
   const templateNameField = useInputField({
-    value: initialTemplateName,
+    value: initialTemplateName || initialLabel,
     onChange: (value) => {}
   });
 
   const descriptionField = useInputField({
     value: initialDescription,
-    onChange: (value) => {}
-  });
-
-  // Category field for template organization
-  const categoryField = useInputField({
-    value: '',
     onChange: (value) => {}
   });
 
@@ -52,13 +53,14 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
   const [forceSaveAsNew, setForceSaveAsNew] = useState(false);
   
   // Check if user can create public templates
-  const canCreatePublicTemplates = currentUser?.email === 'rfv@datago.net';
+  const canCreatePublicTemplates = user?.email === 'rfv@datago.net';
   
   // Update the template name field when initialTemplateName changes
   useEffect(() => {
-    templateNameField.setInputValue(initialTemplateName);
-    setIsNewTemplate(!initialTemplateName);
-  }, [initialTemplateName]);
+    const nameToUse = initialTemplateName || initialLabel;
+    templateNameField.setInputValue(nameToUse);
+    setIsNewTemplate(!nameToUse);
+  }, [initialTemplateName, initialLabel]);
   
   // Update description field when initialDescription changes
   useEffect(() => {
@@ -72,7 +74,6 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
       setPublicName('');
       setPublicDescription('');
       setForceSaveAsNew(false);
-      categoryField.setInputValue('General'); // Default category
     }
   }, [isOpen]);
   
@@ -82,26 +83,13 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
       setIsNewTemplate(true);
     } else if (initialTemplateName && templateNameField.inputValue === initialTemplateName) {
       setIsNewTemplate(false);
-    } else {
-      setIsNewTemplate(true);
-    }
-  }, [templateNameField.inputValue, initialTemplateName]);
-
   const handleSave = async () => {
-    console.log('🔘 SAVE BUTTON CLICKED');
     console.log('Template name:', templateNameField.inputValue);
     console.log('Is public:', isPublic);
     console.log('Public name:', publicName);
     
     if (!templateNameField.inputValue.trim()) {
-      console.log('❌ Validation failed: empty template name');
       alert('Please provide a template name.');
-      return;
-    }
-    
-    if (!categoryField.inputValue.trim()) {
-      console.log('❌ Validation failed: empty category');
-      alert('Please provide a template category.');
       return;
     }
     
@@ -112,30 +100,20 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
       return;
     }
     
-    console.log('✅ Validation passed, calling onSave...');
 
     setIsSaving(true);
     try {
-      console.log('📤 About to call onSave with public fields:', {
-        is_public: isPublic,
-        public_name: isPublic ? publicName.trim() : undefined,
-        public_description: isPublic ? publicDescription.trim() : undefined
-      });
-      
       await onSave(
         templateNameField.inputValue, 
         descriptionField.inputValue,
         {
           ...formStateToSave,
-          category: categoryField.inputValue.trim(),
           is_public: isPublic,
           public_name: isPublic ? publicName.trim() : undefined,
           public_description: isPublic ? publicDescription.trim() : undefined
         },
         forceSaveAsNew
       );
-      console.log('✅ Template save completed successfully');
-      console.log('🔄 Closing modal...');
       onClose();
     } finally {
       setIsSaving(false);
@@ -148,7 +126,9 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
     <div className="fixed inset-0 bg-black/80 dark:bg-black/80 z-50 flex items-center justify-center p-4">
       <div className="bg-white dark:bg-black rounded-lg border border-gray-300 dark:border-gray-700 max-w-md w-full max-h-[90vh] flex flex-col">
         <div className="p-4 border-b border-gray-300 dark:border-gray-800 flex justify-between items-center">
-          <h3 className="text-lg font-medium text-black dark:text-white">Save as Template</h3>
+          <h3 className="text-lg font-medium text-black dark:text-white">
+            {mode === 'edit' ? 'Update Template' : mode === 'clone' ? 'Save Cloned Template' : 'Save as Template'}
+          </h3>
           <button
             onClick={onClose}
             className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white"
@@ -172,24 +152,6 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
             />
           </div>
           
-          <div className="mb-4">
-            <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Category
-            </label>
-            <input
-              type="text"
-              id="category"
-              className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
-              placeholder="e.g., Homepage Templates, Email Marketing, Landing Pages"
-              value={categoryField.inputValue}
-              onChange={categoryField.handleChange}
-              onBlur={categoryField.handleBlur}
-            />
-            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-              Group this template with similar ones for better organization
-            </p>
-          </div>
-
           <div className="mb-4">
             <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Description (Optional)
@@ -319,8 +281,8 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
           </button>
           <button
             onClick={handleSave}
-            className="bg-gray-600 hover:bg-gray-500 text-white px-4 py-2 text-sm flex items-center disabled:opacity-50"
-            disabled={!templateNameField.inputValue.trim() || !categoryField.inputValue.trim() || isSaving || (isPublic && !publicName.trim())}
+            className="bg-gray-600 hover:bg-gray-500 text-white px-4 py-2 text-sm flex items-center"
+            disabled={!templateNameField.inputValue.trim() || isSaving || (isPublic && !publicName.trim())}
           >
             {isSaving ? (
               "Saving..."
