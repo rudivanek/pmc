@@ -47,6 +47,17 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
     } as unknown as React.ChangeEvent<HTMLInputElement>);
   };
 
+  // Handle custom word count change
+  const handleCustomWordCountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    handleChange({
+      target: { 
+        name: 'customWordCount', 
+        value: value ? parseInt(value) : 150 
+      }
+    } as any);
+  };
+
   // Handler for output structure change
   const handleStructureChange = (values: string[]) => {
     handleChange({
@@ -58,20 +69,6 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
   const handleIndustryNicheChange = (value: string) => {
     handleChange({
       target: { name: 'industryNiche', value }
-    } as React.ChangeEvent<HTMLSelectElement>);
-  };
-
-  // Handle reader funnel stage change
-  const handleReaderFunnelStageChange = (value: string) => {
-    handleChange({
-      target: { name: 'readerFunnelStage', value }
-    } as React.ChangeEvent<HTMLSelectElement>);
-  };
-
-  // Handle preferred writing style change
-  const handlePreferredWritingStyleChange = (value: string) => {
-    handleChange({
-      target: { name: 'preferredWritingStyle', value }
     } as React.ChangeEvent<HTMLSelectElement>);
   };
 
@@ -216,7 +213,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
             name="readerFunnelStage"
             placeholder="e.g., Awareness, Consideration, Decision..."
             value={formData.readerFunnelStage || ''}
-            onChange={handleReaderFunnelStageChange}
+            onChange={(value) => handleChange({ target: { name: 'readerFunnelStage', value } } as any)}
           />
         </div>
         
@@ -375,8 +372,8 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
               placeholder="Enter word count"
               min="50"
               max="2000"
-              value={formData.customWordCount?.toString() || ''}
-              onChange={handleChange}
+              value={formData.customWordCount || ''}
+              onChange={handleCustomWordCountChange}
             />
             
             {!isSmartMode && (
@@ -459,7 +456,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
               name="preferredWritingStyle"
               placeholder="e.g., Persuasive, Conversational, Informative, Storytelling..."
               value={formData.preferredWritingStyle || ''}
-              onChange={handlePreferredWritingStyleChange}
+              onChange={(value) => handleChange({ target: { name: 'preferredWritingStyle', value } } as any)}
             />
           </div>
         )}
