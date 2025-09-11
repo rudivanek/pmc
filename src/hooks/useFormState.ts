@@ -107,6 +107,44 @@ export function useFormState() {
     });
   }, [setFormState]);
 
+  /**
+   * Load form state from a template
+   */
+  const loadFormStateFromTemplate = useCallback((template: Template) => {
+    if (!template || !template.form_state_snapshot) {
+      return;
+    }
+    
+    setFormState(prevState => {
+      // Extract form state data from the template's form_state_snapshot
+      const templateData = template.form_state_snapshot;
+      
+      // Create a new state object with the template data
+      const newState: FormState = {
+        ...DEFAULT_FORM_STATE,
+        ...templateData,
+        
+        // Override with template-specific data
+        templateId: template.id,
+        customerId: template.customer_id || undefined,
+        customerName: template.customer?.name || undefined,
+        
+        // Keep model from previous state if not in template
+        model: templateData.model || prevState.model,
+        
+        // Reset copyResult to ensure clean state
+        copyResult: DEFAULT_FORM_STATE.copyResult,
+        
+        // Initialize loading states
+        isLoading: false,
+        isEvaluating: false,
+        generationProgress: []
+      };
+      
+      return newState;
+    });
+  }, [setFormState]);
+
   return {
     formState,
     setFormState,
