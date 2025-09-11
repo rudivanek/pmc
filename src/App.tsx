@@ -27,7 +27,7 @@ import ManageTemplates from './components/ManageTemplates';
 import { getLastPrompts, evaluatePrompt } from './services/apiService';
 import { getCopySession, getTemplate, getSavedOutput, saveTemplate, saveSavedOutput } from './services/supabaseClient';
 import { checkUserAccess } from './services/supabaseClient';
-import { useFormState } from './hooks/useFormState';
+import useFormState from './hooks/useFormState';
 import { useMode } from './context/ModeContext';
 import { DEFAULT_FORM_STATE } from './constants';
 import { v4 as uuidv4 } from 'uuid';

@@ -32,7 +32,7 @@ import ResultsSection from './results/ResultsSection';
 import AppSpinner from './ui/AppSpinner';
 import SaveTemplateModal from './SaveTemplateModal';
 import { useAuth } from '../hooks/useAuth';
-import { useFormState } from '../hooks/useFormState';
+import useFormState from '../hooks/useFormState';
 import { useMode } from '../context/ModeContext';
 import CopyMakerTab from './CopyMakerTab';
 import { calculateTargetWordCount } from '../services/api/utils';

@@ -17,7 +17,7 @@ import SuggestionModal from './SuggestionModal';
 import LoadingSpinner from './ui/LoadingSpinner';
 import { Tooltip } from './ui/Tooltip';
 import { Download, Upload, User as UserIcon, Plus, Zap, Save, Lightbulb, List, Filter } from 'lucide-react';
-import { useFormState } from '../hooks/useFormState';
+import useFormState from '../hooks/useFormState';
 
 interface CopyFormProps {
   currentUser?: User;

@@ -73,3 +73,5 @@
       return newState;
     });
   }, [setFormState]);
+
+export default useFormState;
