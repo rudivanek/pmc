@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 interface UseInputFieldProps {
   value: string;
@@ -19,7 +19,7 @@ export function useInputField({ value, onChange }: UseInputFieldProps): UseInput
   const [inputValue, setInputValue] = useState(value || '');
 
   // Update local state when parent value changes
-  React.useEffect(() => {
+  useEffect(() => {
     setInputValue(value || '');
   }, [value]);
 
