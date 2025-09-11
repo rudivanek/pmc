@@ -31,6 +31,7 @@ export function useInputField({ value, onChange, suggestions = [] }: UseInputFie
   return {
     inputValue,
     setInputValue,
+    setInputValue,
     handleChange,
     handleBlur, 
     suggestions
