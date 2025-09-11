@@ -230,8 +230,8 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
     loadFormStateFromTemplate(templateObject);
     setSelectedTemplateId(templateId);
     
-    // Switch to populated view when template is loaded
-    setDisplayMode('populated');
+    // Switch to all fields view when template is loaded
+    setDisplayMode('all');
     
     toast.success(`Applied "${selectedTemplate.label}" template`);
   };
