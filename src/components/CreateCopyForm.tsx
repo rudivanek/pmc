@@ -19,6 +19,15 @@ interface CreateCopyFormProps {
 
 const CreateCopyForm: React.FC<CreateCopyFormProps> = ({ 
   formData, 
+  handleChange,
+  currentUser,
+  onGetSuggestion,
+  isLoadingSuggestions,
+  activeSuggestionField,
+  handleScoreChange,
+  displayMode,
+  businessDescriptionRef
+}) => {
   // Function to count words in a string
   const countWords = (text: string): number => {
     return text.trim() ? text.trim().split(/\s+/).length : 0;
