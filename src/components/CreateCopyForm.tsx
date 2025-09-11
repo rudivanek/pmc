@@ -1,6 +1,5 @@
 import React from 'react';
 import { FormData, PageType, SectionType, ContentQualityScore } from '../types';
-import { PAGE_TYPES, SECTION_TYPES } from '../constants';
 import ContentQualityIndicator from './ui/ContentQualityIndicator';
 import { Zap } from 'lucide-react';
 import { evaluateContentQuality } from '../services/apiService';
@@ -20,17 +19,6 @@ interface CreateCopyFormProps {
 
 const CreateCopyForm: React.FC<CreateCopyFormProps> = ({ 
   formData, 
-  handleChange,
-  currentUser,
-  onGetSuggestion,
-  isLoadingSuggestions,
-  activeSuggestionField,
-  handleScoreChange, // New prop
-  displayMode,
-  businessDescriptionRef
-}) => {
-  const [isEvaluatingBusinessDescription, setIsEvaluatingBusinessDescription] = React.useState(false);
-
   // Function to count words in a string
   const countWords = (text: string): number => {
     return text.trim() ? text.trim().split(/\s+/).length : 0;
@@ -173,7 +161,6 @@ const CreateCopyForm: React.FC<CreateCopyFormProps> = ({
             placeholder="Describe your business, product, or what you want to create..."
             value={formData.businessDescription || ''}
             onChange={handleChange}
-            ref={businessDescriptionRef}
           ></textarea>
           
           <div className="flex items-center justify-between mt-1">

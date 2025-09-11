@@ -144,7 +144,7 @@ const ImproveCopyForm: React.FC<ImproveCopyFormProps> = ({
             {/* Content Quality Indicator for Original Copy */}
             <ContentQualityIndicator 
               score={formData.originalCopyScore} 
-              isLoading={isEvaluatingContent} 
+              placeholder="e.g., Hero Section, Benefits, Features, FAQ..."
             />
           </div>
         </div>
