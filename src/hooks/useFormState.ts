@@ -12,13 +12,24 @@ function useFormState() {
    * Load form state from a template
    */
   const loadFormStateFromTemplate = useCallback((template: Template) => {
+    console.log('🔍 Loading template data:', template);
+    console.log('🔍 Template form_state_snapshot:', template.form_state_snapshot);
+    
     if (!template) {
+      console.error('❌ No template provided to loadFormStateFromTemplate');
       return;
     }
     
     setFormState(prevState => {
       // Use form_state_snapshot if available, otherwise construct from individual fields
-      const templateData = template.form_state_snapshot ? template.form_state_snapshot : {
+      let templateData;
+      
+      if (template.form_state_snapshot && typeof template.form_state_snapshot === 'object') {
+        console.log('✅ Using form_state_snapshot for template data');
+        templateData = template.form_state_snapshot;
+      } else {
+        console.log('⚠️ No form_state_snapshot found, constructing from individual fields');
+        templateData = {
         tab: template.template_type as TabType || 'copyMaker',
         language: template.language as Language || 'English',
         tone: template.tone as Tone || 'Professional',
@@ -37,6 +48,7 @@ function useFormState() {
         keywords: template.keywords || '',
         context: template.context || '',
         briefDescription: template.brief_description || '',
+        projectDescription: template.project_description || '',
         productServiceName: template.product_service_name || '',
         industryNiche: template.industry_niche || '',
         toneLevel: template.tone_level || 50,
@@ -46,9 +58,16 @@ function useFormState() {
         preferredWritingStyle: template.preferred_writing_style || '',
         languageStyleConstraints: template.language_style_constraints || [],
         excludedTerms: template.excluded_terms || '',
-        outputStructure: template.output_structure?.map(value => ({ value, label: value, wordCount: null })) || [],
+        outputStructure: Array.isArray(template.output_structure) 
+          ? template.output_structure.map(item => 
+              typeof item === 'string' 
+                ? { value: item, label: item, wordCount: null }
+                : item
+            ) 
+          : [],
         generateScores: template.generateScores || template.generatescores || false,
         generateSeoMetadata: template.generateSeoMetadata || false,
+        generateGeoScore: template.generateGeoScore || false,
         selectedPersona: template.selectedPersona || template.selectedpersona || '',
         forceKeywordIntegration: template.forceKeywordIntegration || false,
         forceElaborationsExamples: template.forceElaborationsExamples || false,
@@ -56,6 +75,10 @@ function useFormState() {
         adhereToLittleWordCount: template.adhere_to_little_word_count || false,
         littleWordCountTolerancePercentage: template.little_word_count_tolerance_percentage || 20,
         wordCountTolerancePercentage: template.word_count_tolerance_percentage || 2,
+        enhanceForGEO: template.enhanceForGEO || false,
+        addTldrSummary: template.addTldrSummary || true,
+        geoRegions: template.geoRegions || '',
+        location: template.location || '',
         numUrlSlugs: template.numUrlSlugs || 3,
         numMetaDescriptions: template.numMetaDescriptions || 3,
         numH1Variants: template.numH1Variants || 3,
@@ -63,8 +86,10 @@ function useFormState() {
         numH3Variants: template.numH3Variants || 3,
         numOgTitles: template.numOgTitles || 3,
         numOgDescriptions: template.numOgDescriptions || 3,
+        sectionBreakdown: template.sectionBreakdown || '',
         model: template.model || 'deepseek-chat'
-      };
+        };
+      }
       
       // Create a new state object with the template data
       const newState: FormState = {
@@ -80,6 +105,7 @@ function useFormState() {
         generationProgress: []
       };
       
+      console.log('✅ New form state created from template:', newState);
       return newState;
     });
   }, [setFormState]);
