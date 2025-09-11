@@ -169,9 +169,11 @@ const AppRouter: React.FC = () => {
         language: formStateToSave.language,
         tone: formStateToSave.tone,
         word_count: formStateToSave.wordCount
+        custom_word_count: formStateToSave.customWordCount,
       };
 
       // If forceSaveAsNew is true, pass undefined to create a new template
+      // Otherwise, use the loadedTemplateId to update existing template
       // Otherwise, use the loadedTemplateId to update existing template
       const templateIdToUse = forceSaveAsNew ? undefined : (loadedTemplateId || undefined);
       const { error, updated, id } = await saveTemplate(templateData, templateIdToUse);

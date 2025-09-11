@@ -141,6 +141,7 @@ const App: React.FC<AppProps> = ({ onViewPrompts }) => {
         language: formStateToSave.language,
         tone: formStateToSave.tone,
         word_count: formStateToSave.wordCount,
+        custom_word_count: formStateToSave.customWordCount,
         // Public template fields
         is_public: formStateToSave.is_public,
         public_name: formStateToSave.public_name,
@@ -148,6 +149,7 @@ const App: React.FC<AppProps> = ({ onViewPrompts }) => {
       };
 
       // If forceSaveAsNew is true, pass undefined to create a new template
+      // Otherwise, use the loadedTemplateId to update existing template
       // Otherwise, use the loadedTemplateId to update existing template
       const templateIdToUse = forceSaveAsNew ? undefined : (loadedTemplateId || undefined);
       const { error, updated, id } = await saveTemplate(templateData, templateIdToUse);
