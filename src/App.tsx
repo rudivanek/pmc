@@ -401,7 +401,7 @@ const AppRouter: React.FC = () => {
               onSaveOutput={handleSaveOutput}
               onViewPrompts={handleViewPrompts}
               onCancel={handleCancelOperation}
-              loadFormStateFromPrefill={loadFormStateFromPrefill}
+              loadFormStateFromTemplate={loadFormStateFromTemplate}
             />
             ) : (
               <Navigate to="/login" replace />
