@@ -1,4 +1,4 @@
-  /**
+/**
    * Load form state from a template
    */
   const loadFormStateFromTemplate = useCallback((template: Template) => {
