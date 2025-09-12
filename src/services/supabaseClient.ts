@@ -470,6 +470,7 @@ export const saveTemplate = async (template: Template, existingTemplateId?: stri
     is_public: Boolean(template.is_public),
     public_name: template.is_public ? (template.public_name?.trim() || template.template_name) : null,
     public_description: template.is_public ? (template.public_description?.trim() || null) : null
+    category: templateData.category,
   };
   
   console.log('Final dbTemplate for database:', {
