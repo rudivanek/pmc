@@ -10,7 +10,8 @@ import { useAuth } from '../hooks/useAuth';
 interface SaveTemplateModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (templateName: string, description: string, formStateToSave: FormState, forceSaveAsNew?: boolean) => Promise<void>;
+  // Update onSave signature to include category
+  onSave: (templateName: string, description: string, formStateToSave: FormState, forceSaveAsNew?: boolean, category?: string) => Promise<void>;
   initialTemplateName?: string;
   initialDescription?: string;
   formStateToSave: FormState;
@@ -33,6 +34,12 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
 
   const descriptionField = useInputField({
     value: initialDescription,
+    onChange: (value) => {}
+  });
+
+  // Add a new useInputField for the category
+  const categoryField = useInputField({
+    value: '', // Initial empty value for category
     onChange: (value) => {}
   });
 
@@ -59,15 +66,16 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
     descriptionField.setInputValue(initialDescription);
   }, [initialDescription]);
   
-  // Reset public fields when modal opens/closes
+  // Reset public fields and category when modal opens/closes
   useEffect(() => {
     if (isOpen) {
       setIsPublic(false);
       setPublicName('');
       setPublicDescription('');
       setForceSaveAsNew(false);
+      categoryField.setInputValue(''); // Reset category field
     }
-  }, [isOpen]);
+  }, [isOpen, categoryField]); // Add categoryField to dependency array
   
   // Track if the name has changed from the original
   useEffect(() => {
@@ -98,6 +106,12 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
       alert('Please provide a public display name for this template.');
       return;
     }
+
+    // Validate category field
+    if (!categoryField.inputValue.trim()) {
+      alert('Please provide a category for the template.');
+      return;
+    }
     
     console.log('✅ Validation passed, calling onSave...');
 
@@ -118,7 +132,8 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
           public_name: isPublic ? publicName.trim() : undefined,
           public_description: isPublic ? publicDescription.trim() : undefined
         },
-        forceSaveAsNew
+        forceSaveAsNew,
+        categoryField.inputValue // Pass the new category value
       );
       console.log('✅ Template save completed successfully');
       console.log('🔄 Closing modal...');
@@ -129,6 +144,15 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
   };
 
   if (!isOpen) return null;
+
+  const getModalTitle = () => {
+    switch (mode) {
+      case 'add': return 'Save New Prefill'; // This modal is for templates, not prefills. This title should be adjusted.
+      case 'edit': return 'Update Prefill'; // This modal is for templates, not prefills. This title should be adjusted.
+      case 'clone': return 'Save Cloned Prefill'; // This modal is for templates, not prefills. This title should be adjusted.
+      default: return 'Save Template'; // Default title for template saving
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black/80 dark:bg-black/80 z-50 flex items-center justify-center p-4">
@@ -150,6 +174,7 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
             <input
               type="text"
               id="templateName"
+              required
               className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
               placeholder="Enter a name for this template"
               value={templateNameField.inputValue}
@@ -171,6 +196,26 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
               onChange={descriptionField.handleChange}
               onBlur={descriptionField.handleBlur}
             />
+          </div>
+
+          {/* NEW CATEGORY FIELD */}
+          <div className="mb-4">
+            <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Category *
+            </label>
+            <input
+              type="text"
+              id="category"
+              required
+              className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
+              placeholder="e.g., Email, Social Media, Blog Post"
+              value={categoryField.inputValue}
+              onChange={categoryField.handleChange}
+              onBlur={categoryField.handleBlur}
+            />
+            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+              Organize your templates by category (e.g., "Email", "Social Media", "Blog Post").
+            </p>
           </div>
           
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
@@ -288,7 +333,7 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
           <button
             onClick={handleSave}
             className="bg-gray-600 hover:bg-gray-500 text-white px-4 py-2 text-sm flex items-center"
-            disabled={!templateNameField.inputValue.trim() || isSaving || (isPublic && !publicName.trim())}
+            disabled={!templateNameField.inputValue.trim() || isSaving || (isPublic && !publicName.trim()) || !categoryField.inputValue.trim()}
           >
             {isSaving ? (
               "Saving..."
