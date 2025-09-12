@@ -5,7 +5,8 @@ import { DEFAULT_FORM_STATE } from '../constants';
 import { toast } from 'react-hot-toast';
 import { checkUserAccess, getCustomers } from '../services/supabaseClient';
 import { getSuggestions } from '../services/apiService';
-import TemplateSelector from './TemplateSelector';
+import { useInputField } from '../hooks/useInputField';
+import PrefillSelector from './PrefillSelector';
 import CreateCopyForm from './CreateCopyForm';
 import ImproveCopyForm from './ImproveCopyForm';
 import SharedInputs from './SharedInputs';
@@ -16,7 +17,6 @@ import SuggestionModal from './SuggestionModal';
 import LoadingSpinner from './ui/LoadingSpinner';
 import { Tooltip } from './ui/Tooltip';
 import { Download, Upload, User as UserIcon, Plus, Zap, Save, Lightbulb, List, Filter } from 'lucide-react';
-import useFormState from '../hooks/useFormState';
 
 interface CopyFormProps {
   currentUser?: User;
@@ -31,7 +31,7 @@ interface CopyFormProps {
   isSmartMode: boolean;
   onEvaluateInputs?: () => void;
   onSaveTemplate?: () => void;
-  isTemplateEditingMode?: boolean;
+  isPrefillEditingMode?: boolean;
   projectDescriptionRef?: React.RefObject<HTMLInputElement>;
   businessDescriptionRef?: React.RefObject<HTMLTextAreaElement>;
   originalCopyRef?: React.RefObject<HTMLTextAreaElement>;
@@ -50,7 +50,7 @@ const CopyForm: React.FC<CopyFormProps> = ({
   isSmartMode,
   onEvaluateInputs,
   onSaveTemplate,
-  isTemplateEditingMode = false,
+  isPrefillEditingMode = false,
   projectDescriptionRef,
   businessDescriptionRef,
   originalCopyRef
@@ -66,8 +66,22 @@ const CopyForm: React.FC<CopyFormProps> = ({
   const [currentSuggestionField, setCurrentSuggestionField] = useState<string>('');
   const [displayMode, setDisplayMode] = useState<'all' | 'populated'>('all');
 
-  // Get template loading function from useFormState
-  const { loadFormStateFromTemplate } = useFormState();
+  // Input field hooks
+  const projectDescriptionField = useInputField({
+    value: formState.projectDescription || '',
+    onChange: (value) => handleChange({ target: { name: 'projectDescription', value } } as any)
+  });
+
+  const briefDescriptionField = useInputField({
+    value: formState.briefDescription || '',
+    onChange: (value) => handleChange({ target: { name: 'briefDescription', value } } as any)
+  });
+
+  const productServiceNameField = useInputField({
+    value: formState.productServiceName || '',
+    onChange: (value) => handleChange({ target: { name: 'productServiceName', value } } as any)
+  });
+
   // Load customers on component mount
   React.useEffect(() => {
     const loadCustomers = async () => {
@@ -328,7 +342,7 @@ const CopyForm: React.FC<CopyFormProps> = ({
   const shouldShowFloatingButtons = () => {
     // Show if we have any substantial content
     return !!(
-      !isTemplateEditingMode && // Don't show in template editing mode
+      !isPrefillEditingMode && // Don't show in prefill editing mode
       formState.businessDescription?.trim() ||
       formState.originalCopy?.trim() ||
       formState.projectDescription?.trim() ||
@@ -387,12 +401,10 @@ const CopyForm: React.FC<CopyFormProps> = ({
       </div>
       
       {/* Prefill Selector */}
-      {/* Template Selector */}
-      <TemplateSelector
+      <PrefillSelector
         formState={formState}
         setFormState={setFormState}
         setDisplayMode={setDisplayMode}
-        loadFormStateFromTemplate={loadFormStateFromTemplate}
       />
 
 
@@ -438,8 +450,9 @@ const CopyForm: React.FC<CopyFormProps> = ({
               required
               className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
               placeholder="e.g., Homepage redesign, Product launch copy, Email campaign"
-              value={formState.projectDescription || ''}
-              onChange={handleChange}
+              value={projectDescriptionField.inputValue}
+              onChange={projectDescriptionField.handleChange}
+              onBlur={projectDescriptionField.handleBlur}
               ref={projectDescriptionRef}
             />
             <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
@@ -480,8 +493,9 @@ const CopyForm: React.FC<CopyFormProps> = ({
                 name="productServiceName"
                 className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
                 placeholder="Enter product or service name"
-                value={formState.productServiceName || ''}
-                onChange={handleChange}
+                value={productServiceNameField.inputValue}
+                onChange={productServiceNameField.handleChange}
+                onBlur={productServiceNameField.handleBlur}
               />
             </div>
           </div>
@@ -496,8 +510,9 @@ const CopyForm: React.FC<CopyFormProps> = ({
               name="briefDescription"
               className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
               placeholder="Brief project description for your reference"
-              value={formState.briefDescription || ''}
-              onChange={handleChange}
+              value={briefDescriptionField.inputValue}
+              onChange={briefDescriptionField.handleChange}
+              onBlur={briefDescriptionField.handleBlur}
             />
           </div>
         </div>
@@ -565,7 +580,7 @@ const CopyForm: React.FC<CopyFormProps> = ({
       />
 
       {/* Action Buttons */}
-      {!isTemplateEditingMode && (
+      {!isPrefillEditingMode && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
           <GenerateButton
             onClick={onGenerate}

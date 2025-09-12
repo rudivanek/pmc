@@ -23,6 +23,18 @@ export const signOut = async () => {
   return supabase.auth.signOut();
 };
 
+// Prefill interface for database-stored prefills
+export interface Prefill {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  label: string;
+  category: string;
+  data: any; // FormState data as JSONB
+  is_public: boolean;
+  user_id: string | null;
+}
+
 // Admin function to create a new user
 export const adminCreateUser = async (userData: {
   email: string;
@@ -987,106 +999,16 @@ export async function registerBetaUserViaEdgeFunction(name: string, email: strin
   }
 }
 
-// Get templates for the current user (includes public templates)
-export async function getTemplates(userId?: string) {
-  try {
-    let query = supabase.from('pmc_templates').select('*');
-    
-    if (userId) {
-      // Get user's own templates + public templates
-      query = query.or(`user_id.eq.${userId},is_public.eq.true`);
-    } else {
-      // Only get public templates if no user ID
-      query = query.eq('is_public', true);
-    }
-    
-    query = query.order('created_at', { ascending: false });
-    
-    const { data, error } = await query;
-    
-    if (error) {
-      console.error('Error fetching templates:', error);
-      return { data: null, error };
-    }
-    
-    return { data, error: null };
-  } catch (error) {
-    console.error('Error in getTemplates:', error);
-    return { data: null, error };
-  }
-}
-
-// Create a new template
-export async function createTemplate(templateData: {
-  user_id: string;
-  template_name: string;
-  category: string;
-  is_public: boolean;
-  form_state_snapshot: Partial<FormState>;
-  description?: string;
-}) {
-  try {
-    const { data, error } = await supabase
-      .from('pmc_templates')
-      .insert([{
-        ...templateData,
-        template_type: templateData.form_state_snapshot?.tab || 'create',
-        language: templateData.form_state_snapshot?.language || 'English',
-        tone: templateData.form_state_snapshot?.tone || 'Professional',
-        word_count: templateData.form_state_snapshot?.wordCount || 'Medium: 100-200',
-      }])
-      .select()
-      .single();
-    
-    if (error) {
-      console.error('Error creating template:', error);
-      return { data: null, error };
-    }
-    
-    return { data, error: null };
-  } catch (error) {
-    console.error('Error in createTemplate:', error);
-    return { data: null, error };
-  }
-}
-
-// Update an existing template
-export async function updateTemplate(templateData: {
-  id: string;
-  user_id: string;
-  template_name: string;
-  category: string;
-  is_public: boolean;
-  form_state_snapshot: Partial<FormState>;
-  description?: string;
-}) {
-  try {
-    const { id, ...updateData } = templateData;
-    
-    const { data, error } = await supabase
-      .from('pmc_templates')
-      .update({
-        ...updateData,
-        template_type: updateData.form_state_snapshot?.tab || 'create',
-        language: updateData.form_state_snapshot?.language || 'English',
-        tone: updateData.form_state_snapshot?.tone || 'Professional',
-        word_count: updateData.form_state_snapshot?.wordCount || 'Medium: 100-200',
-      })
-      .eq('id', id)
-      .eq('user_id', updateData.user_id) // Ensure user can only update their own
-      .select()
-      .single();
-    
-    if (error) {
-      console.error('Error updating template:', error);
-      return { data: null, error };
-    }
-    
-    return { data, error: null };
-  } catch (error) {
-    console.error('Error in updateTemplate:', error);
-    return { data: null, error };
-  }
+// Delete a prefill
+export async function deletePrefill(prefillId: string) {
+  const supabase = getSupabaseClient();
+  
+  const { data, error } = await supabase
+    .from('pmc_prefills')
+    .delete()
+    .eq('id', prefillId);
+  
+  return { data, error };
 }
 
 /**
@@ -1212,18 +1134,6 @@ export async function createPrefill(prefillData: {
     console.error('Error in createPrefill:', error);
     return { data: null, error };
   }
-}
-
-// Delete a prefill
-export async function deletePrefill(prefillId: string) {
-  const supabase = getSupabaseClient();
-  
-  const { data, error } = await supabase
-    .from('pmc_prefills')
-    .delete()
-    .eq('id', prefillId);
-  
-  return { data, error };
 }
 
 // Mock data functions for development without Supabase

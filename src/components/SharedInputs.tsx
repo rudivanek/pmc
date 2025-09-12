@@ -3,6 +3,7 @@ import { FormState } from '../types';
 import { LANGUAGES, TONES, WORD_COUNTS, OUTPUT_STRUCTURE_OPTIONS, INDUSTRY_NICHE_CATEGORIES, READER_FUNNEL_STAGES, PREFERRED_WRITING_STYLES, LANGUAGE_STYLE_CONSTRAINTS } from '../constants';
 import { PlusCircle, X, Zap, InfoIcon } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import { useInputField } from '../hooks/useInputField';
 import DraggableStructuredInput from './ui/DraggableStructuredInput';
 import TagInput from './ui/TagInput';
 import { Checkbox } from './ui/checkbox';
@@ -38,25 +39,117 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
   setFormState,
   displayMode
 }) => {
-  // Handle competitor URL changes
-  const handleCompetitorUrlChange = (index: number, value: string) => {
-    const newUrls = [...formData.competitorUrls];
-    newUrls[index] = value;
-    handleChange({
-      target: { name: 'competitorUrls', value: newUrls }
-    } as unknown as React.ChangeEvent<HTMLInputElement>);
-  };
+  // Use input field hooks for competitor URLs
+  const competitorUrl1Field = useInputField({
+    value: formData.competitorUrls[0] || '',
+    onChange: (value) => {
+      const newUrls = [...formData.competitorUrls];
+      newUrls[0] = value;
+      handleChange({
+        target: { name: 'competitorUrls', value: newUrls }
+      } as unknown as React.ChangeEvent<HTMLInputElement>);
+    }
+  });
+  
+  const competitorUrl2Field = useInputField({
+    value: formData.competitorUrls[1] || '',
+    onChange: (value) => {
+      const newUrls = [...formData.competitorUrls];
+      newUrls[1] = value;
+      handleChange({
+        target: { name: 'competitorUrls', value: newUrls }
+      } as unknown as React.ChangeEvent<HTMLInputElement>);
+    }
+  });
+  
+  const competitorUrl3Field = useInputField({
+    value: formData.competitorUrls[2] || '',
+    onChange: (value) => {
+      const newUrls = [...formData.competitorUrls];
+      newUrls[2] = value;
+      handleChange({
+        target: { name: 'competitorUrls', value: newUrls }
+      } as unknown as React.ChangeEvent<HTMLInputElement>);
+    }
+  });
 
-  // Handle custom word count change
-  const handleCustomWordCountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    handleChange({
+  // Use input field hooks for new fields
+  const competitorCopyTextField = useInputField({
+    value: formData.competitorCopyText || '',
+    onChange: (value) => handleChange({ 
+      target: { name: 'competitorCopyText', value } 
+    } as any)
+  });
+
+  const targetAudiencePainPointsField = useInputField({
+    value: formData.targetAudiencePainPoints || '',
+    onChange: (value) => handleChange({ 
+      target: { name: 'targetAudiencePainPoints', value } 
+    } as any)
+  });
+
+  // Use input field hook for location
+  const locationField = useInputField({
+    value: formData.location || '',
+    onChange: (value) => handleChange({ 
+      target: { name: 'location', value } 
+    } as any)
+  });
+
+  // Use input field hook for geoRegions
+  const geoRegionsField = useInputField({
+    value: formData.geoRegions || '',
+    onChange: (value) => handleChange({ 
+      target: { name: 'geoRegions', value } 
+    } as any)
+  });
+
+  // Moved fields from CreateCopyForm and ImproveCopyForm
+  const targetAudienceField = useInputField({
+    value: formData.targetAudience || '',
+    onChange: (value) => handleChange({ target: { name: 'targetAudience', value } } as any)
+  });
+  
+  const keyMessageField = useInputField({
+    value: formData.keyMessage || '',
+    onChange: (value) => handleChange({ target: { name: 'keyMessage', value } } as any)
+  });
+  
+  const desiredEmotionField = useInputField({
+    value: formData.desiredEmotion || '',
+    onChange: (value) => handleChange({ target: { name: 'desiredEmotion', value } } as any)
+  });
+  
+  const callToActionField = useInputField({
+    value: formData.callToAction || '',
+    onChange: (value) => handleChange({ target: { name: 'callToAction', value } } as any)
+  });
+  
+  const brandValuesField = useInputField({
+    value: formData.brandValues || '',
+    onChange: (value) => handleChange({ target: { name: 'brandValues', value } } as any)
+  });
+  
+  const keywordsField = useInputField({
+    value: formData.keywords || '',
+    onChange: (value) => handleChange({ target: { name: 'keywords', value } } as any)
+  });
+  
+  const contextField = useInputField({
+    value: formData.context || '',
+    onChange: (value) => handleChange({ target: { name: 'context', value } } as any)
+  });
+
+  // Use the input field hook for the custom word count field
+  const customWordCountField = useInputField({
+    value: formData.customWordCount?.toString() || '',
+    onChange: (value) => handleChange({ 
       target: { 
         name: 'customWordCount', 
         value: value ? parseInt(value) : 150 
-      }
-    } as any);
-  };
+      } 
+    } as any)
+  });
 
   // Handler for output structure change
   const handleStructureChange = (values: string[]) => {
@@ -69,6 +162,20 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
   const handleIndustryNicheChange = (value: string) => {
     handleChange({
       target: { name: 'industryNiche', value }
+    } as React.ChangeEvent<HTMLSelectElement>);
+  };
+
+  // Handle reader funnel stage change
+  const handleReaderFunnelStageChange = (value: string) => {
+    handleChange({
+      target: { name: 'readerFunnelStage', value }
+    } as React.ChangeEvent<HTMLSelectElement>);
+  };
+
+  // Handle preferred writing style change
+  const handlePreferredWritingStyleChange = (value: string) => {
+    handleChange({
+      target: { name: 'preferredWritingStyle', value }
     } as React.ChangeEvent<HTMLSelectElement>);
   };
 
@@ -190,8 +297,9 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
             rows={3}
             className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
             placeholder="Describe who this copy is targeting (age, interests, pain points, etc.)..."
-            value={formData.targetAudience || ''}
-            onChange={handleChange}
+            value={targetAudienceField.inputValue}
+            onChange={targetAudienceField.handleChange}
+            onBlur={targetAudienceField.handleBlur}
           ></textarea>
         </div>
 
@@ -213,7 +321,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
             name="readerFunnelStage"
             placeholder="e.g., Awareness, Consideration, Decision..."
             value={formData.readerFunnelStage || ''}
-            onChange={(value) => handleChange({ target: { name: 'readerFunnelStage', value } } as any)}
+            onChange={handleReaderFunnelStageChange}
           />
         </div>
         
@@ -226,22 +334,25 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
             type="url"
             className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
             placeholder="https://competitor1.com"
-            value={formData.competitorUrls[0] || ''}
-            onChange={(e) => handleCompetitorUrlChange(0, e.target.value)}
+            value={competitorUrl1Field.inputValue}
+            onChange={competitorUrl1Field.handleChange}
+            onBlur={competitorUrl1Field.handleBlur}
           />
           <input
             type="url"
             className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
             placeholder="https://competitor2.com"
-            value={formData.competitorUrls[1] || ''}
-            onChange={(e) => handleCompetitorUrlChange(1, e.target.value)}
+            value={competitorUrl2Field.inputValue}
+            onChange={competitorUrl2Field.handleChange}
+            onBlur={competitorUrl2Field.handleBlur}
           />
           <input
             type="url"
             className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
             placeholder="https://competitor3.com"
-            value={formData.competitorUrls[2] || ''}
-            onChange={(e) => handleCompetitorUrlChange(2, e.target.value)}
+            value={competitorUrl3Field.inputValue}
+            onChange={competitorUrl3Field.handleChange}
+            onBlur={competitorUrl3Field.handleBlur}
           />
         </div>
 
@@ -264,8 +375,9 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
             rows={4}
             className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
             placeholder="List any specific pain points or challenges that the target audience likely faces..."
-            value={formData.targetAudiencePainPoints || ''}
-            onChange={handleChange}
+            value={targetAudiencePainPointsField.inputValue}
+            onChange={targetAudiencePainPointsField.handleChange}
+            onBlur={targetAudiencePainPointsField.handleBlur}
           ></textarea>
         </div>
 
@@ -354,9 +466,9 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
               {!isSmartMode && totalStructureWordCount > 0 && (
                 <div className="text-xs text-gray-600 dark:text-gray-400"> {/* Changed from text-yellow-600 */}
                   Structure total: {totalStructureWordCount} words
-                  {formData.prioritizeWordCount && totalStructureWordCount !== parseInt(formData.customWordCount?.toString() || '') && (
+                  {formData.prioritizeWordCount && totalStructureWordCount !== parseInt(customWordCountField.inputValue) && (
                     <span className="ml-1 text-yellow-600 dark:text-yellow-400">
-                      {formData.prioritizeWordCount && totalStructureWordCount > parseInt(formData.customWordCount?.toString() || '')
+                      {formData.prioritizeWordCount && totalStructureWordCount > parseInt(customWordCountField.inputValue)
                         ? ' (will use structure total)'
                         : formData.prioritizeWordCount ? ' (will use custom total)' : ''}
                     </span>
@@ -372,8 +484,9 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
               placeholder="Enter word count"
               min="50"
               max="2000"
-              value={formData.customWordCount || ''}
-              onChange={handleCustomWordCountChange}
+              value={customWordCountField.inputValue}
+              onChange={customWordCountField.handleChange}
+              onBlur={customWordCountField.handleBlur}
             />
             
             {!isSmartMode && (
@@ -389,7 +502,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
             {!isSmartMode && 
              formData.prioritizeWordCount && 
              totalStructureWordCount > 0 && 
-             totalStructureWordCount !== parseInt(formData.customWordCount?.toString() || '') && ( // Changed from bg-yellow-50, text-yellow-800
+             totalStructureWordCount !== parseInt(customWordCountField.inputValue) && ( // Changed from bg-yellow-50, text-yellow-800
               <div className="mt-2 p-2 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-md text-xs text-gray-800 dark:text-gray-200">
                 <strong>Note:</strong> The effective target word count will be {effectiveTargetWordCount} words because you have both section word counts and a custom total with strict adherence enabled.
               </div>
@@ -456,7 +569,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
               name="preferredWritingStyle"
               placeholder="e.g., Persuasive, Conversational, Informative, Storytelling..."
               value={formData.preferredWritingStyle || ''}
-              onChange={(value) => handleChange({ target: { name: 'preferredWritingStyle', value } } as any)}
+              onChange={handlePreferredWritingStyleChange}
             />
           </div>
         )}
@@ -554,8 +667,9 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
             rows={2}
             className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
             placeholder="What's the main message you want to convey?"
-            value={formData.keyMessage || ''}
-            onChange={handleChange}
+            value={keyMessageField.inputValue}
+            onChange={keyMessageField.handleChange}
+            onBlur={keyMessageField.handleBlur}
           ></textarea>
         </div>
 
@@ -579,8 +693,8 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
                 id="desiredEmotion"
                 name="desiredEmotion"
                 placeholder="e.g., Trust, Excitement, Relief..."
-                value={formData.desiredEmotion || ''}
-                onChange={(value) => handleChange({ target: { name: 'desiredEmotion', value } } as any)}
+                value={desiredEmotionField.inputValue}
+                onChange={desiredEmotionField.setInputValue}
               />
             </div>
           )}
@@ -604,8 +718,9 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
               name="callToAction"
               className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
               placeholder="e.g., Sign up, Contact us, Learn more..."
-              value={formData.callToAction || ''}
-              onChange={handleChange}
+              value={callToActionField.inputValue}
+              onChange={callToActionField.handleChange}
+              onBlur={callToActionField.handleBlur}
             />
           </div>
         </div>
@@ -628,8 +743,8 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
               id="brandValues"
               name="brandValues"
               placeholder="e.g., Innovation, Reliability, Sustainability..."
-              value={formData.brandValues || ''}
-              onChange={(value) => handleChange({ target: { name: 'brandValues', value } } as any)}
+              value={brandValuesField.inputValue}
+              onChange={brandValuesField.setInputValue}
             />
           </div>
         )}
@@ -652,8 +767,8 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
               id="keywords"
               name="keywords"
               placeholder="e.g., professional, effective, custom, affordable..."
-              value={formData.keywords || ''}
-              onChange={(value) => handleChange({ target: { name: 'keywords', value } } as any)}
+              value={keywordsField.inputValue}
+              onChange={keywordsField.setInputValue}
             />
           </div>
         )}
@@ -678,8 +793,9 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
               rows={3}
               className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
               placeholder="Any additional context for this copy (e.g., campaign details, market conditions)..."
-              value={formData.context || ''}
-              onChange={handleChange}
+              value={contextField.inputValue}
+              onChange={contextField.handleChange}
+              onBlur={contextField.handleBlur}
             ></textarea>
           </div>
         )}
@@ -705,8 +821,9 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
               rows={4}
               className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
               placeholder="Paste the copy you want to outperform..."
-              value={formData.competitorCopyText || ''}
-              onChange={handleChange}
+              value={competitorCopyTextField.inputValue}
+              onChange={competitorCopyTextField.handleChange}
+              onBlur={competitorCopyTextField.handleBlur}
             ></textarea>
           </div>
         )}

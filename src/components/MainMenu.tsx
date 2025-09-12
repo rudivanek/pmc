@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, LogOut, BookOpen, HelpCircle, List, Settings } from 'lucide-react'; 
+import { LayoutDashboard, LogOut, BookOpen, HelpCircle, List } from 'lucide-react'; 
 import { LuZap } from "react-icons/lu";
 import ThemeToggle from './ThemeToggle';
 import { useAuth } from '../hooks/useAuth';
@@ -157,21 +157,6 @@ const MainMenu: React.FC<MainMenuProps> = ({ userName, onLogout }) => {
               <LuZap size={18} className="mr-2" />
               Copy Maker
             </Link>
-            
-            {/* Only show manage templates link to admin users */}
-            {currentUser?.email === 'rfv@datago.net' && (
-              <Link 
-                to="/manage-templates" 
-                className={`flex items-center text-sm font-medium px-4 py-2 rounded-md border transition-colors duration-200 ${
-                  currentPath === '/manage-templates' 
-                    ? 'bg-gray-500 text-white border-gray-500' 
-                    : 'bg-white dark:bg-black border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
-                }`}
-              >
-                <Settings size={18} className="mr-2" />
-                Manage Templates
-              </Link>
-            )}
             
             </nav>
           </div>

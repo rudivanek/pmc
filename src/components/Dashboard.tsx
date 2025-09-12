@@ -459,9 +459,9 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
                 </Link>
                 
                 <Link
-                  to="/manage-templates"
+                  to="/manage-prefills"
                   className="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm flex items-center transition-colors shadow-md hover:shadow-lg"
-                  title="Manage Templates"
+                  title="Manage Prefills"
                 >
                   <List size={16} />
                 </Link>

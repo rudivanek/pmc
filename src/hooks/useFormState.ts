@@ -1,133 +1,82 @@
 import { useState, useCallback } from 'react';
-import { FormState, Template, CopySession, SavedOutput, TabType, Language, Tone, WordCount, PageType } from '../types';
+import { FormState, Template, CopySession, SavedOutput, ContentQualityScore, GeneratedContentItem, GeneratedContentItemType } from '../types';
 import { DEFAULT_FORM_STATE } from '../constants';
+import { Prefill } from '../services/supabaseClient';
+import { v4 as uuidv4 } from 'uuid';
 
-/**
- * Custom hook for managing form state with template/session loading capabilities
- */
-function useFormState() {
+export function useFormState() {
   const [formState, setFormState] = useState<FormState>(DEFAULT_FORM_STATE);
 
   /**
    * Load form state from a template
    */
   const loadFormStateFromTemplate = useCallback((template: Template) => {
-    console.log('🔍 Loading template data:', template);
-    console.log('🔍 Template form_state_snapshot:', template.form_state_snapshot);
-    
-    if (!template) {
-      console.error('❌ No template provided to loadFormStateFromTemplate');
-      return;
-    }
-    
     setFormState(prevState => {
-      // Use form_state_snapshot if available, otherwise construct from individual fields
-      let templateData;
-      
-      if (template.form_state_snapshot && 
-          typeof template.form_state_snapshot === 'object' && 
-          Object.keys(template.form_state_snapshot).length > 0) {
-        console.log('✅ Using form_state_snapshot for template data');
-        templateData = template.form_state_snapshot;
-      } else {
-        console.log('⚠️ No form_state_snapshot found, constructing from individual fields');
-      console.log('🔍 Available template fields:', {
-        business_description: template.business_description,
-        original_copy: template.original_copy,
-        target_audience: template.target_audience,
-        key_message: template.key_message,
-        call_to_action: template.call_to_action,
-        brand_values: template.brand_values,
-        keywords: template.keywords,
-        context: template.context,
-        brief_description: template.brief_description,
-        project_description: template.project_description,
-        product_service_name: template.product_service_name,
-        industry_niche: template.industry_niche,
-        reader_funnel_stage: template.reader_funnel_stage,
-        competitor_copy_text: template.competitor_copy_text,
-        target_audience_pain_points: template.target_audience_pain_points,
-        preferred_writing_style: template.preferred_writing_style,
-        excluded_terms: template.excluded_terms
-      });
-      
-        templateData = {
-        tab: template.template_type as TabType || 'copyMaker',
-        language: template.language as Language || 'English',
-        tone: template.tone as Tone || 'Professional',
-        wordCount: template.word_count as WordCount || 'Medium: 100-200',
-        customWordCount: template.custom_word_count || undefined,
-        competitorUrls: template.competitor_urls || ['', '', ''],
-        businessDescription: template.business_description || '',
-        originalCopy: template.original_copy || '',
-        pageType: template.page_type as PageType || 'Homepage',
-        section: template.section || '',
-        targetAudience: template.target_audience || '',
-        keyMessage: template.key_message || '',
-        desiredEmotion: template.desired_emotion || '',
-        callToAction: template.call_to_action || '',
-        brandValues: template.brand_values || '',
-        keywords: template.keywords || '',
-        context: template.context || '',
-        briefDescription: template.brief_description || '',
-        projectDescription: template.project_description || '',
-        productServiceName: template.product_service_name || '',
-        industryNiche: template.industry_niche || '',
-        toneLevel: template.tone_level || 50,
-        readerFunnelStage: template.reader_funnel_stage || '',
-        competitorCopyText: template.competitor_copy_text || '',
-        targetAudiencePainPoints: template.target_audience_pain_points || '',
-        preferredWritingStyle: template.preferred_writing_style || '',
-        languageStyleConstraints: template.language_style_constraints || [],
-        excludedTerms: template.excluded_terms || '',
-        outputStructure: Array.isArray(template.output_structure) 
-          ? template.output_structure.map(item => 
-              typeof item === 'string' 
-                ? { value: item, label: item, wordCount: null }
-                : item
-            ) 
-          : [],
-        generateScores: template.generateScores || template.generatescores || false,
-        generateSeoMetadata: template.generateSeoMetadata || false,
-        generateGeoScore: template.generateGeoScore || false,
-        selectedPersona: template.selectedPersona || template.selectedpersona || '',
-        forceKeywordIntegration: template.forceKeywordIntegration || false,
-        forceElaborationsExamples: template.forceElaborationsExamples || false,
-        prioritizeWordCount: template.prioritizeWordCount || false,
-        adhereToLittleWordCount: template.adhere_to_little_word_count || false,
-        littleWordCountTolerancePercentage: template.little_word_count_tolerance_percentage || 20,
-        wordCountTolerancePercentage: template.word_count_tolerance_percentage || 2,
-        enhanceForGEO: template.enhanceForGEO || false,
-        addTldrSummary: template.addTldrSummary || true,
-        geoRegions: template.geoRegions || '',
-        location: template.location || '',
-        numUrlSlugs: template.numUrlSlugs || 3,
-        numMetaDescriptions: template.numMetaDescriptions || 3,
-        numH1Variants: template.numH1Variants || 3,
-        numH2Variants: template.numH2Variants || 3,
-        numH3Variants: template.numH3Variants || 3,
-        numOgTitles: template.numOgTitles || 3,
-        numOgDescriptions: template.numOgDescriptions || 3,
-        sectionBreakdown: template.sectionBreakdown || '',
-        model: template.model || 'deepseek-chat'
-        };
-      }
-      
       // Create a new state object with the template data
       const newState: FormState = {
         ...DEFAULT_FORM_STATE,
-        ...templateData,
+        tab: template.template_type as 'create' | 'improve',
+        language: template.language,
+        tone: template.tone,
+        wordCount: template.word_count,
+        customWordCount: template.custom_word_count || undefined,
+        targetAudience: template.target_audience || undefined,
+        keyMessage: template.key_message || undefined,
+        desiredEmotion: template.desired_emotion || undefined,
+        callToAction: template.call_to_action || undefined,
+        brandValues: template.brand_values || undefined,
+        keywords: template.keywords || undefined,
+        context: template.context || undefined,
+        briefDescription: template.brief_description || undefined,
+        pageType: template.page_type || undefined,
+        businessDescription: template.business_description || undefined,
+        originalCopy: template.original_copy || undefined,
+        projectDescription: template.project_description || undefined,
+        competitorUrls: template.competitor_urls || ['', '', ''],
+        section: template.section || undefined,
+        outputStructure: template.output_structure 
+          ? typeof template.output_structure === 'string'
+            ? JSON.parse(template.output_structure)
+            : template.output_structure
+          : [],
         
-        // Reset copyResult to ensure clean state
-        copyResult: DEFAULT_FORM_STATE.copyResult,
+        // New fields
+        productServiceName: template.product_service_name || undefined,
+        industryNiche: template.industry_niche || undefined,
+        toneLevel: template.tone_level || 50,
+        readerFunnelStage: template.reader_funnel_stage || undefined,
+        competitorCopyText: template.competitor_copy_text || undefined,
+        targetAudiencePainPoints: template.target_audience_pain_points || undefined,
+        preferredWritingStyle: template.preferred_writing_style || undefined,
+        languageStyleConstraints: template.language_style_constraints || [],
         
-        // Initialize loading states
+        // Generation options - try different field names since there are camelCase and snake_case versions
+        generateHeadlines: template.generateHeadlines || template.generateheadlines || false,
+        generateScores: template.generateScores || template.generatescores || false,
+        // Counts
+        numberOfHeadlines: 
+          template.numberOfHeadlines || 
+          template.numberofheadlines || 
+          3,
+        // New word count control features
+        sectionBreakdown: template.sectionBreakdown || template.section_breakdown,
+        forceElaborationsExamples: template.forceElaborationsExamples || template.force_elaborations_examples || false,
+        forceKeywordIntegration: template.forceKeywordIntegration || template.force_keyword_integration || false,
+        // Add mapping for prioritizeWordCount
+        prioritizeWordCount: template.prioritizeWordCount || template.prioritize_word_count || false,
+        // Add mapping for little word count control
+        adhereToLittleWordCount: template.adhereToLittleWordCount || template.adhere_to_little_word_count || false,
+        littleWordCountTolerancePercentage: template.littleWordCountTolerancePercentage || template.little_word_count_tolerance_percentage || 20,
+        
+        // Keep model and other fields from previous state
+        model: prevState.model,
+        
+        // Reset loading states
         isLoading: false,
         isEvaluating: false,
         generationProgress: []
       };
       
-      console.log('✅ New form state created from template:', newState);
       return newState;
     });
   }, [setFormState]);
@@ -139,20 +88,24 @@ function useFormState() {
     if (!session || !session.input_data) {
       return;
     }
-
+    
     setFormState(prevState => {
-      const sessionData = session.input_data;
+      // Extract input data from the session
+      const inputData = session.input_data;
       
+      // Create a new state object with the session data
       const newState: FormState = {
         ...DEFAULT_FORM_STATE,
-        ...sessionData,
+        ...inputData,
+        sessionId: session.id,
+        customerId: session.customer_id || undefined,
+        customerName: session.customer?.name || undefined,
         
-        // Set the copy result from session
-        copyResult: {
-          improvedCopy: session.improved_copy,
-          alternativeCopy: session.alternative_copy,
-          generatedVersions: [] // Initialize as empty array
-        },
+        // Keep model and other fields from previous state
+        model: inputData.model || prevState.model,
+        
+        // Explicitly reset copyResult to ensure no outputs are shown
+        copyResult: DEFAULT_FORM_STATE.copyResult,
         
         // Initialize loading states
         isLoading: false,
@@ -160,27 +113,37 @@ function useFormState() {
         generationProgress: []
       };
       
+      // Copy Sessions now only restore inputs, not outputs
+      // The copyResult will remain undefined (empty) when loading from a copy session
+      
       return newState;
     });
-  }, []);
+  }, [setFormState]);
 
   /**
    * Load form state from a saved output
    */
   const loadFormStateFromSavedOutput = useCallback((savedOutput: SavedOutput) => {
-    if (!savedOutput || !savedOutput.input_snapshot) {
+    if (!savedOutput || !savedOutput.input_snapshot || !savedOutput.output_content) {
       return;
     }
-
+    
     setFormState(prevState => {
-      const inputData = savedOutput.input_snapshot;
+      // Extract input data and output content from the saved output
+      const inputSnapshot = savedOutput.input_snapshot;
       
+      // Create a new state object with the saved output data
       const newState: FormState = {
         ...DEFAULT_FORM_STATE,
-        ...inputData,
+        ...inputSnapshot,
+        customerId: savedOutput.customer_id || undefined,
+        customerName: savedOutput.customer?.name || undefined,
         
-        // Set the copy result from saved output
-        copyResult: savedOutput.output_content || DEFAULT_FORM_STATE.copyResult,
+        // Keep model and other fields from previous state if not in snapshot
+        model: inputSnapshot.model || prevState.model,
+        
+        // Set the copyResult directly from the saved output's output_content
+        copyResult: savedOutput.output_content,
         
         // Initialize loading states
         isLoading: false,
@@ -188,17 +151,79 @@ function useFormState() {
         generationProgress: []
       };
       
+      // If the saved output has a session ID, set it
+      if (savedOutput.input_snapshot.sessionId) {
+        newState.sessionId = savedOutput.input_snapshot.sessionId;
+      }
+      
       return newState;
     });
-  }, []);
+  }, [setFormState]);
+
+  /**
+   * Load form state from a prefill
+   */
+  const loadFormStateFromPrefill = useCallback((prefill: Prefill) => {
+    setFormState(prevState => {
+      // Create a new state object with the prefill data
+      const newState: FormState = {
+        ...DEFAULT_FORM_STATE,
+        // Apply all prefill data
+        ...prefill.data,
+        // Always preserve loading states and other runtime states
+        isLoading: false,
+        isEvaluating: false,
+        generationProgress: [],
+        copyResult: DEFAULT_FORM_STATE.copyResult,
+        promptEvaluation: undefined
+      };
+      
+      // Handle originalCopyGuidance from prefill
+      if (prefill.data.originalCopyGuidance) {
+        // Store the guidance in form state
+        newState.originalCopyGuidance = prefill.data.originalCopyGuidance;
+        
+        // Populate the appropriate primary content field based on tab
+        if (newState.tab === 'create') {
+          newState.businessDescription = prefill.data.originalCopyGuidance;
+        } else if (newState.tab === 'improve') {
+          newState.originalCopy = prefill.data.originalCopyGuidance;
+        }
+      }
+      
+      return newState;
+    });
+  }, [setFormState]);
+
+  // Function to update a quality score in the form state
+  const handleScoreChange = useCallback((name: string, score: ContentQualityScore) => {
+    setFormState(prevState => {
+      // Create a copy of the previous state
+      const newState = { ...prevState };
+      
+      // Update the score field based on the name
+      switch (name) {
+        case 'businessDescriptionScore':
+          newState.businessDescriptionScore = score;
+          break;
+        case 'originalCopyScore':
+          newState.originalCopyScore = score;
+          break;
+        default:
+          console.warn(`Unknown score field: ${name}`);
+      }
+      
+      return newState;
+    });
+  }, [setFormState]);
 
   return {
     formState,
     setFormState,
     loadFormStateFromTemplate,
     loadFormStateFromSession,
-    loadFormStateFromSavedOutput
+    loadFormStateFromSavedOutput,
+    loadFormStateFromPrefill,
+    handleScoreChange
   };
 }
-
-export default useFormState;

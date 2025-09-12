@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { FormData, PageType, SectionType, ContentQualityScore } from '../types';
+import { PAGE_TYPES, SECTION_TYPES } from '../constants';
+import { useInputField } from '../hooks/useInputField';
 import ContentQualityIndicator from './ui/ContentQualityIndicator';
-import { Zap, InfoIcon } from 'lucide-react';
+import { Zap } from 'lucide-react';
 import { evaluateContentQuality } from '../services/apiService';
 import { Tooltip } from './ui/Tooltip';
 
@@ -17,8 +19,6 @@ interface CreateCopyFormProps {
   businessDescriptionRef?: React.RefObject<HTMLTextAreaElement>;
 }
 
-const PAGE_TYPES = ['Home', 'About', 'Services', 'Contact', 'Product', 'Blog'];
-
 const CreateCopyForm: React.FC<CreateCopyFormProps> = ({ 
   formData, 
   handleChange,
@@ -26,19 +26,25 @@ const CreateCopyForm: React.FC<CreateCopyFormProps> = ({
   onGetSuggestion,
   isLoadingSuggestions,
   activeSuggestionField,
-  handleScoreChange,
+  handleScoreChange, // New prop
   displayMode,
   businessDescriptionRef
 }) => {
-  const [isEvaluatingBusinessDescription, setIsEvaluatingBusinessDescription] = useState(false);
+  const [isEvaluatingBusinessDescription, setIsEvaluatingBusinessDescription] = React.useState(false);
 
+  // Use the input field hook for the business description text input
+  const businessDescriptionField = useInputField({
+    value: formData.businessDescription || '',
+    onChange: (value) => handleChange({ target: { name: 'businessDescription', value } } as any)
+  });
+  
   // Function to count words in a string
   const countWords = (text: string): number => {
     return text.trim() ? text.trim().split(/\s+/).length : 0;
   };
   
   // Get business description word count
-  const businessDescriptionWordCount = countWords(formData.businessDescription || '');
+  const businessDescriptionWordCount = countWords(businessDescriptionField.inputValue);
   
   // Helper function to check if a field is populated
   const isFieldPopulated = (value: any, fieldType: 'string' | 'select' | 'textarea' = 'string'): boolean => {
@@ -49,10 +55,21 @@ const CreateCopyForm: React.FC<CreateCopyFormProps> = ({
     return false;
   };
 
+  // Check if any field in this form is populated
+  const hasPopulatedFields = () => {
+    return isFieldPopulated(formData.pageType) ||
+           isFieldPopulated(formData.section) ||
+           isFieldPopulated(formData.businessDescription);
+  };
+
+  // Don't render anything if display mode is 'populated' and no fields are populated
+  if (displayMode === 'populated' && !hasPopulatedFields()) {
+    return null;
+  }
   // Function to evaluate the business description
   const evaluateBusinessDescription = async () => {
     // Remove the length check to allow evaluation even with shorter content
-    if (!formData.businessDescription) {
+    if (!businessDescriptionField.inputValue) {
       return;
     }
     
@@ -60,7 +77,7 @@ const CreateCopyForm: React.FC<CreateCopyFormProps> = ({
     
     try {
       const result = await evaluateContentQuality(
-        formData.businessDescription,
+        businessDescriptionField.inputValue,
         'Business Description',
         formData.model,
         currentUser
@@ -85,18 +102,6 @@ const CreateCopyForm: React.FC<CreateCopyFormProps> = ({
       setIsEvaluatingBusinessDescription(false);
     }
   };
-
-  // Check if any field in this form is populated
-  const hasPopulatedFields = () => {
-    return isFieldPopulated(formData.pageType) ||
-           isFieldPopulated(formData.section) ||
-           isFieldPopulated(formData.businessDescription);
-  };
-
-  // Don't render anything if display mode is 'populated' and no fields are populated
-  if (displayMode === 'populated' && !hasPopulatedFields()) {
-    return null;
-  }
 
   return (
     <div className="space-y-6">
@@ -150,13 +155,13 @@ const CreateCopyForm: React.FC<CreateCopyFormProps> = ({
         <div>
           <div className="flex justify-between items-center mb-1">
             <label htmlFor="businessDescription" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Business Description <span className="text-red-500">*</span>
+              Business Description
             </label>
             <Tooltip content="Evaluate the quality of your business description">
               <button
                 type="button"
                 onClick={evaluateBusinessDescription}
-                disabled={isEvaluatingBusinessDescription || !formData.businessDescription}
+                disabled={isEvaluatingBusinessDescription || !businessDescriptionField.inputValue}
                 className="p-1 text-gray-500 dark:text-gray-400 hover:text-primary-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
               >
                 {isEvaluatingBusinessDescription ? (
@@ -173,8 +178,9 @@ const CreateCopyForm: React.FC<CreateCopyFormProps> = ({
             rows={6}
             className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
             placeholder="Describe your business, product, or what you want to create..."
-            value={formData.businessDescription || ''}
-            onChange={handleChange}
+            value={businessDescriptionField.inputValue}
+            onChange={businessDescriptionField.handleChange}
+            onBlur={businessDescriptionField.handleBlur}
             ref={businessDescriptionRef}
           ></textarea>
           
