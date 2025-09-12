@@ -27,11 +27,13 @@ export async function generateContentScores(
   // Extract text content from structured content if needed
   const textContent = typeof content === 'string' 
     ? content 
-    : content.headline 
-      ? `${content.headline}\n\n${content.sections.map((s: any) => 
-          `${s.title}\n${s.content || (s.listItems || []).join('\n')}`
-        ).join('\n\n')}`
-      : JSON.stringify(content);
+    : Array.isArray(content)
+      ? content.join('\n')
+      : content && content.headline 
+        ? `${content.headline}\n\n${content.sections.map((s: any) => 
+            `${s.title}\n${s.content || (s.listItems || []).join('\n')}`
+          ).join('\n\n')}`
+        : JSON.stringify(content);
   
   // Get API configuration
   const { apiKey, baseUrl, headers, maxTokens } = getApiConfig(model);
