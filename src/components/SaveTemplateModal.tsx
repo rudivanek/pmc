@@ -275,7 +275,16 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
                 <Checkbox
                   id="isPublic"
                   checked={isPublic}
-                  onCheckedChange={(checked) => setIsPublic(checked === true)}
+                  onCheckedChange={(checked) => {
+                    setIsPublic(checked === true);
+                    if (checked === true) {
+                      // Pre-fill public name with template name when making public
+                      setPublicName(templateNameField.inputValue);
+                    } else {
+                      // Clear public name when making private
+                      setPublicName('');
+                    }
+                  }}
                 />
                 <Label htmlFor="isPublic" className="cursor-pointer flex items-center">
                   {isPublic ? (
