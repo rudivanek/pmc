@@ -32,8 +32,9 @@ import ResultsSection from './results/ResultsSection';
 import AppSpinner from './ui/AppSpinner';
 import SaveTemplateModal from './SaveTemplateModal';
 import { useAuth } from '../hooks/useAuth';
-import useFormState from '../hooks/useFormState';
+import { useFormState } from '../hooks/useFormState';
 import { useMode } from '../context/ModeContext';
+import CopyMakerTab from './CopyMakerTab';
 import { calculateTargetWordCount } from '../services/api/utils';
 
 interface AppProps {
@@ -48,251 +49,11 @@ const App: React.FC<AppProps> = ({ onViewPrompts }) => {
   const [loadedTemplateId, setLoadedTemplateId] = useState<string | null>(null);
   const [loadedTemplateName, setLoadedTemplateName] = useState<string>('');
   const [isSaveTemplateModalOpen, setIsSaveTemplateModalOpen] = useState(false);
-  const [showEvaluationModal, setShowEvaluationModal] = useState(false);
-  const [evaluationCopied, setEvaluationCopied] = useState(false);
-
-  const addProgressMessage = React.useCallback((message: string) => {
+  const addProgressMessage = useCallback((message: string) => {
     setFormState(prevState => ({
       ...prevState,
       generationProgress: [...prevState.generationProgress, message]
     }));
-  }, [setFormState]);
-
-  // Track user's last visited page and save to localStorage
-  React.useEffect(() => {
-    if (currentUser && (location.pathname === '/dashboard' || location.pathname === '/copy-maker')) {
-      localStorage.setItem('lastVisitedPage', location.pathname);
-    }
-  }, [location.pathname, currentUser]);
-
-  // Enhanced logout handler that navigates to homepage
-  const handleEnhancedLogout = React.useCallback(async () => {
-    await handleLogout();
-    navigate('/');
-  }, [handleLogout, navigate]);
-  
-  // Handle viewing prompts
-  const handleViewPrompts = React.useCallback(() => {
-    const { systemPrompt, userPrompt } = getLastPrompts();
-    setSystemPrompt(systemPrompt);
-    setUserPrompt(userPrompt);
-    setShowPromptModal(true);
-  }, []);
-
-  // Handle evaluate inputs
-  const handleEvaluateInputs = React.useCallback(async () => {
-    if (!currentUser) {
-      toast.error('Please log in to evaluate inputs.');
-      return;
-    }
-    setFormState(prev => ({ ...prev, isEvaluating: true, generationProgress: [] }));
-    addProgressMessage('Evaluating inputs...');
-    try {
-      const evaluation = await evaluatePrompt(formState, currentUser, addProgressMessage);
-      setFormState(prev => ({ ...prev, promptEvaluation: evaluation }));
-      toast.success('Inputs evaluated successfully!');
-    } catch (error: any) {
-      console.error('Error evaluating inputs:', error);
-      toast.error(`Failed to evaluate inputs: ${error.message}`);
-    } finally {
-      setFormState(prev => ({ ...prev, isEvaluating: false }));
-      addProgressMessage('Input evaluation complete.');
-    }
-  }, [currentUser, formState, addProgressMessage, setFormState]);
-
-  // Handle cancelling operations
-  const handleCancelOperation = React.useCallback(() => {
-    const isGenerating = formState.isLoading;
-    const isEvaluating = formState.isEvaluating;
-    
-    const operationType = isGenerating ? 'copy generation' : 'input evaluation';
-    
-    // Show confirmation dialog
-    if (window.confirm(`Are you sure you want to cancel the ${operationType}?`)) {
-      setFormState(prev => ({
-        ...prev,
-        isLoading: false,
-        isEvaluating: false,
-        generationProgress: [...prev.generationProgress, `${operationType} cancelled by user.`]
-      }));
-      toast.success(`${operationType.charAt(0).toUpperCase() + operationType.slice(1)} cancelled`);
-    }
-  }, [formState.isLoading, formState.isEvaluating, setFormState]);
-
-  // Handle save template
-  const handleSaveTemplate = React.useCallback(async (templateName: string, description: string, formStateToSave: FormState, forceSaveAsNew?: boolean) => {
-    console.log('🎯 HANDLE SAVE TEMPLATE CALLED');
-    if (!currentUser || !currentUser.id) {
-      toast.error('You must be logged in to save templates.');
-      return;
-    }
-
-    setFormState(prev => ({ ...prev, isLoading: true }));
-    addProgressMessage('Saving template...');
-
-    try {
-      const templateData = {
-        user_id: currentUser.id,
-        template_name: templateName,
-        description: description || `Template created from Copy Maker session`,
-        category: 'User Templates', // Default category
-        form_state_snapshot: formStateToSave,
-        template_type: formStateToSave.tab,
-        language: formStateToSave.language,
-        tone: formStateToSave.tone,
-        word_count: formStateToSave.wordCount,
-        custom_word_count: formStateToSave.customWordCount,
-        target_audience: formStateToSave.targetAudience,
-        key_message: formStateToSave.keyMessage,
-        desired_emotion: formStateToSave.desiredEmotion,
-        call_to_action: formStateToSave.callToAction,
-        brand_values: formStateToSave.brandValues,
-        keywords: formStateToSave.keywords,
-        context: formStateToSave.context,
-        brief_description: formStateToSave.briefDescription,
-        page_type: formStateToSave.pageType,
-        section: formStateToSave.section,
-        business_description: formStateToSave.businessDescription,
-        original_copy: formStateToSave.originalCopy,
-        competitor_urls: formStateToSave.competitorUrls,
-        product_service_name: formStateToSave.productServiceName,
-        industry_niche: formStateToSave.industryNiche,
-        tone_level: formStateToSave.toneLevel,
-        reader_funnel_stage: formStateToSave.readerFunnelStage,
-        competitor_copy_text: formStateToSave.competitorCopyText,
-        target_audience_pain_points: formStateToSave.targetAudiencePainPoints,
-        preferred_writing_style: formStateToSave.preferredWritingStyle,
-        language_style_constraints: formStateToSave.languageStyleConstraints,
-        excluded_terms: formStateToSave.excludedTerms,
-        generateScores: formStateToSave.generateScores,
-        generateSeoMetadata: formStateToSave.generateSeoMetadata,
-        selectedPersona: formStateToSave.selectedPersona,
-        forceKeywordIntegration: formStateToSave.forceKeywordIntegration,
-        forceElaborationsExamples: formStateToSave.forceElaborationsExamples,
-        output_structure: formStateToSave.outputStructure,
-        prioritizeWordCount: formStateToSave.prioritizeWordCount,
-        adhereToLittleWordCount: formStateToSave.adhereToLittleWordCount,
-        littleWordCountTolerancePercentage: formStateToSave.littleWordCountTolerancePercentage,
-        wordCountTolerancePercentage: formStateToSave.wordCountTolerancePercentage,
-        enhanceForGEO: formStateToSave.enhanceForGEO,
-        addTldrSummary: formStateToSave.addTldrSummary,
-        location: formStateToSave.location,
-        geoRegions: formStateToSave.geoRegions,
-        generateGeoScore: formStateToSave.generateGeoScore,
-        numUrlSlugs: formStateToSave.numUrlSlugs,
-        numMetaDescriptions: formStateToSave.numMetaDescriptions,
-        numH1Variants: formStateToSave.numH1Variants,
-        numH2Variants: formStateToSave.numH2Variants,
-        numH3Variants: formStateToSave.numH3Variants,
-        numOgTitles: formStateToSave.numOgTitles,
-        numOgDescriptions: formStateToSave.numOgDescriptions,
-        sectionBreakdown: formStateToSave.sectionBreakdown,
-        project_description: formStateToSave.projectDescription,
-        // Public template fields
-        is_public: formStateToSave.is_public,
-        public_name: formStateToSave.public_name,
-        public_description: formStateToSave.public_description,
-      };
-
-      // If forceSaveAsNew is true, pass undefined to create a new template
-      // Otherwise, use the loadedTemplateId to update existing template
-      // Otherwise, use the loadedTemplateId to update existing template
-      const templateIdToUse = forceSaveAsNew ? undefined : (loadedTemplateId || undefined);
-      const { error, updated, id } = await saveTemplate(templateData, templateIdToUse);
-
-      if (error) throw error;
-
-      if (updated) {
-        toast.success('Template updated successfully!');
-        addProgressMessage('Template updated.');
-      } else {
-        toast.success('Template saved successfully!');
-        addProgressMessage('Template saved.');
-        setLoadedTemplateId(id || null); // Set the ID for the newly saved template
-        setLoadedTemplateName(templateName);
-      }
-      setIsSaveTemplateModalOpen(false);
-    } catch (error: any) {
-      console.error('Error saving template:', error);
-      toast.error(`Failed to save template: ${error.message}`);
-    } finally {
-      setFormState(prev => ({ ...prev, isLoading: false }));
-    }
-  }, [currentUser, loadedTemplateId, setFormState, addProgressMessage, setLoadedTemplateId, setLoadedTemplateName, setIsSaveTemplateModalOpen]);
-
-  // Handle save output
-  const handleSaveOutput = React.useCallback(async () => {
-    if (!currentUser || !currentUser.id) {
-      toast.error('You must be logged in to save outputs.');
-      return;
-    }
-    if (!formState.copyResult || formState.copyResult.generatedVersions.length === 0) {
-      toast.error('No content to save.');
-      return;
-    }
-
-    setFormState(prev => ({ ...prev, isLoading: true }));
-    addProgressMessage('Saving output...');
-
-    try {
-      const savedOutput = {
-        user_id: currentUser.id,
-        customer_id: formState.customerId || null,
-        brief_description: formState.briefDescription || 'Untitled Output',
-        language: formState.language,
-        tone: formState.tone,
-        model: formState.model,
-        selected_persona: formState.selectedPersona || null,
-        input_snapshot: formState, // Save the entire form state as a snapshot
-        output_content: formState.copyResult, // Save the entire copyResult
-        saved_at: new Date().toISOString(),
-      };
-
-      const { data, error } = await saveSavedOutput(savedOutput);
-
-      if (error) throw error;
-
-      toast.success('Output saved successfully!');
-      addProgressMessage('Output saved to dashboard.');
-    } catch (error: any) {
-      console.error('Error saving output:', error);
-      toast.error(`Failed to save output: ${error.message}`);
-    } finally {
-      setFormState(prev => ({ ...prev, isLoading: false }));
-    }
-  }, [currentUser, formState, setFormState, addProgressMessage]);
-
-  // Handle copying evaluation suggestions
-  const handleCopyEvaluation = React.useCallback(() => {
-    if (!formState.promptEvaluation) return;
-
-    const evaluationText = `
-Evaluation Results:
-
-Overall Score: ${formState.promptEvaluation.overallScore}/10
-
-Strengths:
-${formState.promptEvaluation.strengths.map(s => `• ${s}`).join('\n')}
-
-Areas for Improvement:
-${formState.promptEvaluation.improvements.map(i => `• ${i}`).join('\n')}
-
-Suggestions:
-${formState.promptEvaluation.suggestions.map(s => `• ${s}`).join('\n')}
-    `.trim();
-
-    navigator.clipboard.writeText(evaluationText);
-    setEvaluationCopied(true);
-    setTimeout(() => setEvaluationCopied(false), 2000);
-    toast.success('Evaluation copied to clipboard!');
-  }, [formState.promptEvaluation]);
-
-  // Memoize the clear all function
-  const handleClearAll = React.useCallback(() => {
-    setFormState(DEFAULT_FORM_STATE);
-    setLoadedTemplateId(null);
-    setLoadedTemplateName('');
-    toast.success('Form cleared!');
   }, [setFormState]);
 
   // Handle initial copy generation
@@ -689,6 +450,179 @@ ${formState.promptEvaluation.suggestions.map(s => `• ${s}`).join('\n')}
       setFormState(prev => ({ ...prev, isLoading: false }));
       addProgressMessage('On-demand generation complete.');
     }
+  };
+
+  const handleClearAll = useCallback(() => {
+    setFormState(DEFAULT_FORM_STATE);
+    setLoadedTemplateId(null);
+    setLoadedTemplateName('');
+    toast.success('Form cleared!');
+  }, [setFormState]);
+
+  const handleEvaluateInputs = async () => {
+    if (!currentUser) {
+      toast.error('Please log in to evaluate inputs.');
+      return;
+    }
+    setFormState(prev => ({ ...prev, isEvaluating: true, generationProgress: [] }));
+    addProgressMessage('Evaluating inputs...');
+    try {
+      const evaluation = await evaluatePrompt(formState, currentUser, addProgressMessage);
+      setFormState(prev => ({ ...prev, promptEvaluation: evaluation }));
+      toast.success('Inputs evaluated successfully!');
+    } catch (error: any) {
+      console.error('Error evaluating inputs:', error);
+      toast.error(`Failed to evaluate inputs: ${error.message}`);
+    } finally {
+      setFormState(prev => ({ ...prev, isEvaluating: false }));
+      addProgressMessage('Input evaluation complete.');
+    }
+  };
+
+  const handleSaveOutput = async () => {
+    if (!currentUser || !currentUser.id) {
+      toast.error('You must be logged in to save outputs.');
+      return;
+    }
+    if (!formState.copyResult || formState.copyResult.generatedVersions.length === 0) {
+      toast.error('No content to save.');
+      return;
+    }
+
+    setFormState(prev => ({ ...prev, isLoading: true }));
+    addProgressMessage('Saving output...');
+
+    try {
+      const savedOutput = {
+        user_id: currentUser.id,
+        customer_id: formState.customerId || null,
+        brief_description: formState.briefDescription || 'Untitled Output',
+        language: formState.language,
+        tone: formState.tone,
+        model: formState.model,
+        selected_persona: formState.selectedPersona || null,
+        input_snapshot: formState, // Save the entire form state as a snapshot
+        output_content: formState.copyResult, // Save the entire copyResult
+        saved_at: new Date().toISOString(),
+      };
+
+      const { data, error } = await saveSavedOutput(savedOutput);
+
+      if (error) throw error;
+
+      toast.success('Output saved successfully!');
+      addProgressMessage('Output saved to dashboard.');
+    } catch (error: any) {
+      console.error('Error saving output:', error);
+      toast.error(`Failed to save output: ${error.message}`);
+    } finally {
+      setFormState(prev => ({ ...prev, isLoading: false }));
+    }
+  };
+
+  const handleSaveTemplate = async (templateName: string, description: string, formStateToSave: FormState, forceSaveAsNew?: boolean) => {
+    if (!currentUser || !currentUser.id) {
+      toast.error('You must be logged in to save templates.');
+      return;
+    }
+
+    setFormState(prev => ({ ...prev, isLoading: true }));
+    addProgressMessage('Saving template...');
+
+    try {
+      const templateData = {
+        user_id: currentUser.id,
+        template_name: templateName,
+        description: description,
+        language: formStateToSave.language,
+        tone: formStateToSave.tone,
+        word_count: formStateToSave.wordCount,
+        custom_word_count: formStateToSave.customWordCount,
+        target_audience: formStateToSave.targetAudience,
+        key_message: formStateToSave.keyMessage,
+        desired_emotion: formStateToSave.desiredEmotion,
+        call_to_action: formStateToSave.callToAction,
+        brand_values: formStateToSave.brandValues,
+        keywords: formStateToSave.keywords,
+        context: formStateToSave.context,
+        brief_description: formStateToSave.briefDescription,
+        page_type: formStateToSave.pageType,
+        section: formStateToSave.section,
+        business_description: formStateToSave.businessDescription,
+        original_copy: formStateToSave.originalCopy,
+        template_type: formStateToSave.tab,
+        competitor_urls: formStateToSave.competitorUrls,
+        output_structure: formStateToSave.outputStructure?.map(item => item.value), // Save only values
+        product_service_name: formStateToSave.productServiceName,
+        industry_niche: formStateToSave.industryNiche,
+        tone_level: formStateToSave.toneLevel,
+        reader_funnel_stage: formStateToSave.readerFunnelStage,
+        competitor_copy_text: formStateToSave.competitorCopyText,
+        target_audience_pain_points: formStateToSave.targetAudiencePainPoints,
+        preferred_writing_style: formStateToSave.preferredWritingStyle,
+        language_style_constraints: formStateToSave.languageStyleConstraints,
+        excluded_terms: formStateToSave.excludedTerms,
+        generateHeadlines: formStateToSave.generateHeadlines,
+        generateScores: formStateToSave.generateScores,
+        selectedPersona: formStateToSave.selectedPersona,
+        numberOfHeadlines: formStateToSave.numberOfHeadlines,
+        forceElaborationsExamples: formStateToSave.forceElaborationsExamples,
+        forceKeywordIntegration: formStateToSave.forceKeywordIntegration,
+        prioritizeWordCount: formStateToSave.prioritizeWordCount,
+        adhereToLittleWordCount: formStateToSave.adhereToLittleWordCount,
+        littleWordCountTolerancePercentage: formStateToSave.littleWordCountTolerancePercentage,
+        // Public template fields
+        is_public: formStateToSave.is_public,
+        public_name: formStateToSave.public_name,
+        public_description: formStateToSave.public_description,
+      };
+
+      // If forceSaveAsNew is true, pass undefined to create a new template
+      // Otherwise, use the loadedTemplateId to update existing template
+      const templateIdToUse = forceSaveAsNew ? undefined : (loadedTemplateId || undefined);
+      const { error, updated, id } = await saveTemplate(templateData, templateIdToUse);
+
+      if (error) throw error;
+
+      if (updated) {
+        toast.success('Template updated successfully!');
+        addProgressMessage('Template updated.');
+      } else {
+        toast.success('Template saved successfully!');
+        addProgressMessage('Template saved.');
+        setLoadedTemplateId(id || null); // Set the ID for the newly saved template
+        setLoadedTemplateName(templateName);
+      }
+      setIsSaveTemplateModalOpen(false);
+    } catch (error: any) {
+      console.error('Error saving template:', error);
+      toast.error(`Failed to save template: ${error.message}`);
+    } finally {
+      setFormState(prev => ({ ...prev, isLoading: false }));
+    }
+  };
+
+  // Handle cancelling generation or evaluation
+  const handleCancelOperation = () => {
+    const isGenerating = formState.isLoading;
+    const isEvaluating = formState.isEvaluating;
+    
+    const operationType = isGenerating ? 'copy generation' : 'input evaluation';
+    
+    // Show confirmation dialog
+    if (window.confirm(`Are you sure you want to cancel the ${operationType}?`)) {
+      setFormState(prev => ({
+        ...prev,
+        isLoading: false,
+        isEvaluating: false,
+        generationProgress: [...prev.generationProgress, `${operationType} cancelled by user.`]
+      }));
+      toast.success(`${operationType.charAt(0).toUpperCase() + operationType.slice(1)} cancelled`);
+    }
+  };
+
+  const handleViewPrompts = () => {
+    onViewPrompts();
   };
 
   return (

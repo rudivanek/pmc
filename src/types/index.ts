@@ -326,8 +326,6 @@ export interface Template {
   user_id: string;
   template_name: string;
   description?: string; // New field for template description
-  category?: string; // New field for template category
-  is_public?: boolean; // New field for public template sharing
   language: string;
   tone: string;
   word_count: string;
@@ -388,8 +386,6 @@ export interface Template {
   is_public?: boolean;
   public_name?: string;
   public_description?: string;
-  form_state_snapshot?: Partial<FormState>; // New field to store complete form state
-  category?: string; // Add category field for template organization
 }
 
 // New SavedOutput interface for saved outputs
@@ -417,16 +413,3 @@ export interface AdminUserData {
   untilDate: string | null;
   tokensAllowed: number;
 }
-
-// Remove Prefill interface as it's now merged into Template
-// Prefill interface for form prefills
-// export interface Prefill {
-//   id: string;
-//   user_id: string;
-//   label: string;
-//   category: string;
-//   is_public: boolean;
-//   data: Partial<FormState>;
-//   created_at?: string;
-//   updated_at?: string;
-// }

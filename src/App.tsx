@@ -23,11 +23,11 @@ import NotFound from './components/NotFound';
 import FAQ from './components/FAQ';
 import BetaThanks from './components/BetaThanks';
 import StepByStepGuide from './components/StepByStepGuide';
-import ManageTemplates from './components/ManageTemplates';
+import ManagePrefills from './components/ManagePrefills';
 import { getLastPrompts, evaluatePrompt } from './services/apiService';
 import { getCopySession, getTemplate, getSavedOutput, saveTemplate, saveSavedOutput } from './services/supabaseClient';
 import { checkUserAccess } from './services/supabaseClient';
-import useFormState from './hooks/useFormState';
+import { useFormState } from './hooks/useFormState';
 import { useMode } from './context/ModeContext';
 import { DEFAULT_FORM_STATE } from './constants';
 import { v4 as uuidv4 } from 'uuid';
@@ -162,10 +162,6 @@ const AppRouter: React.FC = () => {
         user_id: currentUser.id,
         template_name: templateName,
         description: description,
-        description: description || `Template created from Copy Maker session`,
-        category: 'User Templates', // Default category
-        form_state_snapshot: formStateToSave,
-        template_type: formStateToSave.tab,
         language: formStateToSave.language,
         tone: formStateToSave.tone,
         word_count: formStateToSave.wordCount,
@@ -182,7 +178,9 @@ const AppRouter: React.FC = () => {
         section: formStateToSave.section,
         business_description: formStateToSave.businessDescription,
         original_copy: formStateToSave.originalCopy,
+        template_type: formStateToSave.tab,
         competitor_urls: formStateToSave.competitorUrls,
+        output_structure: formStateToSave.outputStructure?.map(item => item.value),
         product_service_name: formStateToSave.productServiceName,
         industry_niche: formStateToSave.industryNiche,
         tone_level: formStateToSave.toneLevel,
@@ -192,34 +190,26 @@ const AppRouter: React.FC = () => {
         preferred_writing_style: formStateToSave.preferredWritingStyle,
         language_style_constraints: formStateToSave.languageStyleConstraints,
         excluded_terms: formStateToSave.excludedTerms,
+        generateHeadlines: formStateToSave.generateHeadlines,
         generateScores: formStateToSave.generateScores,
-        generateSeoMetadata: formStateToSave.generateSeoMetadata,
         selectedPersona: formStateToSave.selectedPersona,
-        forceKeywordIntegration: formStateToSave.forceKeywordIntegration,
+        numberOfHeadlines: formStateToSave.numberOfHeadlines,
         forceElaborationsExamples: formStateToSave.forceElaborationsExamples,
-        output_structure: formStateToSave.outputStructure,
+        forceKeywordIntegration: formStateToSave.forceKeywordIntegration,
         prioritizeWordCount: formStateToSave.prioritizeWordCount,
         adhereToLittleWordCount: formStateToSave.adhereToLittleWordCount,
         littleWordCountTolerancePercentage: formStateToSave.littleWordCountTolerancePercentage,
-        wordCountTolerancePercentage: formStateToSave.wordCountTolerancePercentage,
-        enhanceForGEO: formStateToSave.enhanceForGEO,
-        addTldrSummary: formStateToSave.addTldrSummary,
-        location: formStateToSave.location,
-        geoRegions: formStateToSave.geoRegions,
-        generateGeoScore: formStateToSave.generateGeoScore,
-        numUrlSlugs: formStateToSave.numUrlSlugs,
-        numMetaDescriptions: formStateToSave.numMetaDescriptions,
-        numH1Variants: formStateToSave.numH1Variants,
-        numH2Variants: formStateToSave.numH2Variants,
-        numH3Variants: formStateToSave.numH3Variants,
-        numOgTitles: formStateToSave.numOgTitles,
-        numOgDescriptions: formStateToSave.numOgDescriptions,
-        sectionBreakdown: formStateToSave.sectionBreakdown,
         project_description: formStateToSave.projectDescription,
+        // Public template fields from formStateToSave
+        is_public: formStateToSave.is_public,
+        public_name: formStateToSave.public_name,
+        public_description: formStateToSave.public_description,
+        is_public: formStateToSave.is_public,
+        public_name: formStateToSave.public_name,
+        public_description: formStateToSave.public_description,
       };
 
       // If forceSaveAsNew is true, pass undefined to create a new template
-      // Otherwise, use the loadedTemplateId to update existing template
       // Otherwise, use the loadedTemplateId to update existing template
       const templateIdToUse = forceSaveAsNew ? undefined : (loadedTemplateId || undefined);
       const { error, updated, id } = await saveTemplate(templateData, templateIdToUse);
@@ -411,7 +401,7 @@ const AppRouter: React.FC = () => {
               onSaveOutput={handleSaveOutput}
               onViewPrompts={handleViewPrompts}
               onCancel={handleCancelOperation}
-              loadFormStateFromTemplate={loadFormStateFromTemplate}
+              loadFormStateFromPrefill={loadFormStateFromPrefill}
             />
             ) : (
               <Navigate to="/login" replace />
@@ -435,10 +425,10 @@ const AppRouter: React.FC = () => {
           } 
         />
         <Route 
-          path="/manage-templates" 
+          path="/manage-prefills" 
           element={
             currentUser ? (
-              <ManageTemplates />
+              <ManagePrefills />
             ) : (
               <Navigate to="/login" replace />
             )
