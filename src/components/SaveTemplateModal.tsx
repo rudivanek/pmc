@@ -223,14 +223,13 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
               placeholder="Select or type a category..."
               value={categoryField.inputValue}
               onChange={(value) => {
-                // CategoryTagsInput returns a comma-separated string, but we only want one category
-                const singleCategory = value.split(',')[0] || '';
-                categoryField.setInputValue(singleCategory);
+                // Allow multiple categories separated by commas
+                categoryField.setInputValue(value);
               }}
               categories={[{ category: 'Existing Categories', options: availableCategories }]}
             />
             <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-              Organize your templates by category (e.g., "Email", "Social Media", "Blog Post").
+              Organize your templates by categories (e.g., "Email, Marketing", "Social Media, Content"). You can add multiple categories separated by commas.
             </p>
           </div>
           
