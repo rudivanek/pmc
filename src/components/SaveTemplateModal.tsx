@@ -37,10 +37,11 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
     onChange: (value) => {}
   });
 
-  // Add a new useInputField for the category
+  const [category, setCategory] = useState(''); // New state for category
+  
   const categoryField = useInputField({
-    value: '', // Initial empty value for category
-    onChange: (value) => {}
+    value: category, // Use the new state variable
+    onChange: setCategory // Use the setter for the new state variable
   });
 
   const [isSaving, setIsSaving] = useState(false);
@@ -58,7 +59,7 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
   // Update the template name field when initialTemplateName changes
   useEffect(() => {
     templateNameField.setInputValue(initialTemplateName);
-    setIsNewTemplate(!initialTemplateName);
+    setIsNewTemplate(!initialTemplateName); // This line is unchanged
   }, [initialTemplateName]);
   
   // Update description field when initialDescription changes
@@ -72,7 +73,6 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
       setIsPublic(false);
       setPublicName('');
       setPublicDescription('');
-      setIsPublic(false); // Reset public status
       setCategory(''); // Reset category state
     }
   }, [isOpen, categoryField]); // Add categoryField to dependency array
@@ -133,7 +133,7 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
           public_description: isPublic ? publicDescription.trim() : undefined
         },
         forceSaveAsNew,
-        category // Pass the category state
+        categoryField.inputValue // Pass the category state
       );
       console.log('✅ Template save completed successfully');
       console.log('🔄 Closing modal...');
