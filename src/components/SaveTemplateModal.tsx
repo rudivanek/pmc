@@ -46,8 +46,8 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
   const [isSaving, setIsSaving] = useState(false);
   const [isNewTemplate, setIsNewTemplate] = useState(true);
   
-  // State for public template options
   const [isPublic, setIsPublic] = useState(false);
+  const [category, setCategory] = useState(''); // New state for category
   const [publicName, setPublicName] = useState('');
   const [publicDescription, setPublicDescription] = useState('');
   const [forceSaveAsNew, setForceSaveAsNew] = useState(false);
@@ -72,8 +72,8 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
       setIsPublic(false);
       setPublicName('');
       setPublicDescription('');
-      setForceSaveAsNew(false);
-      categoryField.setInputValue(''); // Reset category field
+      setIsPublic(false); // Reset public status
+      setCategory(''); // Reset category state
     }
   }, [isOpen, categoryField]); // Add categoryField to dependency array
   
@@ -133,7 +133,7 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
           public_description: isPublic ? publicDescription.trim() : undefined
         },
         forceSaveAsNew,
-        categoryField.inputValue // Pass the new category value
+        category // Pass the category state
       );
       console.log('✅ Template save completed successfully');
       console.log('🔄 Closing modal...');
