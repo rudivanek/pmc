@@ -325,7 +325,7 @@ export interface Template {
   id?: string;
   user_id: string;
   template_name: string;
-  description?: string; // New field for template description
+  description?: string;
   language: string;
   tone: string;
   word_count: string;
@@ -339,14 +339,13 @@ export interface Template {
   context?: string;
   brief_description?: string;
   page_type?: string | null;
-  section?: string | null; // Added section to templates
+  section?: string | null;
   business_description?: string | null;
   original_copy?: string | null;
   template_type: 'create' | 'improve';
   created_at?: string;
-  competitor_urls?: string[]; // Added competitor_urls field
-  output_structure?: string[]; // Array of structure elements
-  // New fields
+  competitor_urls?: string[];
+  output_structure?: string[];
   product_service_name?: string;
   industry_niche?: string;
   tone_level?: number;
@@ -355,26 +354,19 @@ export interface Template {
   target_audience_pain_points?: string;
   preferred_writing_style?: string;
   language_style_constraints?: string[];
-  excluded_terms?: string; // New field for terms to exclude from output
-  // Generation options
+  excluded_terms?: string;
   generateHumanized?: boolean;
   generateHeadlines?: boolean;
-  generateScores?: boolean; // New field for generating scores
+  generateScores?: boolean;
   selectedPersona?: string;
-  // Multiple version controls
-  forceKeywordIntegration?: boolean; // camelCase for frontend
-  // Legacy fields for compatibility
   generatehumanized?: boolean;
   generateSeoMetadata?: boolean;
   generatescores?: boolean;
   selectedpersona?: string;
-  // Strict word count control
   prioritizeWordCount?: boolean;
-  // Little word count control
-  adhere_to_little_word_count?: boolean; // snake_case for database
-  little_word_count_tolerance_percentage?: number; // snake_case for database
-  word_count_tolerance_percentage?: number; // snake_case for database
-  // SEO metadata variant counts
+  adhere_to_little_word_count?: boolean;
+  little_word_count_tolerance_percentage?: number;
+  word_count_tolerance_percentage?: number;
   numUrlSlugs?: number;
   numMetaDescriptions?: number;
   numH1Variants?: number;
@@ -382,10 +374,11 @@ export interface Template {
   numH3Variants?: number;
   numOgTitles?: number;
   numOgDescriptions?: number;
-  // Public template fields
   is_public?: boolean;
   public_name?: string;
   public_description?: string;
+  form_state_snapshot?: any;
+  **category: string;** // Add this new line
 }
 
 // New SavedOutput interface for saved outputs
