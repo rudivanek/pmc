@@ -40,14 +40,14 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
   const [category, setCategory] = useState(''); // New state for category
   
   const categoryField = useInputField({
-    value: category, // Use the new state variable
-    onChange: setCategory // Use the setter for the new state variable
+    value: category,
+    onChange: (value) => setCategory(value)
   });
 
   const [isSaving, setIsSaving] = useState(false);
   const [isNewTemplate, setIsNewTemplate] = useState(true);
   
-  const [isPublic, setIsPublic] = useState(false);
+  const [category, setCategory] = useState('');
   const [publicName, setPublicName] = useState('');
   const [publicDescription, setPublicDescription] = useState('');
   const [forceSaveAsNew, setForceSaveAsNew] = useState(false);
@@ -72,9 +72,10 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
       setIsPublic(false);
       setPublicName('');
       setPublicDescription('');
-      setCategory(''); // Reset category state
+      setCategory('');
+      categoryField.setInputValue('');
     }
-  }, [isOpen, categoryField]); // Add categoryField to dependency array
+  }, [isOpen]);
   
   // Track if the name has changed from the original
   useEffect(() => {
