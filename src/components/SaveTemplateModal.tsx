@@ -48,7 +48,6 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
   const [isNewTemplate, setIsNewTemplate] = useState(true);
   
   const [isPublic, setIsPublic] = useState(false);
-  const [category, setCategory] = useState(''); // New state for category
   const [publicName, setPublicName] = useState('');
   const [publicDescription, setPublicDescription] = useState('');
   const [forceSaveAsNew, setForceSaveAsNew] = useState(false);
