@@ -378,7 +378,7 @@ export interface Template {
   public_name?: string;
   public_description?: string;
   form_state_snapshot?: any;
-  **category: string;** // Add this new line
+  category: string; // Add this new line
 }
 
 // New SavedOutput interface for saved outputs
