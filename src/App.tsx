@@ -204,10 +204,7 @@ const AppRouter: React.FC = () => {
         is_public: formStateToSave.is_public,
         public_name: formStateToSave.public_name,
         public_description: formStateToSave.public_description,
-        is_public: formStateToSave.is_public,
-        public_name: formStateToSave.public_name,
-        public_description: formStateToSave.public_description,
-        category: category, // Add the category here
+        category: category, // Add the category parameter
       };
 
       // If forceSaveAsNew is true, pass undefined to create a new template
