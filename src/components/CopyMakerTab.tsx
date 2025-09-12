@@ -448,7 +448,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
         
         // Generate content scores if enabled
         if (formState.generateScores) {
-          addProgressMessage(`Generating score for ${personaUsed}\'s voice content...`);
+          addProgressMessage(`Generating score for ${personaUsed}'s voice content...`);
           try {
             const score = await generateContentScores(
               restyledContent,
