@@ -6,6 +6,8 @@ import { Checkbox } from './ui/checkbox';
 import { Label } from './ui/label';
 import { Tooltip } from './ui/Tooltip';
 import { useAuth } from '../hooks/useAuth';
+import { getUniqueTemplateCategories } from '../services/supabaseClient';
+import CategoryTagsInput from './ui/CategoryTagsInput';
 
 interface SaveTemplateModalProps {
   isOpen: boolean;
@@ -51,6 +53,7 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
   const [publicName, setPublicName] = useState('');
   const [publicDescription, setPublicDescription] = useState('');
   const [forceSaveAsNew, setForceSaveAsNew] = useState(false);
+  const [availableCategories, setAvailableCategories] = useState<{ value: string; label: string }[]>([]);
   
   // Check if user can create public templates
   const canCreatePublicTemplates = currentUser?.email === 'rfv@datago.net';
@@ -74,6 +77,17 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
       setPublicDescription('');
       setCategory('');
       categoryField.setInputValue('');
+      
+      // Fetch unique categories when modal opens
+      const fetchCategories = async () => {
+        const { data, error } = await getUniqueTemplateCategories();
+        if (error) {
+          console.error('Error fetching template categories:', error);
+        } else {
+          setAvailableCategories(data || []);
+        }
+      };
+      fetchCategories();
     }
   }, [isOpen]);
   
@@ -203,15 +217,17 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
             <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Category *
             </label>
-            <input
-              type="text"
+            <CategoryTagsInput
               id="category"
-              required
-              className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
-              placeholder="e.g., Email, Social Media, Blog Post"
+              name="category"
+              placeholder="Select or type a category..."
               value={categoryField.inputValue}
-              onChange={categoryField.handleChange}
-              onBlur={categoryField.handleBlur}
+              onChange={(value) => {
+                // CategoryTagsInput returns a comma-separated string, but we only want one category
+                const singleCategory = value.split(',')[0] || '';
+                categoryField.setInputValue(singleCategory);
+              }}
+              categories={[{ category: 'Existing Categories', options: availableCategories }]}
             />
             <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
               Organize your templates by category (e.g., "Email", "Social Media", "Blog Post").

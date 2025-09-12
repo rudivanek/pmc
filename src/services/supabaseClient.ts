@@ -1137,6 +1137,37 @@ export async function createPrefill(prefillData: {
   }
 }
 
+/**
+ * Get unique template categories for suggestion
+ * @returns Promise with unique categories data
+ */
+export async function getUniqueTemplateCategories(): Promise<{ data: { value: string; label: string }[] | null; error: any }> {
+  try {
+    const { data, error } = await supabase
+      .from('pmc_templates')
+      .select('category')
+      .not('category', 'is', null)
+      .order('category', { ascending: true });
+
+    if (error) {
+      console.error('Error fetching unique template categories:', error);
+      return { data: null, error };
+    }
+
+    // Extract unique categories and format them
+    const uniqueCategories = [...new Set(data.map(item => item.category))];
+    const formattedCategories = uniqueCategories.map(category => ({
+      value: category,
+      label: category
+    }));
+
+    return { data: formattedCategories, error: null };
+  } catch (error) {
+    console.error('Error in getUniqueTemplateCategories:', error);
+    return { data: null, error };
+  }
+}
+
 // Mock data functions for development without Supabase
 export const getMockCustomers = (): Customer[] => {
   return [
