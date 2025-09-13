@@ -156,23 +156,24 @@ const TemplateSuggestionModal: React.FC<TemplateSuggestionModalProps> = ({
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Generated Template JSON
                 </label>
-                <button
-                  onClick={handleCopyJson}
-                  className="bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-800 dark:text-white px-3 py-2 rounded-md text-sm flex items-center"
-                >
-                  {copied ? (
-                    <>
-                      <Check size={16} className="mr-1.5 text-green-500 dark:text-green-400" />
-                      <span className="text-green-500 dark:text-green-400">Copied!</span>
-                    </>
-                  ) : (
-                    <>
-                      <Copy size={16} className="mr-1.5" />
-                      Copy JSON
-                    </>
-                  )}
-                </button>
-              </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleCopyJson}
+                    className="bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-800 dark:text-white px-3 py-2 rounded-md text-sm flex items-center"
+                  >
+                    {copied ? (
+                      <>
+                        <Check size={16} className="mr-1.5 text-green-500 dark:text-green-400" />
+                        <span className="text-green-500 dark:text-green-400">Copied!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy size={16} className="mr-1.5" />
+                        Copy JSON
+                      </>
+                    )}
+                  </button>
+                  
                   {onApplyToForm && generatedData && (
                     <button
                       onClick={handleApplyToForm}
@@ -182,6 +183,8 @@ const TemplateSuggestionModal: React.FC<TemplateSuggestionModalProps> = ({
                       Apply to Form
                     </button>
                   )}
+                </div>
+              </div>
               <div className="bg-gray-100 dark:bg-gray-800 rounded-md p-4 border border-gray-200 dark:border-gray-700">
                 <pre className="text-xs text-gray-700 dark:text-gray-300 font-mono whitespace-pre-wrap overflow-x-auto max-h-96 overflow-y-auto custom-scrollbar">
                   <code>{generatedJson}</code>
