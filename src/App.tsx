@@ -75,15 +75,6 @@ const AppRouter: React.FC = () => {
     navigate('/');
   };
   
-  // Handle opening template suggestion modal
-  const handleOpenTemplateSuggestion = () => {
-    if (location.pathname === '/copy-maker') {
-      setIsTemplateSuggestionModalOpen(true);
-    } else {
-      toast('Template JSON Generator is only available on the Copy Maker page');
-    }
-  };
-  
   // Handle viewing prompts
   const handleViewPrompts = () => {
     const { systemPrompt, userPrompt } = getLastPrompts();
@@ -533,15 +524,6 @@ const AppRouter: React.FC = () => {
           </div>
         </div>
       )}
-      {isTemplateSuggestionModalOpen && (
-        <TemplateSuggestionModal
-          isOpen={isTemplateSuggestionModalOpen}
-          onClose={() => setIsTemplateSuggestionModalOpen(false)}
-          currentUser={currentUser}
-          onApplyToForm={handleApplyTemplateToForm}
-        />
-      )}
-      
       {/* Cookie Consent Banner */}
       <CookieConsent />
     </div>
