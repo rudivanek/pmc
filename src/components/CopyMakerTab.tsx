@@ -3,7 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useRef } from 'react';
 import { toast } from 'react-hot-toast';
 import { v4 as uuidv4 } from 'uuid';
-import { Zap, Save } from 'lucide-react';
+import CopyMakerForm from './CopyMakerForm';
 import AppSpinner from './ui/AppSpinner';
 import LoadingSpinner from './ui/LoadingSpinner';
 import FloatingActionBar from './FloatingActionBar';

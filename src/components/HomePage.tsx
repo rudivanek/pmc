@@ -34,7 +34,7 @@ const HomePage: React.FC = () => {
                 Register for Beta
               </button>
               <Link
-                to="/login"
+                to="/copy-maker"
                 className="inline-flex items-center bg-gray-600 hover:bg-gray-500 text-white font-bold py-4 px-8 text-base shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
               >
                 <Sparkles size={24} className="mr-3" />

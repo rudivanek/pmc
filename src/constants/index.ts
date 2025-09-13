@@ -346,7 +346,7 @@ export const LANGUAGE_STYLE_CONSTRAINTS = [
 ];
 
 export const DEFAULT_FORM_STATE = {
-  tab: 'improve' as const, // Set to improve since we're using originalCopy field
+  tab: 'copyMaker' as const,
   language: 'English' as Language,
   tone: 'Professional' as Tone,
   wordCount: 'Medium: 100-200' as WordCount,
@@ -354,7 +354,7 @@ export const DEFAULT_FORM_STATE = {
   competitorUrls: ['', '', ''],
   pageType: 'Homepage' as PageType,
   section: '',
-  businessDescription: '', // Keep for compatibility but won't be used
+  businessDescription: '',
   originalCopy: '',
   targetAudience: '',
   keyMessage: '',
