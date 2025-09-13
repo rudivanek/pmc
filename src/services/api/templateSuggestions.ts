@@ -58,6 +58,7 @@ OPTIONAL FIELDS TO POPULATE WHEN RELEVANT:
 - languageStyleConstraints: string[]
 - competitorUrls: string[] (max 3 URLs)
 - competitorCopyText: string
+- excludedTerms: string
 
 STRUCTURE AND FEATURES:
 - outputStructure: array of objects with {value: string, label: string, wordCount: number}
