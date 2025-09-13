@@ -873,14 +873,6 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
       )}
       
       {/* Template Suggestion Modal */}
-      {isTemplateSuggestionModalOpen && (
-        <TemplateSuggestionModal
-          isOpen={isTemplateSuggestionModalOpen}
-          onClose={() => setIsTemplateSuggestionModalOpen(false)}
-          currentUser={currentUser}
-          onApplyToForm={handleApplyTemplateToForm}
-        />
-      )}
     </div>
   );
 };

@@ -48,6 +48,7 @@ const AppRouter: React.FC = () => {
   const [loadedTemplateId, setLoadedTemplateId] = useState<string | null>(null);
   const [loadedTemplateName, setLoadedTemplateName] = useState<string>('');
   const [isSaveTemplateModalOpen, setIsSaveTemplateModalOpen] = useState(false);
+  const [isTemplateSuggestionModalOpen, setIsTemplateSuggestionModalOpen] = useState(false);
   
   // Evaluation modal state
   const [showEvaluationModal, setShowEvaluationModal] = useState(false);
@@ -72,6 +73,15 @@ const AppRouter: React.FC = () => {
   const handleEnhancedLogout = async () => {
     await handleLogout();
     navigate('/');
+  };
+  
+  // Handle opening template suggestion modal
+  const handleOpenTemplateSuggestion = () => {
+    if (location.pathname === '/copy-maker') {
+      setIsTemplateSuggestionModalOpen(true);
+    } else {
+      toast('Template JSON Generator is only available on the Copy Maker page');
+    }
   };
   
   // Handle viewing prompts
@@ -406,6 +416,8 @@ const AppRouter: React.FC = () => {
               onCancel={handleCancelOperation}
               loadFormStateFromPrefill={loadFormStateFromPrefill}
               loadFormStateFromTemplate={loadFormStateFromTemplate}
+              isTemplateSuggestionModalOpen={isTemplateSuggestionModalOpen}
+              setIsTemplateSuggestionModalOpen={setIsTemplateSuggestionModalOpen}
             />
             ) : (
               <Navigate to="/login" replace />
@@ -521,11 +533,44 @@ const AppRouter: React.FC = () => {
           </div>
         </div>
       )}
+      {isTemplateSuggestionModalOpen && (
+        <TemplateSuggestionModal
+          isOpen={isTemplateSuggestionModalOpen}
+          onClose={() => setIsTemplateSuggestionModalOpen(false)}
+          currentUser={currentUser}
+          onApplyToForm={handleApplyTemplateToForm}
+        />
+      )}
       
       {/* Cookie Consent Banner */}
       <CookieConsent />
     </div>
   );
 };
+
+  // Handle applying template JSON to form
+  const handleApplyTemplateToForm = (templateData: Partial<FormState>) => {
+    try {
+      // Merge the template data with current form state, preserving runtime states
+      const updatedFormState: FormState = {
+        ...formState,
+        ...templateData,
+        // Always preserve loading states and other runtime states
+        isLoading: formState.isLoading,
+        isEvaluating: formState.isEvaluating,
+        generationProgress: formState.generationProgress,
+        copyResult: formState.copyResult,
+        promptEvaluation: formState.promptEvaluation,
+        // Generate new session ID for new template
+        sessionId: undefined
+      };
+
+      setFormState(updatedFormState);
+      toast.success('Template applied to form successfully!');
+    } catch (error) {
+      console.error('Error applying template to form:', error);
+      toast.error('Failed to apply template to form');
+    }
+  };
 
 export default AppRouter;
