@@ -4,7 +4,7 @@
 import { FormState, User, CopyResult } from '../../types';
 import { getApiConfig, handleApiResponse, storePrompts, calculateTargetWordCount, extractWordCount, getWordCountTolerance } from './utils';
 import { trackTokenUsage } from './tokenTracking';
-import { saveCopySession, supabase } from '../supabaseClient';
+import { saveCopySession, getSupabaseClient } from '../supabaseClient';
 import { reviseContentForWordCount } from './contentRefinement';
 import { generateSeoMetadata } from './seoGeneration';
 import { calculateGeoScore } from './geoScoring';
@@ -32,7 +32,7 @@ export async function generateCopy(
   if (currentUser && sessionId) {
     try {
       // Check if session exists
-      const { data: existingSession, error: checkError } = await supabase
+      const { data: existingSession, error: checkError } = await getSupabaseClient()
         .from('pmc_copy_sessions')
         .select('id')
         .eq('id', sessionId)
