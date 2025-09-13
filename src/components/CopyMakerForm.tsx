@@ -58,7 +58,7 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
   isPrefillEditingMode = false,
   projectDescriptionRef,
   businessDescriptionRef,
-  originalCopyRef
+  originalCopyRef,
   onOpenTemplateSuggestion
 }) => {
   const [isExporting, setIsExporting] = useState(false);
