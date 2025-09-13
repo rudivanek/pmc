@@ -362,9 +362,13 @@ const AppRouter: React.FC = () => {
       <MainMenu 
         userName={currentUser?.user_metadata?.name || currentUser?.email?.split('@')[0] || 'User'} 
         onLogout={handleEnhancedLogout}
-        onGenerateTemplateJSON={() => {
-          // For non-copy-maker routes, we can just show a toast
-          toast('Template JSON Generator is only available on the Copy Maker page');
+        onOpenTemplateSuggestion={() => {
+          // Check if we're on the copy-maker page
+          if (location.pathname === '/copy-maker') {
+            setIsTemplateSuggestionModalOpen(true);
+          } else {
+            toast('Template JSON Generator is only available on the Copy Maker page');
+          }
         }}
       />
       
