@@ -474,9 +474,9 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
         const { content: restyledContent, personaUsed } = await restyleCopyWithPersona(
           sourceItem.content,
           selectedPersona,
-          formState.model,
           formState.language,
           formState,
+          currentUser,
           currentUser,
           targetWordCount.target,
           addProgressMessage
