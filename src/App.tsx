@@ -338,7 +338,7 @@ const AppRouter: React.FC = () => {
         onLogout={handleEnhancedLogout}
         onOpenTemplateSuggestion={() => {
           // For non-copy-maker routes, we can just show a toast
-          toast.info('Template JSON Generator is only available on the Copy Maker page');
+          toast('Template JSON Generator is only available on the Copy Maker page');
         }}
       />
       
