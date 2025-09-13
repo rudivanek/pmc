@@ -121,17 +121,6 @@ const NotFound: React.FC = () => {
           </Link>
 
           <Link
-            to="/dashboard"
-            className="flex items-center justify-center p-4 bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-700 transition-colors group"
-          >
-            <BarChart3 size={20} className="text-primary-500 mr-3" />
-            <div className="text-left">
-              <div className="font-medium text-gray-900 dark:text-white">Dashboard</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">View your content</div>
-            </div>
-          </Link>
-
-          <Link
             to="/features"
             className="flex items-center justify-center p-4 bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-700 transition-colors group"
           >

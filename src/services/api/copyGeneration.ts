@@ -747,7 +747,7 @@ CRITICAL Q&A FORMATTING RULES:
 
     // Add specific structure guidance if output structure is specified
     if (formState.outputStructure && formState.outputStructure.length > 0) {
-      // Check if FAQ (JSON) format is requested
+        formState.originalCopy, // Always use originalCopy since that's our single input
       const hasQAFormat = formState.outputStructure.some(element => 
         element.value === 'faqJson' || element.label?.toLowerCase().includes('faq (json)')
       );
