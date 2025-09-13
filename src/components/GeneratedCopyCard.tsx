@@ -231,8 +231,10 @@ const GeneratedCopyCard: React.FC<GeneratedCopyCardProps> = ({
   };
 
   const handleApplyVoice = () => {
-    if (selectedPersona) {
+    if (selectedPersona && selectedPersona.trim()) {
       onApplyVoiceStyle(selectedPersona);
+    } else {
+      toast.error('Please select a voice style first');
     }
   };
 
