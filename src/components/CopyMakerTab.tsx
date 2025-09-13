@@ -649,14 +649,16 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
         {/* Prefill and Template Loaders */}
         <div className="bg-white dark:bg-black border border-gray-300 dark:border-gray-800 rounded-lg p-6 mx-24">
           {/* Prefill Selector */}
-          <PrefillSelector
-            formState={formState}
-            setFormState={setFormState}
-            setDisplayMode={() => {}} // Placeholder, as displayMode is handled internally by CopyMakerForm
-          />
+          <div className="hidden">
+            <PrefillSelector
+              formState={formState}
+              setFormState={setFormState}
+              setDisplayMode={() => {}} // Placeholder, as displayMode is handled internally by CopyMakerForm
+            />
+          </div>
 
           {/* Load Template Section */}
-          <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg hidden">
+          <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg">
             <div className="flex items-center justify-between mb-1">
               <label htmlFor="templateSelection" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Load Template (optional)
