@@ -473,6 +473,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
           sourceItem.content,
           selectedPersona,
           formState.model,
+          currentUser,
           formState.language,
           formState,
           targetWordCount,
