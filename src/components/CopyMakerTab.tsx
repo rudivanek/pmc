@@ -12,7 +12,7 @@ import SavePrefillModal from './SavePrefillModal';
 import { JsonLdModal } from './JsonLdModal';
 import { FormState, User, GeneratedContentItem, GeneratedContentItemType, CopyResult, Prefill, Template } from '../types';
 import { generateCopy, generateContentScores, generateSeoMetadata, calculateGeoScore, generateAlternativeCopy, restyleCopyWithPersona } from '../services/apiService';
-import { checkUserAccess, getPrefill, createPrefill, updatePrefill, getUserTemplates } from '../services/supabaseClient';
+import { checkUserAccess, getPrefill, createPrefill, updatePrefill, getUserTemplates, getSupabaseClient } from '../services/supabaseClient';
 import { calculateTargetWordCount } from '../services/api/utils';
 import { RefreshCw, Search } from 'lucide-react';
 import PrefillSelector from './PrefillSelector';
