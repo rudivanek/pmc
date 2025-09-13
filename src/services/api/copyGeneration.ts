@@ -112,6 +112,16 @@ export async function generateCopy(
     // Extract token usage
     const tokenUsage = data.usage?.total_tokens || 0;
     
+    // Ensure session exists in database before tracking token usage
+    if (actualSessionId && currentUser) {
+      try {
+        await saveCopySession(formState, null, undefined, actualSessionId);
+      } catch (sessionError) {
+        console.warn('Error creating initial session record:', sessionError);
+        // Continue even if session creation fails
+      }
+    }
+    
     // Track token usage
     await trackTokenUsage(
       currentUser,
