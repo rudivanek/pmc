@@ -10,9 +10,10 @@ import TemplateSuggestionModal from './TemplateSuggestionModal';
 interface MainMenuProps {
   userName?: string;
   onLogout?: () => void;
+  onOpenTemplateSuggestion?: () => void;
 }
 
-const MainMenu: React.FC<MainMenuProps> = ({ userName, onLogout }) => {
+const MainMenu: React.FC<MainMenuProps> = ({ userName, onLogout, onOpenTemplateSuggestion }) => {
   const location = useLocation();
   const currentPath = location.pathname;
   const navigate = useNavigate();
