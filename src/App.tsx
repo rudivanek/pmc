@@ -24,6 +24,7 @@ import FAQ from './components/FAQ';
 import BetaThanks from './components/BetaThanks';
 import StepByStepGuide from './components/StepByStepGuide';
 import ManagePrefills from './components/ManagePrefills';
+import TemplateSuggestionModal from './components/TemplateSuggestionModal';
 import { getLastPrompts, evaluatePrompt } from './services/apiService';
 import { getCopySession, getTemplate, getSavedOutput, saveTemplate, saveSavedOutput } from './services/supabaseClient';
 import { checkUserAccess } from './services/supabaseClient';
@@ -205,7 +206,6 @@ const AppRouter: React.FC = () => {
         is_public: formStateToSave.is_public,
         public_name: formStateToSave.public_name,
         public_description: formStateToSave.public_description,
-        category: category, // Ensure the category is explicitly saved here
         category: category, // Add the category parameter
       };
 
@@ -296,6 +296,31 @@ const AppRouter: React.FC = () => {
     toast.success('Evaluation copied to clipboard!');
   };
 
+  // Handle applying template JSON to form
+  const handleApplyTemplateToForm = (templateData: Partial<FormState>) => {
+    try {
+      // Merge the template data with current form state, preserving runtime states
+      const updatedFormState: FormState = {
+        ...formState,
+        ...templateData,
+        // Always preserve loading states and other runtime states
+        isLoading: formState.isLoading,
+        isEvaluating: formState.isEvaluating,
+        generationProgress: formState.generationProgress,
+        copyResult: formState.copyResult,
+        promptEvaluation: formState.promptEvaluation,
+        // Generate new session ID for new template
+        sessionId: undefined
+      };
+
+      setFormState(updatedFormState);
+      toast.success('Template applied to form successfully!');
+    } catch (error) {
+      console.error('Error applying template to form:', error);
+      toast.error('Failed to apply template to form');
+    }
+  };
+
   // Show loading screen while initializing
   if (!isInitialized) {
     return (
@@ -337,7 +362,7 @@ const AppRouter: React.FC = () => {
       <MainMenu 
         userName={currentUser?.user_metadata?.name || currentUser?.email?.split('@')[0] || 'User'} 
         onLogout={handleEnhancedLogout}
-        onOpenTemplateSuggestion={() => {
+        onGenerateTemplateJSON={() => {
           // For non-copy-maker routes, we can just show a toast
           toast('Template JSON Generator is only available on the Copy Maker page');
         }}
@@ -524,35 +549,20 @@ const AppRouter: React.FC = () => {
           </div>
         </div>
       )}
+      
+      {isTemplateSuggestionModalOpen && (
+        <TemplateSuggestionModal
+          isOpen={isTemplateSuggestionModalOpen}
+          onClose={() => setIsTemplateSuggestionModalOpen(false)}
+          currentUser={currentUser}
+          onApplyToForm={handleApplyTemplateToForm}
+        />
+      )}
+      
       {/* Cookie Consent Banner */}
       <CookieConsent />
     </div>
   );
 };
-
-  // Handle applying template JSON to form
-  const handleApplyTemplateToForm = (templateData: Partial<FormState>) => {
-    try {
-      // Merge the template data with current form state, preserving runtime states
-      const updatedFormState: FormState = {
-        ...formState,
-        ...templateData,
-        // Always preserve loading states and other runtime states
-        isLoading: formState.isLoading,
-        isEvaluating: formState.isEvaluating,
-        generationProgress: formState.generationProgress,
-        copyResult: formState.copyResult,
-        promptEvaluation: formState.promptEvaluation,
-        // Generate new session ID for new template
-        sessionId: undefined
-      };
-
-      setFormState(updatedFormState);
-      toast.success('Template applied to form successfully!');
-    } catch (error) {
-      console.error('Error applying template to form:', error);
-      toast.error('Failed to apply template to form');
-    }
-  };
 
 export default AppRouter;
