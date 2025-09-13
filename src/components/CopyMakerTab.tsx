@@ -259,9 +259,9 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
 
   // Add progress message callback
   const addProgressMessage = React.useCallback((message: string) => {
-    setFormState(prevState => ({
+    setFormState(prevState => ({ // Ensure message is a string before adding to array
       ...prevState,
-      generationProgress: [...prevState.generationProgress, message]
+      generationProgress: [...prevState.generationProgress, typeof message === 'string' ? message : String(message)]
     }));
   }, [setFormState]);
 

@@ -31,13 +31,13 @@ const AppSpinner: React.FC<AppSpinnerProps> = ({
               <div 
                 key={index} 
                 className={`py-1 px-2 text-sm ${
-                  msg.includes('✓') || msg.includes('done') || msg.includes('complete') || msg.includes('applied') || msg.includes('🎯')
+                  typeof msg === 'string' && (msg.includes('✓') || msg.includes('done') || msg.includes('complete') || msg.includes('applied') || msg.includes('🎯'))
                     ? 'text-green-600 dark:text-green-400 font-medium'
-                    : msg.includes('❌') || msg.includes('Failed') || msg.includes('Error')
+                    : typeof msg === 'string' && (msg.includes('❌') || msg.includes('Failed') || msg.includes('Error'))
                       ? 'text-red-600 dark:text-red-400'
-                    : msg.includes('⚠') || msg.includes('🚨') || msg.includes('revision') || msg.includes('attempt')
+                    : typeof msg === 'string' && (msg.includes('⚠') || msg.includes('🚨') || msg.includes('revision') || msg.includes('attempt'))
                       ? 'text-yellow-600 dark:text-yellow-400'
-                    : msg.includes('🔄')
+                    : typeof msg === 'string' && msg.includes('🔄')
                       ? 'text-blue-600 dark:text-blue-400'
                       : 'text-gray-700 dark:text-gray-300'
                 }`}

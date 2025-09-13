@@ -51,8 +51,8 @@ const App: React.FC<AppProps> = ({ onViewPrompts }) => {
   const [isSaveTemplateModalOpen, setIsSaveTemplateModalOpen] = useState(false);
   const addProgressMessage = useCallback((message: string) => {
     setFormState(prevState => ({
-      ...prevState,
-      generationProgress: [...prevState.generationProgress, message]
+      ...prevState, // Ensure message is a string before adding to array
+      generationProgress: [...prevState.generationProgress, typeof message === 'string' ? message : String(message)]
     }));
   }, [setFormState]);
 
