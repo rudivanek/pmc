@@ -3,19 +3,23 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useRef } from 'react';
 import { toast } from 'react-hot-toast';
 import { v4 as uuidv4 } from 'uuid';
-import CopyMakerForm from './CopyMakerForm';
+import { Zap } from 'lucide-react';
 import AppSpinner from './ui/AppSpinner';
 import LoadingSpinner from './ui/LoadingSpinner';
 import FloatingActionBar from './FloatingActionBar';
 import GeneratedCopyCard from './GeneratedCopyCard';
-import SavePrefillModal from './SavePrefillModal';
 import { JsonLdModal } from './JsonLdModal';
+import { useInputField } from '../hooks/useInputField';
+import ContentQualityIndicator from './ui/ContentQualityIndicator';
+import { evaluateContentQuality } from '../services/apiService';
+import { Tooltip } from './ui/Tooltip';
+import GenerateButton from './GenerateButton';
+import ClearButton from './ClearButton';
 import { FormState, User, GeneratedContentItem, GeneratedContentItemType, CopyResult, Prefill, Template } from '../types';
 import { generateCopy, generateContentScores, generateSeoMetadata, calculateGeoScore, generateAlternativeCopy, restyleCopyWithPersona } from '../services/apiService';
-import { checkUserAccess, getPrefill, createPrefill, updatePrefill, getUserTemplates } from '../services/supabaseClient';
+import { checkUserAccess, getUserTemplates } from '../services/supabaseClient';
 import { calculateTargetWordCount } from '../services/api/utils';
 import { RefreshCw, Search } from 'lucide-react';
-import PrefillSelector from './PrefillSelector';
 
 interface CopyMakerTabProps {
   currentUser?: User;
@@ -32,8 +36,6 @@ interface CopyMakerTabProps {
   onSaveOutput?: () => void;
   onViewPrompts?: () => void;
   onCancel?: () => void;
-  loadFormStateFromPrefill: (prefill: Prefill) => void;
-  loadFormStateFromTemplate: (template: Template) => void;
 }
 
 const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
@@ -51,20 +53,12 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
   onSaveOutput,
   onViewPrompts,
   onCancel,
-  loadFormStateFromPrefill,
-  loadFormStateFromTemplate
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const [showJsonLdModal, setShowJsonLdModal] = useState(false);
   const [jsonLdContent, setJsonLdContent] = useState('');
-  const [isPrefillEditingMode, setIsPrefillEditingMode] = useState(false);
-  const [prefillEditingData, setPrefillEditingData] = useState<{
-    mode: 'add' | 'edit' | 'clone';
-    prefillId?: string;
-    originalLabel?: string;
-  } | null>(null);
-  const [showSavePrefillModal, setShowSavePrefillModal] = useState(false);
+  const [isEvaluatingContent, setIsEvaluatingContent] = useState(false);
   
   // State for template loading
   const [fetchedTemplates, setFetchedTemplates] = useState<Template[]>([]);
@@ -75,63 +69,26 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
 
   // Refs for focusing on required fields
   const projectDescriptionRef = useRef<HTMLInputElement>(null);
-  const businessDescriptionRef = useRef<HTMLTextAreaElement>(null);
   const originalCopyRef = useRef<HTMLTextAreaElement>(null);
 
-  // Handle prefill mode from URL parameters
-  React.useEffect(() => {
-    const prefillMode = searchParams.get('prefillMode') as 'add' | 'edit' | 'clone' | null;
-    const prefillId = searchParams.get('prefillId');
+  // Use input field hooks
+  const projectDescriptionField = useInputField({
+    value: formState.projectDescription || '',
+    onChange: (value) => setFormState(prev => ({ ...prev, projectDescription: value }))
+  });
 
-    if (prefillMode && currentUser) {
-      setIsPrefillEditingMode(true);
-      setPrefillEditingData({ mode: prefillMode, prefillId });
+  const originalCopyField = useInputField({
+    value: formState.originalCopy || '',
+    onChange: (value) => setFormState(prev => ({ ...prev, originalCopy: value }))
+  });
 
-      // If editing or cloning, load the prefill data
-      if ((prefillMode === 'edit' || prefillMode === 'clone') && prefillId) {
-        loadPrefillData(prefillId, prefillMode === 'clone');
-      } else if (prefillMode === 'add') {
-        // Clear form for new prefill
-        setFormState(prev => ({
-          ...prev,
-          ...formState,
-          copyResult: { generatedVersions: [] }
-        }));
-      }
-    } else {
-      setIsPrefillEditingMode(false);
-      setPrefillEditingData(null);
-    }
-  }, [searchParams, currentUser]);
-
-  // Function to load prefill data
-  const loadPrefillData = async (prefillId: string, isClone: boolean = false) => {
-    try {
-      const { data: prefill, error } = await getPrefill(prefillId);
-      if (error) throw error;
-      
-      if (prefill) {
-        loadFormStateFromPrefill(prefill);
-        setPrefillEditingData(prev => ({
-          ...prev!,
-          originalLabel: isClone ? `${prefill.label} (Clone)` : prefill.label
-        }));
-        
-        if (isClone) {
-          toast.success(`Cloned "${prefill.label}" - edit and save as new prefill`);
-        } else {
-          toast.success(`Loaded "${prefill.label}" for editing`);
-        }
-      }
-    } catch (error: any) {
-      console.error('Error loading prefill:', error);
-      toast.error(`Failed to load prefill: ${error.message}`);
-      // Reset prefill mode on error
-      setSearchParams({});
-      setIsPrefillEditingMode(false);
-      setPrefillEditingData(null);
-    }
+  // Function to count words in a string
+  const countWords = (text: string): number => {
+    return text.trim() ? text.trim().split(/\s+/).length : 0;
   };
+  
+  // Get original copy word count
+  const originalCopyWordCount = countWords(originalCopyField.inputValue);
 
   // Fetch templates from database
   useEffect(() => {
@@ -191,7 +148,13 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
     if (templateId) {
       const template = fetchedTemplates.find(t => t.id === templateId);
       if (template) {
-        loadFormStateFromTemplate(template);
+        // Simplified template loading - just load the original copy
+        setFormState(prev => ({
+          ...prev,
+          originalCopy: template.original_copy || template.business_description || '',
+          projectDescription: template.project_description || '',
+          briefDescription: template.brief_description || ''
+        }));
         setLoadedTemplateId(template.id || null);
         setLoadedTemplateName(template.template_name || '');
         toast.success(`Template "${template.template_name}" loaded successfully!`);
@@ -211,49 +174,27 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
     setLoadedTemplateName('');
   };
 
-  // Handle saving prefill
-  const handleSavePrefill = async (label: string, category: string, isPublic: boolean) => {
-    if (!currentUser?.id) {
-      toast.error('You must be logged in to save prefills.');
+  // Function to evaluate the original copy
+  const evaluateOriginalCopy = async () => {
+    if (!originalCopyField.inputValue) {
       return;
     }
-
+    
+    setIsEvaluatingContent(true);
+    
     try {
-      const prefillData = {
-        user_id: currentUser.id,
-        label,
-        category,
-        is_public: isPublic,
-        data: formState
-      };
-
-      if (prefillEditingData?.mode === 'edit' && prefillEditingData.prefillId) {
-        // Update existing prefill
-        const { error } = await updatePrefill({
-          id: prefillEditingData.prefillId,
-          ...prefillData
-        });
-        if (error) throw error;
-        toast.success('Prefill updated successfully!');
-      } else {
-        // Create new prefill (add or clone)
-        const { error } = await createPrefill(prefillData);
-        if (error) throw error;
-        toast.success(prefillEditingData?.mode === 'clone' ? 'Prefill cloned successfully!' : 'Prefill created successfully!');
-      }
-
-      // Navigate back to manage prefills
-      navigate('/manage-prefills');
-    } catch (error: any) {
-      console.error('Error saving prefill:', error);
-      toast.error(`Failed to save prefill: ${error.message}`);
-    }
-  };
-
-  // Handle canceling prefill editing
-  const handleCancelPrefillEditing = () => {
-    if (window.confirm('Are you sure you want to cancel? Any unsaved changes will be lost.')) {
-      navigate('/manage-prefills');
+      const result = await evaluateContentQuality(
+        originalCopyField.inputValue,
+        'Original Copy',
+        formState.model,
+        currentUser
+      );
+      
+      setFormState(prev => ({ ...prev, originalCopyScore: result }));
+    } catch (error) {
+      console.error('Error evaluating original copy:', error);
+    } finally {
+      setIsEvaluatingContent(false);
     }
   };
 
@@ -274,13 +215,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
       return;
     }
     
-    if (formState.tab === 'create' && !formState.businessDescription?.trim()) {
-      toast.error('Business Description is required. Please describe your business or product.');
-      businessDescriptionRef.current?.focus();
-      return;
-    }
-    
-    if (formState.tab === 'improve' && !formState.originalCopy?.trim()) {
+    if (!formState.originalCopy?.trim()) {
       toast.error('Original Copy is required. Please provide the copy you want to improve.');
       originalCopyRef.current?.focus();
       return;
@@ -648,13 +583,6 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
       <div className="space-y-8">
         {/* Prefill and Template Loaders */}
         <div className="bg-white dark:bg-black border border-gray-300 dark:border-gray-800 rounded-lg p-6 mx-24">
-          {/* Prefill Selector */}
-          <PrefillSelector
-            formState={formState}
-            setFormState={setFormState}
-            setDisplayMode={() => {}} // Placeholder, as displayMode is handled internally by CopyMakerForm
-          />
-
           {/* Load Template Section */}
           <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg">
             <div className="flex items-center justify-between mb-1">
@@ -733,42 +661,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
 
         {/* Form Section */}
         <div>
-          <CopyMakerForm
-            currentUser={currentUser}
-            formState={formState}
-            setFormState={setFormState}
-            onGenerate={isPrefillEditingMode ? undefined : handleGenerate}
-            onClearAll={handleClearAllOverride} // Use the override function
-            loadedTemplateId={loadedTemplateId}
-            setLoadedTemplateId={setLoadedTemplateId}
-            loadedTemplateName={loadedTemplateName}
-            setLoadedTemplateName={setLoadedTemplateName}
-            isSmartMode={isSmartMode}
-            onEvaluateInputs={onEvaluateInputs}
-            onSaveTemplate={onSaveTemplate}
-            projectDescriptionRef={projectDescriptionRef}
-            businessDescriptionRef={businessDescriptionRef}
-            originalCopyRef={originalCopyRef}
-            isPrefillEditingMode={isPrefillEditingMode}
-          />
-          
           {/* Prefill Action Buttons */}
-          {isPrefillEditingMode && (
-            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <button
-                onClick={() => setShowSavePrefillModal(true)}
-                className="w-full bg-primary-600 hover:bg-primary-500 text-white font-medium text-base px-5 py-3.5 transition-colors flex items-center justify-center"
-              >
-                Save Prefill
-              </button>
-              <button
-                onClick={handleCancelPrefillEditing}
-                className="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-black text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium text-base px-5 py-3 transition-colors flex items-center justify-center"
-              >
-                Cancel
-              </button>
-            </div>
-          )}
         </div>
 
         {/* Results Section */}
@@ -821,18 +714,6 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
         progressMessages={formState.generationProgress}
         onCancel={onCancel || handleCancelOperation}
       />
-
-      {/* Save Prefill Modal */}
-      {showSavePrefillModal && prefillEditingData && (
-        <SavePrefillModal
-          isOpen={showSavePrefillModal}
-          onClose={() => setShowSavePrefillModal(false)}
-          onSave={handleSavePrefill}
-          mode={prefillEditingData.mode}
-          initialLabel={prefillEditingData.originalLabel || ''}
-          currentUser={currentUser}
-        />
-      )}
 
       {/* JSON-LD Modal */}
       {showJsonLdModal && (
