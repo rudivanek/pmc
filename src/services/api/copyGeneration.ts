@@ -4,10 +4,11 @@
 import { FormState, User, CopyResult } from '../../types';
 import { getApiConfig, handleApiResponse, storePrompts, calculateTargetWordCount, extractWordCount, getWordCountTolerance } from './utils';
 import { trackTokenUsage } from './tokenTracking';
-import { saveCopySession } from '../supabaseClient';
+import { saveCopySession, supabase } from '../supabaseClient';
 import { reviseContentForWordCount } from './contentRefinement';
 import { generateSeoMetadata } from './seoGeneration';
 import { calculateGeoScore } from './geoScoring';
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * Generate copy based on form state
@@ -25,6 +26,61 @@ export async function generateCopy(
 ): Promise<CopyResult> {
   // Get API configuration
   const { apiKey, baseUrl, headers, maxTokens } = getApiConfig(formState.model);
+  
+  // Ensure session record exists in database before any token tracking
+  let actualSessionId = sessionId;
+  if (currentUser && sessionId) {
+    try {
+      // Check if session exists
+      const { data: existingSession, error: checkError } = await supabase
+        .from('pmc_copy_sessions')
+        .select('id')
+        .eq('id', sessionId)
+        .single();
+      
+      if (checkError && checkError.code === 'PGRST116') {
+        // Session doesn't exist, create it
+        const { data: newSession, error: createError } = await saveCopySession(
+          formState,
+          null, // No content yet
+          undefined, // No alternative copy
+          sessionId
+        );
+        
+        if (createError) {
+          console.error('Error creating session record:', createError);
+          // Generate new session ID if creation failed
+          actualSessionId = uuidv4();
+        } else {
+          actualSessionId = newSession?.id || sessionId;
+        }
+      }
+    } catch (err) {
+      console.error('Error checking/creating session:', err);
+      // Generate new session ID if there's an error
+      actualSessionId = uuidv4();
+    }
+  } else if (currentUser && !sessionId) {
+    // Generate new session ID for logged in users
+    actualSessionId = uuidv4();
+    
+    try {
+      const { data: newSession, error: createError } = await saveCopySession(
+        formState,
+        null, // No content yet
+        undefined, // No alternative copy
+        actualSessionId
+      );
+      
+      if (createError) {
+        console.error('Error creating new session record:', createError);
+      } else {
+        actualSessionId = newSession?.id || actualSessionId;
+      }
+    } catch (err) {
+      console.error('Error creating new session:', err);
+    }
+  }
   
   // Calculate target word count
   const targetWordCount = calculateTargetWordCount(formState);
@@ -113,7 +169,7 @@ export async function generateCopy(
       formState.model,
       `generate_${formState.tab}_copy`,
       formState.briefDescription || `Generate ${formState.tab} copy`,
-      formState.sessionId,
+      actualSessionId,
       formState.projectDescription
     );
     
@@ -192,13 +248,14 @@ export async function generateCopy(
             targetWordCount,
             {
               ...formState,
+              sessionId: actualSessionId,
               prioritizeWordCount: true, // Force prioritizeWordCount to true
               forceElaborationsExamples: true // Add examples to help reach word count
             },
             currentUser,
             progressCallback,
             undefined, // persona
-            formState.sessionId
+            actualSessionId
           );
           
           // Update with the revised content
@@ -299,13 +356,13 @@ export async function generateCopy(
     }
     
     // Save to database if session ID is provided
-    if (sessionId) {
+    if (actualSessionId) {
       try {
         const { data: sessionData, error: sessionError } = await saveCopySession(
           formState, 
           improvedCopy, 
           undefined, 
-          sessionId
+          actualSessionId
         );
         
         if (sessionError) {
@@ -329,7 +386,7 @@ export async function generateCopy(
           console.error('Error saving new copy session:', sessionError);
         } else {
           console.log('New copy session created:', sessionData?.id);
-          result.sessionId = sessionData?.id;
+          result.sessionId = sessionData?.id || actualSessionId;
         }
       } catch (err) {
         console.error('Error creating new copy session:', err);
