@@ -314,9 +314,38 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
     }));
     addProgressMessage('Starting copy generation...');
 
+    // Ensure session record exists in database before any token tracking
+    let actualSessionId = formState.sessionId;
+    if (currentUser && formState.sessionId) {
+      try {
+        // Check if session exists
+        const { data: existingSession, error: checkError } = await getSupabaseClient()
+          .from('pmc_copy_sessions')
+          .select('id')
+          .eq('id', formState.sessionId)
+          .limit(1);
+        
+        if (checkError || !existingSession || existingSession.length === 0) {
+          // Session doesn't exist, generate new ID and don't try to create here
+          actualSessionId = uuidv4();
+          // Update formState with new session ID
+          setFormState(prev => ({ ...prev, sessionId: actualSessionId }));
+        }
+      } catch (err) {
+        console.error('Error checking/creating session:', err);
+        // Generate new session ID if there's an error
+        actualSessionId = uuidv4();
+        setFormState(prev => ({ ...prev, sessionId: actualSessionId }));
+      }
+    } else if (currentUser && !formState.sessionId) {
+      // Generate new session ID for logged in users only if not already set
+      actualSessionId = uuidv4();
+      setFormState(prev => ({ ...prev, sessionId: actualSessionId }));
+    }
+
     try {
       // Generate initial copy
-      const result = await generateCopy(formState, currentUser, formState.sessionId, addProgressMessage);
+      const result = await generateCopy(formState, currentUser, actualSessionId, addProgressMessage);
       const improvedCopyItem: GeneratedContentItem = {
         id: uuidv4(),
         type: GeneratedContentItemType.Improved,

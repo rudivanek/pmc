@@ -29,58 +29,8 @@ export async function generateCopy(
   
   // Ensure session record exists in database before any token tracking
   let actualSessionId = sessionId;
-  if (currentUser && sessionId) {
-    try {
-      // Check if session exists
-      const { data: existingSession, error: checkError } = await getSupabaseClient()
-        .from('pmc_copy_sessions')
-        .select('id')
-        .eq('id', sessionId)
-        .limit(1);
-      
-      if (checkError || !existingSession || existingSession.length === 0) {
-        // Session doesn't exist, create it
-        const { data: newSession, error: createError } = await saveCopySession(
-          formState,
-          null, // No content yet
-          undefined, // No alternative copy
-          sessionId
-        );
-        
-        if (createError) {
-          console.error('Error creating session record:', createError);
-          // Generate new session ID if creation failed
-          actualSessionId = uuidv4();
-        } else {
-          actualSessionId = newSession?.id || sessionId;
-        }
-      }
-    } catch (err) {
-      console.error('Error checking/creating session:', err);
-      // Generate new session ID if there's an error
-      actualSessionId = uuidv4();
-    }
-  } else if (currentUser && !sessionId) {
-    // Generate new session ID for logged in users
-    actualSessionId = uuidv4();
-    
-    try {
-      const { data: newSession, error: createError } = await saveCopySession(
-        formState,
-        null, // No content yet
-        undefined, // No alternative copy
-        actualSessionId
-      );
-      
-      if (createError) {
-        console.error('Error creating new session record:', createError);
-      } else {
-        actualSessionId = newSession?.id || actualSessionId;
-      }
-    } catch (err) {
-      console.error('Error creating new session:', err);
-    }
-  }
+  // Use existing session ID or don't create sessions here to avoid conflicts
+  actualSessionId = sessionId || (currentUser ? uuidv4() : undefined);
   
   // Calculate target word count
   const targetWordCount = calculateTargetWordCount(formState);
