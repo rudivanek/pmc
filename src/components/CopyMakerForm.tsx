@@ -39,6 +39,7 @@ interface CopyMakerFormProps {
   projectDescriptionRef?: React.RefObject<HTMLInputElement>;
   businessDescriptionRef?: React.RefObject<HTMLTextAreaElement>;
   originalCopyRef?: React.RefObject<HTMLTextAreaElement>;
+  onOpenTemplateSuggestion?: () => void;
 }
 
 const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
@@ -58,6 +59,7 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
   projectDescriptionRef,
   businessDescriptionRef,
   originalCopyRef
+  onOpenTemplateSuggestion
 }) => {
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
@@ -581,6 +583,19 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
         <h2 className="text-xl font-bold text-gray-900 dark:text-white">Copy Maker</h2>
         
         <div className="flex items-center space-x-3">
+          {/* Template JSON Generator - Admin Only */}
+          {isAdmin && onOpenTemplateSuggestion && (
+            <button
+              type="button"
+              onClick={onOpenTemplateSuggestion}
+              className="flex items-center bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 px-3 py-2 rounded-md text-sm transition-colors"
+              title="Template JSON Generator"
+            >
+              <Lightbulb size={16} className="mr-1.5" />
+              Template Generator
+            </button>
+          )}
+          
           <button
             type="button"
             onClick={handleExportForm}

@@ -18,7 +18,6 @@ const MainMenu: React.FC<MainMenuProps> = ({ userName, onLogout }) => {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
   const [isBetaModalOpen, setIsBetaModalOpen] = React.useState(false);
-  const [isTemplateSuggestionModalOpen, setIsTemplateSuggestionModalOpen] = React.useState(false);
 
   // Check if current user is admin
   const isAdmin = currentUser?.email === 'rfv@datago.net';
@@ -100,7 +99,7 @@ const MainMenu: React.FC<MainMenuProps> = ({ userName, onLogout }) => {
               {/* Template JSON Generator - Admin Only */}
               {isAdmin && (
                 <button
-                  onClick={() => setIsTemplateSuggestionModalOpen(true)}
+                  onClick={onOpenTemplateSuggestion}
                   className="p-2 rounded-md transition-colors duration-200 text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
                   title="Template JSON Generator"
                 >
@@ -186,15 +185,6 @@ const MainMenu: React.FC<MainMenuProps> = ({ userName, onLogout }) => {
       isOpen={isBetaModalOpen}
       onClose={() => setIsBetaModalOpen(false)}
     />
-    
-    {/* Template Suggestion Modal - Admin Only */}
-    {isAdmin && (
-      <TemplateSuggestionModal
-        isOpen={isTemplateSuggestionModalOpen}
-        onClose={() => setIsTemplateSuggestionModalOpen(false)}
-        currentUser={currentUser}
-      />
-    )}
     </>
   );
 };

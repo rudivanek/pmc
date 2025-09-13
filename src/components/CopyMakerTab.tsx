@@ -10,6 +10,7 @@ import FloatingActionBar from './FloatingActionBar';
 import GeneratedCopyCard from './GeneratedCopyCard';
 import SavePrefillModal from './SavePrefillModal';
 import { JsonLdModal } from './JsonLdModal';
+import TemplateSuggestionModal from './TemplateSuggestionModal';
 import { FormState, User, GeneratedContentItem, GeneratedContentItemType, CopyResult, Prefill, Template } from '../types';
 import { generateCopy, generateContentScores, generateSeoMetadata, calculateGeoScore, generateAlternativeCopy, restyleCopyWithPersona } from '../services/apiService';
 import { checkUserAccess, getPrefill, createPrefill, updatePrefill, getUserTemplates } from '../services/supabaseClient';
@@ -58,6 +59,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
   const navigate = useNavigate();
   const [showJsonLdModal, setShowJsonLdModal] = useState(false);
   const [jsonLdContent, setJsonLdContent] = useState('');
+  const [isTemplateSuggestionModalOpen, setIsTemplateSuggestionModalOpen] = useState(false);
   const [isPrefillEditingMode, setIsPrefillEditingMode] = useState(false);
   const [prefillEditingData, setPrefillEditingData] = useState<{
     mode: 'add' | 'edit' | 'clone';
@@ -642,6 +644,30 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
     toast.info('Operation cancelled.');
   };
 
+  // Handle applying template JSON to form
+  const handleApplyTemplateToForm = (templateData: Partial<FormState>) => {
+    try {
+      // Merge the template data with current form state, preserving runtime states
+      const updatedFormState: FormState = {
+        ...formState,
+        ...templateData,
+        // Always preserve loading states and other runtime states
+        isLoading: formState.isLoading,
+        isEvaluating: formState.isEvaluating,
+        generationProgress: formState.generationProgress,
+        copyResult: formState.copyResult,
+        promptEvaluation: formState.promptEvaluation,
+        // Generate new session ID for new template
+        sessionId: undefined
+      };
+
+      setFormState(updatedFormState);
+      toast.success('Template applied to form successfully!');
+    } catch (error) {
+      console.error('Error applying template to form:', error);
+      toast.error('Failed to apply template to form');
+    }
+  };
   return (
     <div className="relative min-h-screen">
       {/* Main Content Layout */}
@@ -752,6 +778,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
             businessDescriptionRef={businessDescriptionRef}
             originalCopyRef={originalCopyRef}
             isPrefillEditingMode={isPrefillEditingMode}
+            onOpenTemplateSuggestion={() => setIsTemplateSuggestionModalOpen(true)}
           />
           
           {/* Prefill Action Buttons */}
@@ -842,6 +869,16 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
           isOpen={showJsonLdModal}
           onClose={() => setShowJsonLdModal(false)}
           jsonLd={jsonLdContent}
+        />
+      )}
+      
+      {/* Template Suggestion Modal */}
+      {isTemplateSuggestionModalOpen && (
+        <TemplateSuggestionModal
+          isOpen={isTemplateSuggestionModalOpen}
+          onClose={() => setIsTemplateSuggestionModalOpen(false)}
+          currentUser={currentUser}
+          onApplyToForm={handleApplyTemplateToForm}
         />
       )}
     </div>

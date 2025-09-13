@@ -8,16 +8,19 @@ interface TemplateSuggestionModalProps {
   isOpen: boolean;
   onClose: () => void;
   currentUser?: User;
+  onApplyToForm?: (templateData: Partial<FormState>) => void;
 }
 
 const TemplateSuggestionModal: React.FC<TemplateSuggestionModalProps> = ({
   isOpen,
   onClose,
-  currentUser
+  currentUser,
+  onApplyToForm
 }) => {
   const [instruction, setInstruction] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedJson, setGeneratedJson] = useState('');
+  const [generatedData, setGeneratedData] = useState<Partial<FormState> | null>(null);
   const [copied, setCopied] = useState(false);
 
   // Reset state when modal opens/closes
@@ -25,6 +28,7 @@ const TemplateSuggestionModal: React.FC<TemplateSuggestionModalProps> = ({
     if (isOpen) {
       setInstruction('');
       setGeneratedJson('');
+      setGeneratedData(null);
       setCopied(false);
     }
   }, [isOpen]);
@@ -50,6 +54,7 @@ const TemplateSuggestionModal: React.FC<TemplateSuggestionModalProps> = ({
       // Format the JSON with proper indentation
       const formattedJson = JSON.stringify(jsonSuggestion, null, 2);
       setGeneratedJson(formattedJson);
+      setGeneratedData(jsonSuggestion);
       toast.success('Template JSON generated successfully!');
     } catch (error: any) {
       console.error('Error generating template JSON:', error);
@@ -72,6 +77,18 @@ const TemplateSuggestionModal: React.FC<TemplateSuggestionModalProps> = ({
     }
   };
 
+  const handleApplyToForm = () => {
+    if (!generatedData || !onApplyToForm) return;
+    
+    try {
+      onApplyToForm(generatedData);
+      toast.success('Template applied to form fields!');
+      onClose();
+    } catch (error) {
+      console.error('Error applying template to form:', error);
+      toast.error('Failed to apply template to form');
+    }
+  };
   if (!isOpen) return null;
 
   return (
@@ -156,6 +173,15 @@ const TemplateSuggestionModal: React.FC<TemplateSuggestionModalProps> = ({
                   )}
                 </button>
               </div>
+                  {onApplyToForm && generatedData && (
+                    <button
+                      onClick={handleApplyToForm}
+                      className="bg-primary-600 hover:bg-primary-500 text-white px-3 py-2 rounded-md text-sm flex items-center"
+                    >
+                      <Zap size={16} className="mr-1.5" />
+                      Apply to Form
+                    </button>
+                  )}
               <div className="bg-gray-100 dark:bg-gray-800 rounded-md p-4 border border-gray-200 dark:border-gray-700">
                 <pre className="text-xs text-gray-700 dark:text-gray-300 font-mono whitespace-pre-wrap overflow-x-auto max-h-96 overflow-y-auto custom-scrollbar">
                   <code>{generatedJson}</code>
