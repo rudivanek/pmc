@@ -11,7 +11,6 @@ import Dashboard from './components/Dashboard';
 import Features from './components/Features';
 import Documentation from './components/Documentation';
 import Privacy from './components/Privacy';
-import App from './components/App';
 import CopyMakerTab from './components/CopyMakerTab';
 import ManageUsers from './components/ManageUsers';
 import PromptDisplay from './components/PromptDisplay';
@@ -63,7 +62,7 @@ const AppRouter: React.FC = () => {
 
   // Track user's last visited page and save to localStorage
   React.useEffect(() => {
-    if (currentUser && (location.pathname === '/dashboard' || location.pathname === '/copy-maker')) {
+    if (currentUser && location.pathname === '/copy-maker') {
       localStorage.setItem('lastVisitedPage', location.pathname);
     }
   }, [location.pathname, currentUser]);
@@ -344,8 +343,8 @@ const AppRouter: React.FC = () => {
           element={
             currentUser ? (() => {
               const lastVisitedPage = localStorage.getItem('lastVisitedPage');
-              const defaultPath = '/dashboard';
-              const targetPath = (lastVisitedPage === '/dashboard' || lastVisitedPage === '/copy-maker') 
+              const defaultPath = '/copy-maker';
+              const targetPath = (lastVisitedPage === '/copy-maker') 
                 ? lastVisitedPage 
                 : defaultPath;
               return <Navigate to={targetPath} replace />;
@@ -356,29 +355,6 @@ const AppRouter: React.FC = () => {
           path="/login" 
           element={
             currentUser ? <Navigate to="/dashboard" replace /> : <Login onLogin={handleLogin} />
-          } 
-        />
-        <Route 
-          path="/dashboard" 
-          element={
-            currentUser ? (
-            <Dashboard 
-              userId={currentUser.id} 
-              onLogout={handleLogout}
-            />
-            ) : (
-              <Navigate to="/login" replace />
-            )
-          } 
-        />
-        <Route 
-          path="/app" 
-          element={
-            currentUser ? (
-            <App onViewPrompts={handleViewPrompts} />
-            ) : (
-              <Navigate to="/login" replace />
-            )
           } 
         />
         <Route 
@@ -414,26 +390,6 @@ const AppRouter: React.FC = () => {
         <Route path="/faq" element={<FAQ />} />
         <Route path="/beta-thanks" element={<BetaThanks />} />
         <Route path="/step-by-step" element={<StepByStepGuide />} />
-        <Route 
-          path="/manage-users" 
-          element={
-            currentUser ? (
-              <ManageUsers />
-            ) : (
-              <Navigate to="/login" replace />
-            )
-          } 
-        />
-        <Route 
-          path="/manage-prefills" 
-          element={
-            currentUser ? (
-              <ManagePrefills />
-            ) : (
-              <Navigate to="/login" replace />
-            )
-          } 
-        />
         <Route path="*" element={<NotFound />} />
       </Routes>
       

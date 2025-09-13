@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, LogOut, BookOpen, HelpCircle, List } from 'lucide-react'; 
+import { LogOut, BookOpen, HelpCircle, List } from 'lucide-react'; 
 import { LuZap } from "react-icons/lu";
 import ThemeToggle from './ThemeToggle';
 import { useAuth } from '../hooks/useAuth';
@@ -28,7 +28,7 @@ const MainMenu: React.FC<MainMenuProps> = ({ userName, onLogout }) => {
             <div className="flex items-center">
               <LuZap size={28} className="text-primary-500 mr-2" />
               <Link 
-                to={currentUser ? "/copy-maker" : "/"} 
+                to="/" 
                 className="text-3xl font-bold text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400 transition-colors duration-200"
               >
                 <h1>PimpMyCopy<span className="text-[10px] font-normal ml-1">Beta 3.0</span></h1>
@@ -122,45 +122,6 @@ const MainMenu: React.FC<MainMenuProps> = ({ userName, onLogout }) => {
             </div>
           </div>
             
-        {/* Bottom row with button-style navigation - only show when user is authenticated */}
-        {currentUser && (
-          <div className="w-full">
-            <nav className="flex items-center space-x-2">
-            <Link 
-              to="/copy-maker" 
-              className={`flex items-center text-sm font-medium px-4 py-2 rounded-md border transition-colors duration-200 ${
-                currentPath === '/copy-maker' 
-                  ? 'bg-gray-500 text-white border-gray-500' 
-                  : 'bg-white dark:bg-black border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
-              }`}
-            >
-              <LuZap size={18} className="mr-2" />
-              Copy Maker
-            </Link>
-            
-            <Link 
-              to="/dashboard" 
-              className={`flex items-center text-sm font-medium px-4 py-2 rounded-md border transition-colors duration-200 ${
-                currentPath === '/dashboard' 
-                  ? 'bg-gray-500 text-white border-gray-500' 
-                  : 'bg-white dark:bg-black border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
-              }`}
-            >
-              <LayoutDashboard size={18} className="mr-2" />
-              Dashboard
-            </Link>
-            
-            <Link 
-              to="/app" 
-              className="hidden"
-            >
-              <LuZap size={18} className="mr-2" />
-              Copy Maker
-            </Link>
-            
-            </nav>
-          </div>
-        )}
         </div>
       </div>
     </header>
