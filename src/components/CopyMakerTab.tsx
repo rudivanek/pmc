@@ -32,6 +32,10 @@ interface CopyMakerTabProps {
   onSaveOutput?: () => void;
   onViewPrompts?: () => void;
   onCancel?: () => void;
+  loadFormStateFromPrefill: any;
+  loadFormStateFromTemplate: any;
+  isTemplateSuggestionModalOpen: boolean;
+  setIsTemplateSuggestionModalOpen: (open: boolean) => void;
 }
 
 const CopyMakerTab: React.FC<CopyMakerTabProps> = ({

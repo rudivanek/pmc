@@ -36,9 +36,9 @@ export async function generateCopy(
         .from('pmc_copy_sessions')
         .select('id')
         .eq('id', sessionId)
-        .single();
+        .limit(1);
       
-      if (checkError && checkError.code === 'PGRST116') {
+      if (checkError || !existingSession || existingSession.length === 0) {
         // Session doesn't exist, create it
         const { data: newSession, error: createError } = await saveCopySession(
           formState,
