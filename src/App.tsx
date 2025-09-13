@@ -298,9 +298,18 @@ const AppRouter: React.FC = () => {
 
   // Handle applying template JSON to form
   const handleApplyTemplateToForm = (templateData: Partial<FormState>) => {
+    // Filter out undefined, null, and empty string values to prevent overwriting valid form state
+    const filteredTemplateData: Partial<FormState> = {};
+    Object.entries(templateData).forEach(([key, value]) => {
+      // Only include values that are not undefined, null, or empty strings
+      if (value !== undefined && value !== null && value !== '') {
+        filteredTemplateData[key as keyof FormState] = value;
+      }
+    });
+    
     setFormState(prevState => ({
       ...prevState,
-      ...templateData,
+      ...filteredTemplateData,
       // Reset runtime states to provide clean state after applying template
       isLoading: false,
       isEvaluating: false,
