@@ -53,7 +53,15 @@ const UrlParamLoader: React.FC<UrlParamLoaderProps> = ({
         setFormState(prev => ({ ...prev, isLoading: true }));
         try {
           const { data, error } = await getCopySession(sessionId);
-          if (error) throw error;
+          if (error) {
+            if (error.code === 'PGRST116') {
+              console.warn('Session not found:', sessionId);
+              toast.error('Session not found. The link may be invalid or the session may have been deleted.');
+            } else {
+              throw error;
+            }
+            return;
+          }
           if (data) {
             loadFormStateFromSession(data);
             toast.success('Session loaded successfully!');
@@ -79,7 +87,15 @@ const UrlParamLoader: React.FC<UrlParamLoaderProps> = ({
         setFormState(prev => ({ ...prev, isLoading: true }));
         try {
           const { data, error } = await getTemplate(templateId);
-          if (error) throw error;
+          if (error) {
+            if (error.code === 'PGRST116') {
+              console.warn('Template not found:', templateId);
+              toast.error('Template not found. The link may be invalid or the template may have been deleted.');
+            } else {
+              throw error;
+            }
+            return;
+          }
           if (data) {
             loadFormStateFromTemplate(data);
             setLoadedTemplateId(data.id || null);
@@ -107,7 +123,15 @@ const UrlParamLoader: React.FC<UrlParamLoaderProps> = ({
         setFormState(prev => ({ ...prev, isLoading: true }));
         try {
           const { data, error } = await getSavedOutput(savedOutputId);
-          if (error) throw error;
+          if (error) {
+            if (error.code === 'PGRST116') {
+              console.warn('Saved output not found:', savedOutputId);
+              toast.error('Saved output not found. The link may be invalid or the output may have been deleted.');
+            } else {
+              throw error;
+            }
+            return;
+          }
           if (data) {
             loadFormStateFromSavedOutput(data);
             toast.success('Saved output loaded successfully!');
