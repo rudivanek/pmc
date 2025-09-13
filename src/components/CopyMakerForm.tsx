@@ -72,6 +72,9 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
   const [currentSuggestionField, setCurrentSuggestionField] = useState<string>('');
   const [displayMode, setDisplayMode] = useState<'all' | 'populated'>('all');
   const [isEvaluatingOriginalCopy, setIsEvaluatingOriginalCopy] = useState(false);
+  // Check if current user is admin
+  const isAdmin = currentUser?.email === 'rfv@datago.net';
+
 
   // Input field hooks
   const projectDescriptionField = useInputField({
