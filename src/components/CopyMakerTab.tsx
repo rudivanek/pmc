@@ -274,14 +274,8 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
       return;
     }
     
-    if (formState.tab === 'create' && !formState.businessDescription?.trim()) {
-      toast.error('Business Description is required. Please describe your business or product.');
-      businessDescriptionRef.current?.focus();
-      return;
-    }
-    
-    if (formState.tab === 'improve' && !formState.originalCopy?.trim()) {
-      toast.error('Original Copy is required. Please provide the copy you want to improve.');
+    if (!formState.originalCopy?.trim()) {
+      toast.error('Original Copy is required. Please provide content or describe what you want to achieve.');
       originalCopyRef.current?.focus();
       return;
     }

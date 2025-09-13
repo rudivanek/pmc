@@ -30,7 +30,7 @@ CRITICAL: You must respond with a valid JSON object only. No explanations, no ma
 The JSON should represent a FormState object with the following structure and guidelines:
 
 REQUIRED FIELDS:
-- originalCopy: string (primary content field - use this for the main content description)
+- originalCopy: string (UNIVERSAL primary content field - ALWAYS use this for the main content description regardless of whether creating new copy or improving existing copy)
 - projectDescription: string (internal organization field)
 - language: one of ["English", "Spanish", "French", "German", "Italian", "Portuguese"]
 - tone: one of ["Professional", "Friendly", "Bold", "Minimalist", "Creative", "Persuasive"]
@@ -59,6 +59,12 @@ OPTIONAL FIELDS TO POPULATE WHEN RELEVANT:
 - competitorUrls: string[] (max 3 URLs)
 - competitorCopyText: string
 - excludedTerms: string
+
+CRITICAL FIELD USAGE RULES:
+- ALWAYS populate originalCopy field with the main content description from the user's instruction
+- NEVER populate businessDescription field (it is deprecated and not used anymore)
+- originalCopy is used for both creating new copy and improving existing copy
+- The content in originalCopy should describe what the user wants to achieve or the copy they want to improve
 
 STRUCTURE AND FEATURES:
 - outputStructure: array of objects with {value: string, label: string, wordCount: number}
@@ -97,7 +103,9 @@ INSTRUCTIONS:
 5. Make the template immediately usable for content generation
 6. Include relevant SEO and optimization features when appropriate
 7. Set realistic word count allocations for output structure elements
-8. Consider the content type when setting tone, style, and features`;
+8. Consider the content type when setting tone, style, and features
+9. ALWAYS use originalCopy field for primary content, NEVER businessDescription
+10. NEVER include selectedPersona field - voice styles should be applied manually after generation`;
 
   // Build user prompt with examples
   const userPrompt = `Generate a comprehensive FormState JSON template based on this instruction:
@@ -147,7 +155,13 @@ EXAMPLE TEMPLATE STRUCTURE:
   "numH3Variants": 5
 }
 
-Generate a similar comprehensive template based on the user's instruction. Include all relevant fields and make logical inferences about what would make this template most effective.`;
+Generate a similar comprehensive template based on the user's instruction. Include all relevant fields and make logical inferences about what would make this template most effective.
+
+CRITICAL REMINDERS:
+- ALWAYS populate originalCopy with the main content description
+- NEVER populate businessDescription (deprecated field)
+- NEVER include selectedPersona field (voice styles are applied manually after generation)
+- The originalCopy field should contain a detailed description of what the user wants to achieve or the copy they want to create/improve`;
 
   // Store the prompts for display
   storePrompts(systemPrompt, userPrompt);
