@@ -1,10 +1,11 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, LogOut, BookOpen, HelpCircle, List } from 'lucide-react'; 
+import { LayoutDashboard, LogOut, BookOpen, HelpCircle, List, Lightbulb } from 'lucide-react'; 
 import { LuZap } from "react-icons/lu";
 import ThemeToggle from './ThemeToggle';
 import { useAuth } from '../hooks/useAuth';
 import BetaRegistrationModal from './BetaRegistrationModal';
+import TemplateSuggestionModal from './TemplateSuggestionModal';
 
 interface MainMenuProps {
   userName?: string;
@@ -17,6 +18,10 @@ const MainMenu: React.FC<MainMenuProps> = ({ userName, onLogout }) => {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
   const [isBetaModalOpen, setIsBetaModalOpen] = React.useState(false);
+  const [isTemplateSuggestionModalOpen, setIsTemplateSuggestionModalOpen] = React.useState(false);
+
+  // Check if current user is admin
+  const isAdmin = currentUser?.email === 'rfv@datago.net';
 
   return (
     <>
@@ -91,6 +96,17 @@ const MainMenu: React.FC<MainMenuProps> = ({ userName, onLogout }) => {
               >
                 <HelpCircle size={18} />
               </Link>
+              
+              {/* Template JSON Generator - Admin Only */}
+              {isAdmin && (
+                <button
+                  onClick={() => setIsTemplateSuggestionModalOpen(true)}
+                  className="p-2 rounded-md transition-colors duration-200 text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
+                  title="Template JSON Generator"
+                >
+                  <Lightbulb size={18} />
+                </button>
+              )}
               
               {/* Show Login button when user is not authenticated */}
               {!currentUser && (
@@ -170,6 +186,15 @@ const MainMenu: React.FC<MainMenuProps> = ({ userName, onLogout }) => {
       isOpen={isBetaModalOpen}
       onClose={() => setIsBetaModalOpen(false)}
     />
+    
+    {/* Template Suggestion Modal - Admin Only */}
+    {isAdmin && (
+      <TemplateSuggestionModal
+        isOpen={isTemplateSuggestionModalOpen}
+        onClose={() => setIsTemplateSuggestionModalOpen(false)}
+        currentUser={currentUser}
+      />
+    )}
     </>
   );
 };
