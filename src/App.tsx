@@ -297,6 +297,22 @@ const AppRouter: React.FC = () => {
   };
 
   // Handle applying template JSON to form
+  const handleApplyTemplateToForm = (templateData: Partial<FormState>) => {
+    setFormState(prevState => ({
+      ...prevState,
+      ...templateData,
+      // Reset runtime states to provide clean state after applying template
+      isLoading: false,
+      isEvaluating: false,
+      generationProgress: [],
+      copyResult: null,
+      promptEvaluation: null,
+      sessionId: uuidv4() // Generate new session ID for the new template application
+    }));
+    toast.success('Template applied to form successfully!');
+  };
+
+  // Handle applying template JSON to form
   // Show loading screen while initializing
   if (!isInitialized) {
     return (
