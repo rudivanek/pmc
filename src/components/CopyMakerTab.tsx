@@ -495,6 +495,11 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
           }
         }
       } else if (actionType === 'restyle' && selectedPersona) {
+        // Check if source content exists
+        if (!sourceItem.content) {
+          throw new Error('No content available to restyle. Please regenerate the content first.');
+        }
+        
         addProgressMessage(`Applying ${selectedPersona}'s voice to ${sourceItem.sourceDisplayName || sourceItem.type}...`);
         const { content: restyledContent, personaUsed } = await restyleCopyWithPersona(
           sourceItem.content,
