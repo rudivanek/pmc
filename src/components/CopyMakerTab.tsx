@@ -500,8 +500,8 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
           sourceItem.content,
           selectedPersona,
           formState.model,
-          formState.language,
           currentUser,
+          formState.language,
           formState,
           targetWordCount.target,
           addProgressMessage
@@ -511,11 +511,11 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
           id: uuidv4(),
           type: GeneratedContentItemType.RestyledImproved,
           content: restyledContent,
-          persona: personaUsed,
+          persona: personaUsed || selectedPersona,
           generatedAt: new Date().toISOString(),
           sourceId: sourceItem.id,
           sourceType: sourceItem.type,
-          sourceDisplayName: `${personaUsed}'s Voice from ${sourceItem.sourceDisplayName || sourceItem.type}`
+          sourceDisplayName: `${personaUsed || selectedPersona}'s Voice from ${sourceItem.sourceDisplayName || sourceItem.type}`
         };
         addProgressMessage(`Applied ${personaUsed}'s voice style.`);
         
