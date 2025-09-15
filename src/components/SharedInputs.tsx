@@ -219,11 +219,6 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
     if (typeof value === 'boolean') return value;
     if (Array.isArray(value)) return value.length > 0 && value.some(item => 
       typeof item === 'string' ? item.trim().length > 0 : !!item
-    );
-    if (typeof value === 'number') return !isNaN(value) && value !== 0;
-    return false;
-  };
-
   return (
     <div className="space-y-6">
       {/* COPY TARGETING SECTION */}
@@ -439,7 +434,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         </div>
 
         {/* Custom Word Count */}
-        {formData.wordCount === 'Custom' && (
+        {formData.wordCount === 'Custom' && (displayMode === 'all' || isFieldPopulated(formData.customWordCount)) && (
           <div className="mb-6">
             <div className="flex justify-between items-center">
               <label htmlFor="customWordCount" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -508,7 +503,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         )}
 
         {/* Tone Level Slider - HIDE in Smart Mode */}
-        {!isSmartMode && (
+        {!isSmartMode && (displayMode === 'all' || isFieldPopulated(formData.toneLevel)) && (
           <div className="mb-6">
             <div className="flex justify-between items-center mb-1">
               <label htmlFor="toneLevel" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -535,7 +530,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         )}
 
         {/* Preferred Writing Style - HIDE in Smart Mode */}
-        {!isSmartMode && (
+        {!isSmartMode && (displayMode === 'all' || isFieldPopulated(formData.preferredWritingStyle)) && (
           <div className="mb-6">
             <div className="flex justify-between items-center mb-1">
               <label htmlFor="preferredWritingStyle" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -559,7 +554,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         )}
 
         {/* Language Style Constraints - HIDE in Smart Mode */}
-        {!isSmartMode && (
+        {!isSmartMode && (displayMode === 'all' || isFieldPopulated(formData.languageStyleConstraints)) && (
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
               Language Style Constraints
@@ -585,7 +580,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         )}
 
         {/* Output Structure - HIDE in Smart Mode */}
-        {!isSmartMode && (
+        {!isSmartMode && (displayMode === 'all' || isFieldPopulated(formData.outputStructure)) && (
           <div>
             <label htmlFor="outputStructure" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Output Structure
@@ -785,7 +780,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         </div>
 
         {/* Competitor Copy (Text) - HIDE in Smart Mode */}
-        <div className={`${isSmartMode ? 'hidden' : ''} ${displayMode === 'populated' && !isFieldPopulated(formData.competitorCopyText) ? 'hidden' : ''}`}>
+        <div className={`mb-6 ${displayMode === 'populated' && !isFieldPopulated(formData.competitorCopyText) ? 'hidden' : ''}`}>
           <div>
             <div className="flex justify-between items-center mb-1">
               <label htmlFor="competitorCopyText" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
