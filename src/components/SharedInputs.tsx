@@ -219,6 +219,10 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
     if (typeof value === 'boolean') return value;
     if (Array.isArray(value)) return value.length > 0 && value.some(item => 
       typeof item === 'string' ? item.trim().length > 0 : !!item
+    );
+    return !!value;
+  };
+  
   return (
     <div className="space-y-6">
       {/* COPY TARGETING SECTION */}
