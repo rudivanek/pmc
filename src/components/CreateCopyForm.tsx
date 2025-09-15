@@ -98,10 +98,10 @@ const CreateCopyForm: React.FC<CreateCopyFormProps> = ({
   return (
     <div className="space-y-6">
       {/* Page Type & Section Type Grid */}
-      {(displayMode === 'all' || isFieldPopulated(formData.pageType) || isFieldPopulated(formData.section)) && (
+      {(displayMode === 'all' || (isFieldPopulated(formData.pageType) || isFieldPopulated(formData.section))) && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {/* Page Type Dropdown */}
-          <div className={`${displayMode === 'populated' && !isFieldPopulated(formData.pageType) ? 'hidden' : ''}`}>
+          {(displayMode === 'all' || isFieldPopulated(formData.pageType)) && (
             <div>
               <label htmlFor="pageType" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Page Type
@@ -120,10 +120,10 @@ const CreateCopyForm: React.FC<CreateCopyFormProps> = ({
                 ))}
               </select>
             </div>
-          </div>
+          )}
 
           {/* Section Type Dropdown */}
-          <div className={`${displayMode === 'populated' && !isFieldPopulated(formData.section) ? 'hidden' : ''}`}>
+          {(displayMode === 'all' || isFieldPopulated(formData.section)) && (
             <div>
               <label htmlFor="section" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Section
@@ -138,12 +138,12 @@ const CreateCopyForm: React.FC<CreateCopyFormProps> = ({
                 placeholder="e.g., Hero Section, Benefits, Features, FAQ..."
               />
             </div>
-          </div>
+          )}
         </div>
       )}
 
       {/* Business Description */}
-      <div className={`${displayMode === 'populated' && !isFieldPopulated(formData.businessDescription) ? 'hidden' : ''}`}>
+      {(displayMode === 'all' || isFieldPopulated(formData.businessDescription)) && (
         <div>
           <div className="flex justify-between items-center mb-1">
             <label htmlFor="businessDescription" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -189,7 +189,7 @@ const CreateCopyForm: React.FC<CreateCopyFormProps> = ({
             />
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
