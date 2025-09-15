@@ -189,7 +189,7 @@ const CreateCopyForm: React.FC<CreateCopyFormProps> = ({
             />
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };

@@ -646,6 +646,7 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
         formState={formState}
         setFormState={setFormState}
         setDisplayMode={setDisplayMode}
+        displayMode={displayMode}
       />
 
       {/* Project Setup Section */}
