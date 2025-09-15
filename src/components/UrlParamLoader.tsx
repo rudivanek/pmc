@@ -15,6 +15,7 @@ interface UrlParamLoaderProps {
   addProgressMessage: (message: string) => void;
   setLoadedTemplateId: (id: string | null) => void;
   setLoadedTemplateName: (name: string) => void;
+  setDisplayMode: (mode: 'all' | 'populated') => void;
 }
 
 const UrlParamLoader: React.FC<UrlParamLoaderProps> = ({
@@ -27,7 +28,8 @@ const UrlParamLoader: React.FC<UrlParamLoaderProps> = ({
   loadFormStateFromSavedOutput,
   addProgressMessage,
   setLoadedTemplateId,
-  setLoadedTemplateName
+  setLoadedTemplateName,
+  setDisplayMode
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -64,6 +66,7 @@ const UrlParamLoader: React.FC<UrlParamLoaderProps> = ({
           }
           if (data) {
             loadFormStateFromSession(data);
+            setDisplayMode('populated');
             toast.success('Session loaded successfully!');
           }
         } catch (error: any) {
@@ -100,6 +103,7 @@ const UrlParamLoader: React.FC<UrlParamLoaderProps> = ({
             loadFormStateFromTemplate(data);
             setLoadedTemplateId(data.id || null);
             setLoadedTemplateName(data.template_name || '');
+            setDisplayMode('populated');
             toast.success('Template loaded successfully!');
           }
         } catch (error: any) {
@@ -134,6 +138,7 @@ const UrlParamLoader: React.FC<UrlParamLoaderProps> = ({
           }
           if (data) {
             loadFormStateFromSavedOutput(data);
+            setDisplayMode('populated');
             toast.success('Saved output loaded successfully!');
           }
         } catch (error: any) {
