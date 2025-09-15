@@ -119,6 +119,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
       
       if (prefill) {
         loadFormStateFromPrefill(prefill);
+        setDisplayMode('populated');
         setPrefillEditingData(prev => ({
           ...prev!,
           originalLabel: isClone ? `${prefill.label} (Clone)` : prefill.label
