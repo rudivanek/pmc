@@ -216,17 +216,34 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
   const isFieldPopulated = (value: any): boolean => {
     if (value === null || value === undefined) return false;
     if (typeof value === 'string') return value.trim().length > 0;
-    if (typeof value === 'boolean') return value;
-    if (Array.isArray(value)) return value.length > 0 && value.some(item => 
-      typeof item === 'string' ? item.trim().length > 0 : !!item
-    );
-    return !!value;
+    if (Array.isArray(value)) return value.length > 0;
+    return false;
   };
-  
+
+  // Check if any field in the Copy Targeting section is populated
+  const hasPopulatedCopyTargetingFields = () => {
+    return isFieldPopulated(formData.industryNiche) ||
+           isFieldPopulated(formData.targetAudience) ||
+           isFieldPopulated(formData.readerFunnelStage) ||
+           isFieldPopulated(formData.competitorUrls?.some(url => url.trim())) ||
+           isFieldPopulated(formData.targetAudiencePainPoints) ||
+           isFieldPopulated(formData.competitorCopyText);
+  };
+
+  // Check if any field in the Strategic Messaging section is populated
+  const hasPopulatedStrategicMessagingFields = () => {
+    return isFieldPopulated(formData.keyMessage) ||
+           isFieldPopulated(formData.desiredEmotion) ||
+           isFieldPopulated(formData.callToAction) ||
+           isFieldPopulated(formData.brandValues) ||
+           isFieldPopulated(formData.keywords) ||
+           isFieldPopulated(formData.context);
+  };
+
   return (
     <div className="space-y-6">
       {/* COPY TARGETING SECTION */}
-      <div className={`${isSmartMode ? 'hidden' : ''}`}>
+      <div className={`${isSmartMode ? 'hidden' : ''} ${displayMode === 'populated' && !hasPopulatedCopyTargetingFields() ? 'hidden' : ''}`}>
         <Tooltip content="Describe your target audience and competitive landscape. The more precise this is, the better your copy will resonate with readers." delayDuration={300}>
           <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-4 pb-2 border-b border-gray-300 dark:border-gray-700 flex items-center">
             <div className="w-1 h-5 bg-primary-500 mr-2"></div>
@@ -309,7 +326,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         </div>
         
         {/* Competitor URLs */}
-        <div className={`space-y-3 mb-6 ${displayMode === 'populated' && !isFieldPopulated(formData.competitorUrls) ? 'hidden' : ''}`}>
+        <div className={`space-y-3 mb-6 ${displayMode === 'populated' && !isFieldPopulated(formData.competitorUrls?.some(url => url.trim())) ? 'hidden' : ''}`}>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Competitor URLs (Optional)
           </label>
@@ -438,7 +455,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         </div>
 
         {/* Custom Word Count */}
-        {formData.wordCount === 'Custom' && (displayMode === 'all' || isFieldPopulated(formData.customWordCount)) && (
+        {formData.wordCount === 'Custom' && (
           <div className="mb-6">
             <div className="flex justify-between items-center">
               <label htmlFor="customWordCount" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -507,7 +524,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         )}
 
         {/* Tone Level Slider - HIDE in Smart Mode */}
-        {!isSmartMode && (displayMode === 'all' || isFieldPopulated(formData.toneLevel)) && (
+        {!isSmartMode && (
           <div className="mb-6">
             <div className="flex justify-between items-center mb-1">
               <label htmlFor="toneLevel" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -534,7 +551,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         )}
 
         {/* Preferred Writing Style - HIDE in Smart Mode */}
-        {!isSmartMode && (displayMode === 'all' || isFieldPopulated(formData.preferredWritingStyle)) && (
+        {!isSmartMode && (
           <div className="mb-6">
             <div className="flex justify-between items-center mb-1">
               <label htmlFor="preferredWritingStyle" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -558,7 +575,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         )}
 
         {/* Language Style Constraints - HIDE in Smart Mode */}
-        {!isSmartMode && (displayMode === 'all' || isFieldPopulated(formData.languageStyleConstraints)) && (
+        {!isSmartMode && (
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
               Language Style Constraints
@@ -584,7 +601,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         )}
 
         {/* Output Structure - HIDE in Smart Mode */}
-        {!isSmartMode && (displayMode === 'all' || isFieldPopulated(formData.outputStructure)) && (
+        {!isSmartMode && (
           <div>
             <label htmlFor="outputStructure" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Output Structure
@@ -623,7 +640,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
       </div>
 
       {/* STRATEGIC MESSAGING SECTION */}
-      <div>
+      <div className={`${displayMode === 'populated' && !hasPopulatedStrategicMessagingFields() ? 'hidden' : ''}`}>
         <Tooltip content="Define the key message, emotions, and SEO keywords to guide your copy's core message and impact." delayDuration={300}>
           <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-4 pb-2 border-b border-gray-300 dark:border-gray-700 flex items-center">
             <div className="w-1 h-5 bg-primary-500 mr-2"></div>
@@ -659,7 +676,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         {/* Grid for smaller inputs - Moved from CreateCopyForm/ImproveCopyForm */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
           {/* Desired Emotion - HIDE in Smart Mode */}
-          <div className={`${isSmartMode ? 'hidden' : ''} ${displayMode === 'populated' && !isFieldPopulated(formData.desiredEmotion) ? 'hidden' : ''}`}>
+          {!isSmartMode && (displayMode === 'all' || isFieldPopulated(formData.desiredEmotion)) && (
             <div>
               <div className="flex justify-between items-center mb-1">
                 <label htmlFor="desiredEmotion" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -680,7 +697,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
                 onChange={desiredEmotionField.setInputValue}
               />
             </div>
-          </div>
+          )}
 
           {/* Call to Action */}
           <div className={`${isSmartMode ? 'col-span-full' : ''} ${displayMode === 'populated' && !isFieldPopulated(formData.callToAction) ? 'hidden' : ''}`}>
@@ -709,7 +726,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         </div>
 
         {/* Brand Values - HIDE in Smart Mode */}
-        <div className={`${isSmartMode ? 'hidden' : ''} ${displayMode === 'populated' && !isFieldPopulated(formData.brandValues) ? 'hidden' : ''}`}>
+        {!isSmartMode && (displayMode === 'all' || isFieldPopulated(formData.brandValues)) && (
           <div className="mb-6">
             <div className="flex justify-between items-center mb-1">
               <label htmlFor="brandValues" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -725,15 +742,15 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
             <TagInput
               id="brandValues"
               name="brandValues"
-              placeholder="e.g., Innovation, Reliability, Sustainability"
+              placeholder="e.g., Innovation, Reliability, Sustainability..."
               value={brandValuesField.inputValue}
               onChange={brandValuesField.setInputValue}
             />
           </div>
-        </div>
+        )}
 
         {/* Keywords - HIDE in Smart Mode */}
-        <div className={`${isSmartMode ? 'hidden' : ''} ${displayMode === 'populated' && !isFieldPopulated(formData.keywords) ? 'hidden' : ''}`}>
+        {!isSmartMode && (displayMode === 'all' || isFieldPopulated(formData.keywords)) && (
           <div className="mb-6">
             <div className="flex justify-between items-center mb-1">
               <label htmlFor="keywords" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -754,10 +771,10 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
               onChange={keywordsField.setInputValue}
             />
           </div>
-        </div>
+        )}
 
         {/* Context - HIDE in Smart Mode */}
-        <div className={`${isSmartMode ? 'hidden' : ''} ${displayMode === 'populated' && !isFieldPopulated(formData.context) ? 'hidden' : ''}`}>
+        {!isSmartMode && (displayMode === 'all' || isFieldPopulated(formData.context)) && (
           <div className="mb-6">
             <div className="flex justify-between items-center mb-1">
               <label htmlFor="context" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -781,10 +798,10 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
               onBlur={contextField.handleBlur}
             ></textarea>
           </div>
-        </div>
+        )}
 
         {/* Competitor Copy (Text) - HIDE in Smart Mode */}
-        <div className={`mb-6 ${displayMode === 'populated' && !isFieldPopulated(formData.competitorCopyText) ? 'hidden' : ''}`}>
+        {!isSmartMode && (displayMode === 'all' || isFieldPopulated(formData.competitorCopyText)) && (
           <div>
             <div className="flex justify-between items-center mb-1">
               <label htmlFor="competitorCopyText" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -809,7 +826,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
               onBlur={competitorCopyTextField.handleBlur}
             ></textarea>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
