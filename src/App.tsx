@@ -40,6 +40,9 @@ const AppRouter: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   
+  // Display mode state for form field filtering
+  const [displayMode, setDisplayMode] = useState<'all' | 'populated'>('all');
+  
   // Prompt modal state
   const [showPromptModal, setShowPromptModal] = useState(false);
   const [systemPrompt, setSystemPrompt] = useState('');
@@ -358,6 +361,7 @@ const AppRouter: React.FC = () => {
         addProgressMessage={addProgressMessage}
         setLoadedTemplateId={setLoadedTemplateId}
         setLoadedTemplateName={setLoadedTemplateName}
+        setDisplayMode={setDisplayMode}
       />
       
       <MainMenu 

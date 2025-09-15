@@ -47,17 +47,25 @@ const CreateCopyForm: React.FC<CreateCopyFormProps> = ({
   const businessDescriptionWordCount = countWords(businessDescriptionField.inputValue);
   
   // Helper function to check if a field is populated
-  const isFieldPopulated = (value: any): boolean => {
+  const isFieldPopulated = (value: any, fieldType: 'string' | 'select' | 'textarea' = 'string'): boolean => {
     if (value === null || value === undefined) return false;
     if (typeof value === 'string') return value.trim().length > 0;
-    if (typeof value === 'boolean') return value;
-    if (Array.isArray(value)) return value.length > 0 && value.some(item => 
-      typeof item === 'string' ? item.trim().length > 0 : !!item
-    );
-    if (typeof value === 'number') return !isNaN(value) && value !== 0;
+    if (typeof value === 'boolean') return value === true;
+    if (Array.isArray(value)) return value.length > 0;
     return false;
   };
 
+  // Check if any field in this form is populated
+  const hasPopulatedFields = () => {
+    return isFieldPopulated(formData.pageType) ||
+           isFieldPopulated(formData.section) ||
+           isFieldPopulated(formData.businessDescription);
+  };
+
+  // Don't render anything if display mode is 'populated' and no fields are populated
+  if (displayMode === 'populated' && !hasPopulatedFields()) {
+    return null;
+  }
   // Function to evaluate the business description
   const evaluateBusinessDescription = async () => {
     // Remove the length check to allow evaluation even with shorter content
