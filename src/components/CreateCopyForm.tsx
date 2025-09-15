@@ -98,10 +98,10 @@ const CreateCopyForm: React.FC<CreateCopyFormProps> = ({
   return (
     <div className="space-y-6">
       {/* Page Type & Section Type Grid */}
-      {(displayMode === 'all' || (isFieldPopulated(formData.pageType) || isFieldPopulated(formData.section))) && (
+      {(displayMode === 'all' || isFieldPopulated(formData.pageType) || isFieldPopulated(formData.section)) && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {/* Page Type Dropdown */}
-          {(displayMode === 'all' || isFieldPopulated(formData.pageType)) && (
+          <div className={`${displayMode === 'populated' && !isFieldPopulated(formData.pageType) ? 'hidden' : ''}`}>
             <div>
               <label htmlFor="pageType" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Page Type
@@ -120,10 +120,10 @@ const CreateCopyForm: React.FC<CreateCopyFormProps> = ({
                 ))}
               </select>
             </div>
-          )}
+          </div>
 
           {/* Section Type Dropdown */}
-          {(displayMode === 'all' || isFieldPopulated(formData.section)) && (
+          <div className={`${displayMode === 'populated' && !isFieldPopulated(formData.section) ? 'hidden' : ''}`}>
             <div>
               <label htmlFor="section" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Section
@@ -138,12 +138,12 @@ const CreateCopyForm: React.FC<CreateCopyFormProps> = ({
                 placeholder="e.g., Hero Section, Benefits, Features, FAQ..."
               />
             </div>
-          )}
+          </div>
         </div>
       )}
 
       {/* Business Description */}
-      {(displayMode === 'all' || isFieldPopulated(formData.businessDescription)) && (
+      <div className={`${displayMode === 'populated' && !isFieldPopulated(formData.businessDescription) ? 'hidden' : ''}`}>
         <div>
           <div className="flex justify-between items-center mb-1">
             <label htmlFor="businessDescription" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
