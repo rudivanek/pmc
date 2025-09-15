@@ -786,6 +786,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
             businessDescriptionRef={businessDescriptionRef}
             originalCopyRef={originalCopyRef}
             isPrefillEditingMode={isPrefillEditingMode}
+            displayMode={displayMode}
           />
           
           {/* Prefill Action Buttons */}
