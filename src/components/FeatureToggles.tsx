@@ -341,7 +341,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
       </div>
       
       {/* Word Count Tolerance Percentage - Only show when prioritizeWordCount is enabled */}
-      {formData.prioritizeWordCount && (
+      {formData.prioritizeWordCount && (displayMode === 'all' || isFieldPopulated(formData.wordCountTolerancePercentage)) && (
         <div className="ml-6 mt-2">
           <div className="flex items-center space-x-2">
             <label htmlFor="wordCountTolerancePercentage" className="text-xs text-gray-600 dark:text-gray-400">
@@ -367,7 +367,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
       )}
       
       {/* Little Word Count Adherence Toggle - Only show for targets below 100 words */}
-      {isLittleWordCount && (
+      {isLittleWordCount && (displayMode === 'all' || isFieldPopulated(formData.adhereToLittleWordCount)) && (
         <div className={`flex items-start ${displayMode === 'populated' && !isFieldPopulated(formData.adhereToLittleWordCount) ? 'hidden' : ''}`}>
           <div className="flex items-start">
             <Checkbox
@@ -396,6 +396,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
               </Label>
               
               {formData.adhereToLittleWordCount && (
+              {formData.adhereToLittleWordCount && (displayMode === 'all' || isFieldPopulated(formData.littleWordCountTolerancePercentage)) && (
                 <div className="mt-2">
                   <div className="flex items-center space-x-2">
                     <label htmlFor="littleWordCountTolerancePercentage" className="text-xs text-gray-600 dark:text-gray-400">
@@ -590,7 +591,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
       )}
       
       {/* Target Countries or Regions - Only show when GEO is enabled */}
-      {formData.enhanceForGEO && (
+      {formData.enhanceForGEO && (displayMode === 'all' || isFieldPopulated(formData.geoRegions)) && (
         <div className={`ml-6 mt-2 ${displayMode === 'populated' && !isFieldPopulated(formData.geoRegions) ? 'hidden' : ''}`}>
           <label htmlFor="geoRegions" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Target Countries or Regions
