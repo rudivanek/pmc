@@ -1368,5 +1368,14 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
                 name="brandValues"
                 placeholder="e.g., Innovation, Reliability, Sustainability"
                 value={brandValuesField.inputValue}
-               onChange={brandValuesField.setInputValue}
-             />
+                onChange={brandValuesField.setInputValue}
+              />
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default CopyMakerForm;
