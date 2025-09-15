@@ -313,7 +313,7 @@ Use alternative terminology only if it doesn't interfere with the exact word cou
       formState.model,
       'generate_humanized_copy',
       formState.briefDescription || 'Generate humanized copy',
-      formState.sessionId,
+      undefined, // Don't pass sessionId to avoid foreign key constraint violations
       formState.projectDescription
     );
     

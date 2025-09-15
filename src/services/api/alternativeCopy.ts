@@ -324,7 +324,7 @@ ${formState.geoRegions && formState.geoRegions.trim()
       formState.model,
       'generate_alternative_copy',
       formState.briefDescription || 'Generate alternative copy',
-      formState.sessionId,
+      undefined, // Don't pass sessionId to avoid foreign key constraint violations
       formState.projectDescription
     );
     

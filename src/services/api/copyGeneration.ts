@@ -129,7 +129,7 @@ export async function generateCopy(
       formState.model,
       `generate_${formState.tab}_copy`,
       formState.briefDescription || `Generate ${formState.tab} copy`,
-      actualSessionId,
+      undefined, // Don't pass sessionId until session is created in database
       formState.projectDescription
     );
     
@@ -329,6 +329,7 @@ export async function generateCopy(
           console.error('Error updating copy session:', sessionError);
         } else {
           console.log('Copy session updated:', sessionData?.id);
+          // Now that session exists, we could track additional token usage with sessionId if needed
         }
       } catch (err) {
         console.error('Error saving copy session:', err);
@@ -347,6 +348,7 @@ export async function generateCopy(
         } else {
           console.log('New copy session created:', sessionData?.id);
           result.sessionId = sessionData?.id || actualSessionId;
+          // Session now exists, could track additional token usage with sessionId if needed
         }
       } catch (err) {
         console.error('Error creating new copy session:', err);

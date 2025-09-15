@@ -197,7 +197,7 @@ IMPORTANT:
       formState.model,
       'calculate_geo_score',
       'Calculate GEO optimization score',
-      formState.sessionId,
+      undefined, // Don't pass sessionId to avoid foreign key constraint violations
       formState.projectDescription
     );
     
