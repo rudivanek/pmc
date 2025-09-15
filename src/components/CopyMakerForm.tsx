@@ -1366,4 +1366,5 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
               <TagInput
                 id="brandValues"
                 name="brandValues"
-                placeholder="e.g., Innovation
+                placeholder="e.g., Innovation, Reliability, Sustainability"
+                value={brandValuesField.inputValue}
