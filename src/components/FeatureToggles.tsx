@@ -395,7 +395,6 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
                 </Tooltip>
               </Label>
               
-              {formData.adhereToLittleWordCount && (
               {formData.adhereToLittleWordCount && (displayMode === 'all' || isFieldPopulated(formData.littleWordCountTolerancePercentage)) && (
                 <div className="mt-2">
                   <div className="flex items-center space-x-2">
@@ -420,7 +419,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
                   </p>
                 </div>
               )}
-              </div>
+            </div>
           </div>
         </div>
       )}
@@ -514,7 +513,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
         <div className="flex items-start">
           {/* Check if structured output is selected */}
           {(() => {
-            const hasStructuredOutput = formState.outputStructure && formState.outputStructure.length > 0;
+            const hasStructuredOutput = formData.outputStructure && formData.outputStructure.length > 0;
             return (
               <>
           <Checkbox
