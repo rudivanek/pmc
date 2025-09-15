@@ -725,7 +725,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
             <TagInput
               id="brandValues"
               name="brandValues"
-              placeholder="e.g., Innovation, Reliability, Sustainability..."
+             placeholder="e.g., Innovation, Reliability, Sustainability"
               value={brandValuesField.inputValue}
               onChange={brandValuesField.setInputValue}
             />
