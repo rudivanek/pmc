@@ -397,6 +397,26 @@ const CopyForm: React.FC<CopyFormProps> = ({
               </>
             )}
           </button>
+          
+          {/* Display Mode Toggle */}
+          <button
+            type="button"
+            onClick={() => setDisplayMode(displayMode === 'all' ? 'populated' : 'all')}
+            className="flex items-center bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 px-3 py-2 rounded-md text-sm transition-colors"
+            title={displayMode === 'all' ? 'Show only populated fields' : 'Show all fields'}
+          >
+            {displayMode === 'all' ? (
+              <>
+                <Filter size={16} className="mr-1.5" />
+                Show Populated
+              </>
+            ) : (
+              <>
+                <List size={16} className="mr-1.5" />
+                Show All Fields
+              </>
+            )}
+          </button>
         </div>
       </div>
       
@@ -625,24 +645,6 @@ const CopyForm: React.FC<CopyFormProps> = ({
                 </button>
               </Tooltip>
             )}
-          </div>
-        </div>
-      )}
-
-      {/* Display Mode Floating Buttons - Second Group */}
-      {shouldShowFloatingButtons() && (
-        <div className="fixed top-1/2 left-4 transform translate-y-16 z-40">
-          <div className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg p-2 space-y-2">
-            {/* Toggle Display Mode */}
-            <Tooltip content={displayMode === 'all' ? 'Show only populated fields' : 'Show all fields'}>
-              <button
-                onClick={() => setDisplayMode(displayMode === 'all' ? 'populated' : 'all')}
-                className="w-10 h-10 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
-                title={displayMode === 'all' ? 'Show only populated fields' : 'Show all fields'}
-              >
-                {displayMode === 'all' ? <Filter size={18} /> : <List size={18} />}
-              </button>
-            </Tooltip>
           </div>
         </div>
       )}

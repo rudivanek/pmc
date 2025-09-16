@@ -13,6 +13,7 @@ import ContentQualityIndicator from './ui/ContentQualityIndicator';
 import { Tooltip } from './ui/Tooltip';
 import CategoryTagsInput from './ui/CategoryTagsInput';
 import { calculateTargetWordCount } from '../services/api/utils';
+import { isFieldPopulated } from '../utils/formUtils';
 
 interface SharedInputsProps {
   formData: FormState;
@@ -26,19 +27,6 @@ interface SharedInputsProps {
   setFormState: (formState: FormState) => void;
   displayMode: 'all' | 'populated';
 }
-
-// Helper function to check if a field is populated
-const isFieldPopulated = (value: any): boolean => {
-  if (value === null || value === undefined) return false;
-  if (typeof value === 'string') return value.trim().length > 0;
-  if (typeof value === 'number') return value > 0;
-  if (typeof value === 'boolean') return value === true;
-  if (Array.isArray(value)) return value.length > 0 && value.some(item => 
-    typeof item === 'string' ? item.trim().length > 0 : true
-  );
-  if (typeof value === 'object') return Object.keys(value).length > 0;
-  return false;
-};
 
 const SharedInputs: React.FC<SharedInputsProps> = ({ 
   formData, 
@@ -409,6 +397,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
           {/* Language Dropdown */}
+          {(displayMode === 'all' || isFieldPopulated(formData.language !== 'English')) && (
           <div>
             <label htmlFor="language" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Language
@@ -427,8 +416,10 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
               ))}
             </select>
           </div>
+          )}
 
           {/* Tone Dropdown */}
+          {(displayMode === 'all' || isFieldPopulated(formData.tone !== 'Professional')) && (
           <div>
             <label htmlFor="tone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Tone
@@ -447,8 +438,10 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
               ))}
             </select>
           </div>
+          )}
 
           {/* Word Count Dropdown */}
+          {(displayMode === 'all' || isFieldPopulated(formData.wordCount !== 'Medium: 100-200')) && (
           <div>
             <label htmlFor="wordCount" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Target Word Count
@@ -467,10 +460,11 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
               ))}
             </select>
           </div>
+          )}
         </div>
 
         {/* Custom Word Count */}
-        {formData.wordCount === 'Custom' && (
+        {formData.wordCount === 'Custom' && (displayMode === 'all' || isFieldPopulated(formData.customWordCount)) && (
           <div className="mb-6">
             <div className="flex justify-between items-center">
               <label htmlFor="customWordCount" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -539,7 +533,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         )}
 
         {/* Tone Level Slider - HIDE in Smart Mode */}
-        {!isSmartMode && (
+        {!isSmartMode && (displayMode === 'all' || isFieldPopulated(formData.toneLevel !== 50)) && (
           <div className="mb-6">
             <div className="flex justify-between items-center mb-1">
               <label htmlFor="toneLevel" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -566,7 +560,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         )}
 
         {/* Preferred Writing Style - HIDE in Smart Mode */}
-        {!isSmartMode && (
+        {!isSmartMode && (displayMode === 'all' || isFieldPopulated(formData.preferredWritingStyle)) && (
           <div className="mb-6">
             <div className="flex justify-between items-center mb-1">
               <label htmlFor="preferredWritingStyle" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -590,7 +584,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         )}
 
         {/* Language Style Constraints - HIDE in Smart Mode */}
-        {!isSmartMode && (
+        {!isSmartMode && (displayMode === 'all' || isFieldPopulated(formData.languageStyleConstraints)) && (
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
               Language Style Constraints
@@ -616,7 +610,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         )}
 
         {/* Output Structure - HIDE in Smart Mode */}
-        {!isSmartMode && (
+        {!isSmartMode && (displayMode === 'all' || isFieldPopulated(formData.outputStructure)) && (
           <div>
             <label htmlFor="outputStructure" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Output Structure
