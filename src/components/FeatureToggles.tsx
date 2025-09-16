@@ -13,13 +13,15 @@ interface FeatureTogglesProps {
   handleToggle: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleChange: (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => void;
   isSmartMode: boolean; // Add prop for Smart Mode
+  displayMode: 'all' | 'populated';
 }
 
 const FeatureToggles: React.FC<FeatureTogglesProps> = ({ 
   formData, 
   handleToggle, 
   handleChange,
-  isSmartMode // Add isSmartMode prop
+  isSmartMode, // Add isSmartMode prop
+  displayMode
 }) => {
   // Initialize locationField using useInputField hook
   const locationField = useInputField({
@@ -63,6 +65,17 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
     });
   }, [formData.wordCount, formData.customWordCount, isLittleWordCount]);
   
+  // Helper function to check if a field is populated
+  const isFieldPopulated = (value: any): boolean => {
+    if (value === null || value === undefined) return false;
+    if (typeof value === 'string') return value.trim().length > 0;
+    if (typeof value === 'number') return value > 0;
+    if (typeof value === 'boolean') return value === true;
+    if (Array.isArray(value)) return value.length > 0;
+    if (typeof value === 'object') return Object.keys(value).length > 0;
+    return false;
+  };
+  
   return (
     <div className="space-y-3 py-4 border-t border-gray-300 dark:border-gray-800">
       <Tooltip content="Enhance your output with alternative versions, humanized styles, scoring, and voice emulation options." delayDuration={300}>
@@ -73,6 +86,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
       </Tooltip>
       
       <div className="flex items-start">
+      {(displayMode === 'all' || isFieldPopulated(formData.generateSeoMetadata)) && (
         <Checkbox
           id="generateSeoMetadata"
           checked={formData.generateSeoMetadata || false}
@@ -237,9 +251,12 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
             </div>
           )}
         </div>
+      )}
+      )}
       </div>
       
       {/* Little Word Count Adherence Toggle - Only show for targets below 100 words */}
+      {(displayMode === 'all' || isFieldPopulated(formData.generateScores)) && (
       <div className="flex items-center">
         <Checkbox
           id="generateScores"
@@ -264,8 +281,10 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
           </Tooltip>
         </Label>
       </div>
+      )}
       
       {/* GEO Score Generation Toggle */}
+      {(displayMode === 'all' || isFieldPopulated(formData.generateGeoScore)) && (
       <div className="flex items-center">
         <Checkbox
           id="generateGeoScore"
@@ -290,8 +309,10 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
           </Tooltip>
         </Label>
       </div>
+      )}
       
       {/* Strict Word Count Adherence Toggle */}
+      {(displayMode === 'all' || isFieldPopulated(formData.prioritizeWordCount)) && (
       <div className="flex items-center">
         <Checkbox
           id="prioritizeWordCount"
@@ -317,6 +338,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
           </Tooltip>
         </Label>
       </div>
+      )}
       
       {/* Word Count Tolerance Percentage - Only show when prioritizeWordCount is enabled */}
       {formData.prioritizeWordCount && (
@@ -346,6 +368,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
       
       {/* Little Word Count Adherence Toggle - Only show for targets below 100 words */}
       {isLittleWordCount && (
+      {(displayMode === 'all' || isFieldPopulated(formData.adhereToLittleWordCount)) && (
         <div className="flex items-start">
           <Checkbox
             id="adhereToLittleWordCount"
@@ -399,8 +422,10 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
           </div>
         </div>
       )}
+      )}
       
       {/* New option for SEO keyword integration */}
+      {(displayMode === 'all' || isFieldPopulated(formData.forceKeywordIntegration)) && (
       <div className="flex items-center">
         <Checkbox
           id="forceKeywordIntegration"
@@ -425,8 +450,10 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
           </Tooltip>
         </Label>
       </div>
+      )}
 
       {/* Force detailed elaborations and examples */}
+      {(displayMode === 'all' || isFieldPopulated(formData.forceElaborationsExamples)) && (
       <div className="flex items-center">
         <Checkbox
           id="forceElaborationsExamples"
@@ -451,8 +478,10 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
           </Tooltip>
         </Label>
       </div>
+      )}
 
       {/* New option for GEO enhancement */}
+      {(displayMode === 'all' || isFieldPopulated(formData.enhanceForGEO)) && (
       <div className="flex items-center">
         <Checkbox
           id="enhanceForGEO"
@@ -477,9 +506,11 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
           </Tooltip>
         </Label>
       </div>
+      )}
 
       {/* TL;DR Summary Toggle - Only show when GEO is enabled */}
       {formData.enhanceForGEO && (
+      {(displayMode === 'all' || isFieldPopulated(formData.addTldrSummary)) && (
         <div className="flex items-start">
           {/* Check if structured output is selected */}
           {(() => {
@@ -561,7 +592,8 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
       
       {/* Target Countries or Regions - Only show when GEO is enabled */}
       {formData.enhanceForGEO && (
-        <div className="ml-6 mt-2">
+      {(displayMode === 'all' || isFieldPopulated(formData.geoRegions)) && (
+      <div className="ml-6 mt-2">
           <label htmlFor="geoRegions" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Target Countries or Regions
           </label>
@@ -578,6 +610,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
             Enter countries, regions, or cities to help tailor the content for local AI search results (e.g., México, LATAM, CDMX, España).
           </p>
         </div>
+      )}
       )}
     </div>
   );

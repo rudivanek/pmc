@@ -50,6 +50,10 @@ const ImproveCopyForm: React.FC<ImproveCopyFormProps> = ({
   const isFieldPopulated = (value: any): boolean => {
     if (value === null || value === undefined) return false;
     if (typeof value === 'string') return value.trim().length > 0;
+    if (typeof value === 'number') return value > 0;
+    if (typeof value === 'boolean') return value === true;
+    if (Array.isArray(value)) return value.length > 0;
+    if (typeof value === 'object') return Object.keys(value).length > 0;
     return false;
   };
 
@@ -106,7 +110,7 @@ const ImproveCopyForm: React.FC<ImproveCopyFormProps> = ({
     <div className="space-y-6">
       {/* Section Dropdown */}
       {(displayMode === 'all' || isFieldPopulated(formData.section)) && (
-        <div>
+      <div>
           <label htmlFor="section" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Section
           </label>
@@ -124,7 +128,7 @@ const ImproveCopyForm: React.FC<ImproveCopyFormProps> = ({
 
       {/* Original Copy */}
       {(displayMode === 'all' || isFieldPopulated(formData.originalCopy)) && (
-        <div>
+      <div>
           <div className="mb-1">
             <label htmlFor="originalCopy" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Original Copy or Describe what you want to achieve <span className="text-red-500">*</span>
@@ -160,7 +164,7 @@ const ImproveCopyForm: React.FC<ImproveCopyFormProps> = ({
 
       {/* Exclude Specific Terms */}
       {(displayMode === 'all' || isFieldPopulated(formData.excludedTerms)) && (
-        <div>
+      <div>
           <label htmlFor="excludedTerms" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Exclude specific terms from output
           </label>
