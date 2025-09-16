@@ -21,7 +21,6 @@ import { Label } from './ui/label';
 import { Tooltip } from './ui/Tooltip';
 import { Download, Upload, User as UserIcon, Plus, Zap, Save, Lightbulb, List, Filter, InfoIcon } from 'lucide-react';
 import { calculateTargetWordCount } from '../services/api/utils';
-import { isFieldPopulated } from '../utils/formUtils';
 
 interface CopyMakerFormProps {
   currentUser?: User;
@@ -519,6 +518,14 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
   // Calculate the effective target word count using the shared utility function
   const effectiveTargetWordCount = calculateTargetWordCount(formState);
 
+  // Helper function to check if a field is populated
+  const isFieldPopulated = (value: any): boolean => {
+    if (value === null || value === undefined) return false;
+    if (typeof value === 'string') return value.trim().length > 0;
+    if (Array.isArray(value)) return value.length > 0;
+    return false;
+  };
+
   // Function to count words in a string
   const countWords = (text: string): number => {
     return text.trim() ? text.trim().split(/\s+/).length : 0;
@@ -652,7 +659,6 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
           </Tooltip>
 
           {/* Model Selection */}
-          {(displayMode === 'all' || isFieldPopulated(formState.model !== 'deepseek-chat')) && (
           <div className="mb-6">
             <label htmlFor="model" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               AI Model
@@ -671,10 +677,8 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
               ))}
             </select>
           </div>
-          )}
 
           {/* Project Description */}
-          {(displayMode === 'all' || isFieldPopulated(formState.projectDescription)) && (
           <div className="mb-6">
             <label htmlFor="projectDescription" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Project Description <span className="text-red-500">*</span>
@@ -695,12 +699,9 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
               Internal field for your organization - not sent to AI. Helps you identify and manage projects.
             </p>
           </div>
-          )}
 
           {/* Customer Selection */}
-          {(displayMode === 'all' || isFieldPopulated(formState.customerId) || isFieldPopulated(formState.productServiceName)) && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
-            {(displayMode === 'all' || isFieldPopulated(formState.customerId)) && (
             <div>
               <label htmlFor="customerId" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Customer
@@ -721,9 +722,7 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
                 ))}
               </select>
             </div>
-            )}
 
-            {(displayMode === 'all' || isFieldPopulated(formState.productServiceName)) && (
             <div>
               <label htmlFor="productServiceName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Product/Service Name
@@ -739,11 +738,8 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
                 onBlur={productServiceNameField.handleBlur}
               />
             </div>
-            )}
           </div>
-          )}
 
-          {(displayMode === 'all' || isFieldPopulated(formState.briefDescription)) && (
           <div>
             <label htmlFor="briefDescription" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Brief Description
@@ -759,7 +755,6 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
               onBlur={briefDescriptionField.handleBlur}
             />
           </div>
-          )}
         </div>
       </div>
 
@@ -1992,3 +1987,37 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
           </div>
         </div>
       )}
+
+      {/* Display Mode Floating Buttons - Second Group */}
+      {shouldShowFloatingButtons() && (
+        <div className="fixed top-1/2 left-4 transform translate-y-16 z-40">
+          <div className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg p-2 space-y-2">
+            {/* Toggle Display Mode */}
+            <Tooltip content={displayMode === 'all' ? 'Show only populated fields' : 'Show all fields'}>
+              <button
+                onClick={() => setDisplayMode(displayMode === 'all' ? 'populated' : 'all')}
+                className="w-10 h-10 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
+                title={displayMode === 'all' ? 'Show only populated fields' : 'Show all fields'}
+              >
+                {displayMode === 'all' ? <Filter size={18} /> : <List size={18} />}
+              </button>
+            </Tooltip>
+          </div>
+        </div>
+      )}
+
+      {/* Suggestion Modal */}
+      {showSuggestionModal && (
+        <SuggestionModal
+          fieldType={currentSuggestionField}
+          suggestions={currentSuggestions}
+          onClose={() => setShowSuggestionModal(false)}
+          onInsert={handleInsertSuggestions}
+          isLoading={isLoadingSuggestions}
+        />
+      )}
+    </div>
+  );
+};
+
+export default CopyMakerForm;

@@ -13,7 +13,6 @@ import ContentQualityIndicator from './ui/ContentQualityIndicator';
 import { Tooltip } from './ui/Tooltip';
 import CategoryTagsInput from './ui/CategoryTagsInput';
 import { calculateTargetWordCount } from '../services/api/utils';
-import { isFieldPopulated } from '../utils/formUtils';
 
 interface SharedInputsProps {
   formData: FormState;
@@ -213,6 +212,14 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
   // Calculate the effective target word count using the shared utility function
   const effectiveTargetWordCount = calculateTargetWordCount(formData);
 
+  // Helper function to check if a field is populated
+  const isFieldPopulated = (value: any): boolean => {
+    if (value === null || value === undefined) return false;
+    if (typeof value === 'string') return value.trim().length > 0;
+    if (Array.isArray(value)) return value.length > 0;
+    return false;
+  };
+
   // Check if any field in the Copy Targeting section is populated
   const hasPopulatedCopyTargetingFields = () => {
     return isFieldPopulated(formData.industryNiche) ||
@@ -245,8 +252,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         </Tooltip>
         
         {/* Industry/Niche - Enhanced field with categories */}
-        {(displayMode === 'all' || isFieldPopulated(formData.industryNiche)) && (
-        <div className="mb-6">
+        <div className={`mb-6 ${displayMode === 'populated' && !isFieldPopulated(formData.industryNiche) ? 'hidden' : ''}`}>
           <div className="flex justify-between items-center mb-1">
             <label htmlFor="industryNiche" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Industry/Niche
@@ -270,11 +276,9 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
             Select your industry or add a custom one to get more targeted copy
           </p>
         </div>
-        )}
 
         {/* Target Audience - Moved from CreateCopyForm/ImproveCopyForm */}
-        {(displayMode === 'all' || isFieldPopulated(formData.targetAudience)) && (
-        <div className="mb-6">
+        <div className={`mb-6 ${displayMode === 'populated' && !isFieldPopulated(formData.targetAudience) ? 'hidden' : ''}`}>
           <div className="flex justify-between items-center mb-1">
             <label htmlFor="targetAudience" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Target Audience
@@ -298,11 +302,9 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
             onBlur={targetAudienceField.handleBlur}
           ></textarea>
         </div>
-        )}
 
         {/* Reader's Stage in Funnel */}
-        {(displayMode === 'all' || isFieldPopulated(formData.readerFunnelStage)) && (
-        <div className="mb-6">
+        <div className={`mb-6 ${displayMode === 'populated' && !isFieldPopulated(formData.readerFunnelStage) ? 'hidden' : ''}`}>
           <div className="flex justify-between items-center mb-1">
             <label htmlFor="readerFunnelStage" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Reader's Stage in Funnel
@@ -322,11 +324,9 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
             onChange={handleReaderFunnelStageChange}
           />
         </div>
-        )}
         
         {/* Competitor URLs */}
-        {(displayMode === 'all' || isFieldPopulated(formData.competitorUrls?.some(url => url.trim()))) && (
-        <div className="space-y-3 mb-6">
+        <div className={`space-y-3 mb-6 ${displayMode === 'populated' && !isFieldPopulated(formData.competitorUrls?.some(url => url.trim())) ? 'hidden' : ''}`}>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Competitor URLs (Optional)
           </label>
@@ -355,11 +355,9 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
             onBlur={competitorUrl3Field.handleBlur}
           />
         </div>
-        )}
 
         {/* Target Audience Pain Points - With suggestion button */}
-        {(displayMode === 'all' || isFieldPopulated(formData.targetAudiencePainPoints)) && (
-        <div className="mb-6">
+        <div className={`mb-6 ${displayMode === 'populated' && !isFieldPopulated(formData.targetAudiencePainPoints) ? 'hidden' : ''}`}>
           <div className="flex justify-between items-center mb-1">
             <label htmlFor="targetAudiencePainPoints" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Target Audience Pain Points
@@ -382,7 +380,6 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
             onBlur={targetAudiencePainPointsField.handleBlur}
           ></textarea>
         </div>
-        )}
 
       </div>
 
@@ -397,7 +394,6 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
           {/* Language Dropdown */}
-          {(displayMode === 'all' || isFieldPopulated(formData.language !== 'English')) && (
           <div>
             <label htmlFor="language" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Language
@@ -416,10 +412,8 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
               ))}
             </select>
           </div>
-          )}
 
           {/* Tone Dropdown */}
-          {(displayMode === 'all' || isFieldPopulated(formData.tone !== 'Professional')) && (
           <div>
             <label htmlFor="tone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Tone
@@ -438,10 +432,8 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
               ))}
             </select>
           </div>
-          )}
 
           {/* Word Count Dropdown */}
-          {(displayMode === 'all' || isFieldPopulated(formData.wordCount !== 'Medium: 100-200')) && (
           <div>
             <label htmlFor="wordCount" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Target Word Count
@@ -460,11 +452,10 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
               ))}
             </select>
           </div>
-          )}
         </div>
 
         {/* Custom Word Count */}
-        {formData.wordCount === 'Custom' && (displayMode === 'all' || isFieldPopulated(formData.customWordCount)) && (
+        {formData.wordCount === 'Custom' && (
           <div className="mb-6">
             <div className="flex justify-between items-center">
               <label htmlFor="customWordCount" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -533,7 +524,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         )}
 
         {/* Tone Level Slider - HIDE in Smart Mode */}
-        {!isSmartMode && (displayMode === 'all' || isFieldPopulated(formData.toneLevel !== 50)) && (
+        {!isSmartMode && (
           <div className="mb-6">
             <div className="flex justify-between items-center mb-1">
               <label htmlFor="toneLevel" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -560,7 +551,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         )}
 
         {/* Preferred Writing Style - HIDE in Smart Mode */}
-        {!isSmartMode && (displayMode === 'all' || isFieldPopulated(formData.preferredWritingStyle)) && (
+        {!isSmartMode && (
           <div className="mb-6">
             <div className="flex justify-between items-center mb-1">
               <label htmlFor="preferredWritingStyle" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -584,7 +575,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         )}
 
         {/* Language Style Constraints - HIDE in Smart Mode */}
-        {!isSmartMode && (displayMode === 'all' || isFieldPopulated(formData.languageStyleConstraints)) && (
+        {!isSmartMode && (
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
               Language Style Constraints
@@ -610,7 +601,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         )}
 
         {/* Output Structure - HIDE in Smart Mode */}
-        {!isSmartMode && (displayMode === 'all' || isFieldPopulated(formData.outputStructure)) && (
+        {!isSmartMode && (
           <div>
             <label htmlFor="outputStructure" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Output Structure
@@ -658,8 +649,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         </Tooltip>
         
         {/* Key Message - Moved from CreateCopyForm/ImproveCopyForm */}
-        {(displayMode === 'all' || isFieldPopulated(formData.keyMessage)) && (
-        <div className="mb-6">
+        <div className={`mb-6 ${displayMode === 'populated' && !isFieldPopulated(formData.keyMessage) ? 'hidden' : ''}`}>
           <div className="flex justify-between items-center mb-1">
             <label htmlFor="keyMessage" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Key Message
@@ -682,7 +672,6 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
             onBlur={keyMessageField.handleBlur}
           ></textarea>
         </div>
-        )}
 
         {/* Grid for smaller inputs - Moved from CreateCopyForm/ImproveCopyForm */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
