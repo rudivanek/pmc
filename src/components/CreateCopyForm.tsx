@@ -50,10 +50,8 @@ const CreateCopyForm: React.FC<CreateCopyFormProps> = ({
   const isFieldPopulated = (value: any, fieldType: 'string' | 'select' | 'textarea' = 'string'): boolean => {
     if (value === null || value === undefined) return false;
     if (typeof value === 'string') return value.trim().length > 0;
-    if (typeof value === 'number') return value > 0;
     if (typeof value === 'boolean') return value === true;
     if (Array.isArray(value)) return value.length > 0;
-    if (typeof value === 'object') return Object.keys(value).length > 0;
     return false;
   };
 
@@ -109,10 +107,10 @@ const CreateCopyForm: React.FC<CreateCopyFormProps> = ({
     <div className="space-y-6">
       {/* Page Type & Section Type Grid */}
       {(displayMode === 'all' || (isFieldPopulated(formData.pageType) || isFieldPopulated(formData.section))) && (
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {/* Page Type Dropdown */}
           {(displayMode === 'all' || isFieldPopulated(formData.pageType)) && (
-          <div>
+            <div>
               <label htmlFor="pageType" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Page Type
               </label>
@@ -134,7 +132,7 @@ const CreateCopyForm: React.FC<CreateCopyFormProps> = ({
 
           {/* Section Type Dropdown */}
           {(displayMode === 'all' || isFieldPopulated(formData.section)) && (
-          <div>
+            <div>
               <label htmlFor="section" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Section
               </label>
@@ -154,7 +152,7 @@ const CreateCopyForm: React.FC<CreateCopyFormProps> = ({
 
       {/* Business Description */}
       {(displayMode === 'all' || isFieldPopulated(formData.businessDescription)) && (
-      <div>
+        <div>
           <div className="flex justify-between items-center mb-1">
             <label htmlFor="businessDescription" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Business Description

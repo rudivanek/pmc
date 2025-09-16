@@ -654,8 +654,6 @@ const CopyForm: React.FC<CopyFormProps> = ({
           onClose={() => setShowSuggestionModal(false)}
           onInsert={handleInsertSuggestions}
           isLoading={isLoadingSuggestions}
-          displayMode={displayMode}
-          displayMode={displayMode}
         />
       )}
     </div>

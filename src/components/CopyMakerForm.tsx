@@ -522,10 +522,7 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
   const isFieldPopulated = (value: any): boolean => {
     if (value === null || value === undefined) return false;
     if (typeof value === 'string') return value.trim().length > 0;
-    if (typeof value === 'number') return value > 0;
-    if (typeof value === 'boolean') return value === true;
     if (Array.isArray(value)) return value.length > 0;
-    if (typeof value === 'object') return Object.keys(value).length > 0;
     return false;
   };
 
@@ -662,7 +659,6 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
           </Tooltip>
 
           {/* Model Selection */}
-          {(displayMode === 'all' || isFieldPopulated(formData.model !== 'deepseek-chat')) && (
           <div className="mb-6">
             <label htmlFor="model" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               AI Model
@@ -681,10 +677,8 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
               ))}
             </select>
           </div>
-          )}
 
           {/* Project Description */}
-          {(displayMode === 'all' || isFieldPopulated(formData.projectDescription)) && (
           <div className="mb-6">
             <label htmlFor="projectDescription" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Project Description <span className="text-red-500">*</span>
@@ -705,12 +699,9 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
               Internal field for your organization - not sent to AI. Helps you identify and manage projects.
             </p>
           </div>
-          )}
 
           {/* Customer Selection */}
-          {(displayMode === 'all' || isFieldPopulated(formData.customerId) || isFieldPopulated(formData.productServiceName)) && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
-            {(displayMode === 'all' || isFieldPopulated(formData.customerId)) && (
             <div>
               <label htmlFor="customerId" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Customer
@@ -731,9 +722,7 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
                 ))}
               </select>
             </div>
-            )}
 
-            {(displayMode === 'all' || isFieldPopulated(formData.productServiceName)) && (
             <div>
               <label htmlFor="productServiceName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Product/Service Name
@@ -749,11 +738,8 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
                 onBlur={productServiceNameField.handleBlur}
               />
             </div>
-            )}
           </div>
-          )}
 
-          {(displayMode === 'all' || isFieldPopulated(formData.briefDescription)) && (
           <div>
             <label htmlFor="briefDescription" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Brief Description
@@ -769,7 +755,6 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
               onBlur={briefDescriptionField.handleBlur}
             />
           </div>
-          )}
         </div>
       </div>
 
