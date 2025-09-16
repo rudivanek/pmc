@@ -425,6 +425,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
           )}
         </div>
       </div>
+      )}
       
       {/* Little Word Count Adherence Toggle - Only show for targets below 100 words */}
       {(displayMode === 'all' || isFieldPopulated(formData.generateScores)) && (
@@ -509,7 +510,6 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
           </Tooltip>
         </Label>
       </div>
-      
       )}
       
       {/* Word Count Tolerance Percentage - Only show when prioritizeWordCount is enabled */}
@@ -536,7 +536,6 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
             AI will revise content if it's more than this percentage below the target word count.
           </p>
         </div>
-      </div>
       )}
       
       {/* GEO Score Generation Toggle */}
@@ -594,7 +593,6 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
           </Tooltip>
         </Label>
       </div>
-      
       )}
       
       {/* Word Count Tolerance Percentage - Only show when prioritizeWordCount is enabled */}
@@ -620,7 +618,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
           <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
             AI will revise content if it's more than this percentage below the target word count.
           </p>
-      )}
+        </div>
       )}
       {/* TL;DR Summary Toggle - Only show when GEO is enabled */}
       {/* Little Word Count Adherence Toggle - Only show for targets below 100 words */}
@@ -656,7 +654,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
               if (checked === true) {
                 toast('💡 TL;DR summaries work best for blogs, long-form pages, service pages, and FAQs.\n\nThey improve AI visibility, boost quotability, and help readers grasp the value instantly.\nAvoid using TL;DR for short ads, H1s, or slogans — those already serve as the summary.', {
                   duration: 6000,
-            {formData.adhereToLittleWordCount && (displayMode === 'all' || isFieldPopulated(formData.littleWordCountTolerancePercentage !== 20)) && (
+                  position: 'top-right',
                   style: {
                     background: '#374151',
                     color: '#f9fafb',
@@ -702,7 +700,6 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
             );
           })()}
         </div>
-      )
       )}
       
       {/* Target Countries or Regions - Only show when GEO is enabled */}
@@ -730,4 +727,3 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
 };
 
 export default FeatureToggles;
-      {formData.enhanceForGEO && (displayMode === 'all' || isFieldPopulated(formData.addTldrSummary)) && (
