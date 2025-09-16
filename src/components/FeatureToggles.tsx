@@ -12,15 +12,28 @@ interface FeatureTogglesProps {
   formData: FormData;
   handleToggle: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleChange: (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => void;
-  isSmartMode: boolean; // Add prop for Smart Mode
+  isSmartMode: boolean;
   displayMode: 'all' | 'populated';
 }
+
+// Helper function to check if a field is populated
+const isFieldPopulated = (value: any): boolean => {
+  if (value === null || value === undefined) return false;
+  if (typeof value === 'string') return value.trim().length > 0;
+  if (typeof value === 'number') return value > 0;
+  if (typeof value === 'boolean') return value === true;
+  if (Array.isArray(value)) return value.length > 0 && value.some(item => 
+    typeof item === 'string' ? item.trim().length > 0 : true
+  );
+  if (typeof value === 'object') return Object.keys(value).length > 0;
+  return false;
+};
 
 const FeatureToggles: React.FC<FeatureTogglesProps> = ({ 
   formData, 
   handleToggle, 
   handleChange,
-  isSmartMode, // Add isSmartMode prop
+  isSmartMode,
   displayMode
 }) => {
   // Initialize locationField using useInputField hook
@@ -337,6 +350,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
           </Tooltip>
         </Label>
       </div>
+      
       )}
       
       {/* Word Count Tolerance Percentage - Only show when prioritizeWordCount is enabled */}
@@ -366,8 +380,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
       )}
       
       {/* Little Word Count Adherence Toggle - Only show for targets below 100 words */}
-      {isLittleWordCount && (
-      (displayMode === 'all' || isFieldPopulated(formData.adhereToLittleWordCount)) && (
+      {isLittleWordCount && (displayMode === 'all' || isFieldPopulated(formData.adhereToLittleWordCount)) && (
         <div className="flex items-start">
           <Checkbox
             id="adhereToLittleWordCount"
@@ -420,7 +433,6 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
             )}
           </div>
         </div>
-      )
       )}
       
       {/* New option for SEO keyword integration */}
@@ -591,8 +603,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
       )}
       
       {/* Target Countries or Regions - Only show when GEO is enabled */}
-      {formData.enhanceForGEO && (
-      (displayMode === 'all' || isFieldPopulated(formData.geoRegions)) && (
+      {formData.enhanceForGEO && (displayMode === 'all' || isFieldPopulated(formData.geoRegions)) && (
       <div className="ml-6 mt-2">
           <label htmlFor="geoRegions" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Target Countries or Regions
@@ -610,7 +621,6 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
             Enter countries, regions, or cities to help tailor the content for local AI search results (e.g., México, LATAM, CDMX, España).
           </p>
         </div>
-      )
       )}
     </div>
   );

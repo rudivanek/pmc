@@ -405,6 +405,7 @@ const CopyForm: React.FC<CopyFormProps> = ({
         formState={formState}
         setFormState={setFormState}
         setDisplayMode={setDisplayMode}
+        displayMode={displayMode}
       />
 
 

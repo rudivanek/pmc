@@ -225,14 +225,6 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
   // Calculate the effective target word count using the shared utility function
   const effectiveTargetWordCount = calculateTargetWordCount(formData);
 
-  // Helper function to check if a field is populated
-  const isFieldPopulated = (value: any): boolean => {
-    if (value === null || value === undefined) return false;
-    if (typeof value === 'string') return value.trim().length > 0;
-    if (Array.isArray(value)) return value.length > 0;
-    return false;
-  };
-
   // Check if any field in the Copy Targeting section is populated
   const hasPopulatedCopyTargetingFields = () => {
     return isFieldPopulated(formData.industryNiche) ||
