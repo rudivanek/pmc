@@ -1959,6 +1959,21 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
         </div>
       )}
 
+      {/* Suggestion Modal */}
+      {showSuggestionModal && (
+        <SuggestionModal
+          fieldType={currentSuggestionField}
+          suggestions={currentSuggestions}
+          onClose={() => setShowSuggestionModal(false)}
+          onInsert={handleInsertSuggestions}
+          isLoading={isLoadingSuggestions}
+        />
+      )}
+    </div>
+  );
+};
+
+export default CopyMakerForm;
       {/* Floating Action Buttons for Evaluate and Save Template */}
       {shouldShowFloatingButtons() && (
         <div className="fixed top-1/2 left-4 transform -translate-y-1/2 z-40">
