@@ -539,18 +539,6 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
     );
   };
 
-  // Helper function to check if we should show floating buttons
-  const shouldShowFloatingButtons = () => {
-    return !!(
-      !isPrefillEditingMode &&
-      (formState.originalCopy?.trim() ||
-       formState.projectDescription?.trim() ||
-       formState.briefDescription?.trim() ||
-       formState.targetAudience?.trim() ||
-       formState.keyMessage?.trim())
-    );
-  };
-
   // Calculate if the current word count target is "little" (below 100 words)
   const isLittleWordCount = React.useMemo(() => {
     if (formState.wordCount === 'Custom') {
