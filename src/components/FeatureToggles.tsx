@@ -327,7 +327,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
       </div>
 
       {/* Number of Primary Outputs */}
-      <div className={displayMode === 'populated' && !isFieldPopulated(formData.numberOfPrimaryOutputs) ? 'hidden' : ''}>
+      <div>
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <label htmlFor="numberOfPrimaryOutputs" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
