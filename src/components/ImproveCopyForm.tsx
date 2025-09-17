@@ -6,6 +6,7 @@ import ContentQualityIndicator from './ui/ContentQualityIndicator';
 import { Zap } from 'lucide-react';
 import { evaluateContentQuality } from '../services/apiService';
 import { Tooltip } from './ui/Tooltip';
+import { isFieldPopulated } from '../utils/formUtils';
 
 interface ImproveCopyFormProps {
   formData: FormData;
@@ -45,13 +46,6 @@ const ImproveCopyForm: React.FC<ImproveCopyFormProps> = ({
   
   // Get original copy word count
   const originalCopyWordCount = countWords(originalCopyField.inputValue);
-
-  // Helper function to check if a field is populated
-  const isFieldPopulated = (value: any): boolean => {
-    if (value === null || value === undefined) return false;
-    if (typeof value === 'string') return value.trim().length > 0;
-    return false;
-  };
 
   // Check if any field in this form is populated
   const hasPopulatedFields = () => {

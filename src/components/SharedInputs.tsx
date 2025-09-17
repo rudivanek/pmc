@@ -13,6 +13,7 @@ import ContentQualityIndicator from './ui/ContentQualityIndicator';
 import { Tooltip } from './ui/Tooltip';
 import CategoryTagsInput from './ui/CategoryTagsInput';
 import { calculateTargetWordCount } from '../services/api/utils';
+import { isFieldPopulated, hasPopulatedCompetitorUrls } from '../utils/formUtils';
 
 interface SharedInputsProps {
   formData: FormState;
@@ -212,20 +213,12 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
   // Calculate the effective target word count using the shared utility function
   const effectiveTargetWordCount = calculateTargetWordCount(formData);
 
-  // Helper function to check if a field is populated
-  const isFieldPopulated = (value: any): boolean => {
-    if (value === null || value === undefined) return false;
-    if (typeof value === 'string') return value.trim().length > 0;
-    if (Array.isArray(value)) return value.length > 0;
-    return false;
-  };
-
   // Check if any field in the Copy Targeting section is populated
   const hasPopulatedCopyTargetingFields = () => {
     return isFieldPopulated(formData.industryNiche) ||
            isFieldPopulated(formData.targetAudience) ||
            isFieldPopulated(formData.readerFunnelStage) ||
-           isFieldPopulated(formData.competitorUrls?.some(url => url.trim())) ||
+           hasPopulatedCompetitorUrls(formData.competitorUrls || []) ||
            isFieldPopulated(formData.targetAudiencePainPoints) ||
            isFieldPopulated(formData.competitorCopyText);
   };
@@ -326,7 +319,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         </div>
         
         {/* Competitor URLs */}
-        <div className={`space-y-3 mb-6 ${displayMode === 'populated' && !isFieldPopulated(formData.competitorUrls?.some(url => url.trim())) ? 'hidden' : ''}`}>
+        <div className={`space-y-3 mb-6 ${displayMode === 'populated' && !hasPopulatedCompetitorUrls(formData.competitorUrls || []) ? 'hidden' : ''}`}>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Competitor URLs (Optional)
           </label>
