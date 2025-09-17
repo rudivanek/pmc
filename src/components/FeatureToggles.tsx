@@ -7,7 +7,6 @@ import { isFieldUserModified, hasPopulatedCompetitorUrls, isFieldPopulated } fro
 import { useMemo } from 'react';
 import { useInputField } from '../hooks/useInputField';
 import { toast } from 'react-hot-toast';
-import { isFieldPopulated, isFieldUserModified } from '../utils/formUtils';
 
 interface FeatureTogglesProps {
   formData: FormState;
