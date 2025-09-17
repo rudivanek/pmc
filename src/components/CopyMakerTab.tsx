@@ -77,9 +77,6 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
   const [isLoadingTemplates, setIsLoadingTemplates] = useState(false);
   const [templateLoadError, setTemplateLoadError] = useState<string | null>(null);
 
-  // Display mode state for form field filtering
-  const [displayMode, setDisplayMode] = useState<'all' | 'populated'>('all');
-
   // Refs for focusing on required fields
   const projectDescriptionRef = useRef<HTMLInputElement>(null);
   const businessDescriptionRef = useRef<HTMLTextAreaElement>(null);

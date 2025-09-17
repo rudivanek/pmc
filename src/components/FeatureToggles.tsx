@@ -7,7 +7,7 @@ import { Label } from './ui/label';
 import { useMemo } from 'react';
 import { useInputField } from '../hooks/useInputField';
 import { toast } from 'react-hot-toast';
-import { isFieldPopulated } from '../utils/formUtils';
+import { isFieldUserModified } from '../utils/formUtils';
 
 interface FeatureTogglesProps {
   formData: FormData;
@@ -68,25 +68,25 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
   
   // Check if any field in the Optional Features section is populated
   const hasPopulatedFeatureTogglesFields = () => {
-    return formData.generateSeoMetadata ||
-           formData.generateScores ||
-           formData.generateGeoScore ||
-           formData.prioritizeWordCount ||
-           formData.adhereToLittleWordCount ||
-           formData.forceKeywordIntegration ||
-           formData.forceElaborationsExamples ||
-           formData.enhanceForGEO ||
-           formData.addTldrSummary ||
-           isFieldPopulated(formData.geoRegions) ||
-           isFieldPopulated(formData.numUrlSlugs) ||
-           isFieldPopulated(formData.numMetaDescriptions) ||
-           isFieldPopulated(formData.numH1Variants) ||
-           isFieldPopulated(formData.numH2Variants) ||
-           isFieldPopulated(formData.numH3Variants) ||
-           isFieldPopulated(formData.numOgTitles) ||
-           isFieldPopulated(formData.numOgDescriptions) ||
-           isFieldPopulated(formData.wordCountTolerancePercentage) ||
-           isFieldPopulated(formData.littleWordCountTolerancePercentage);
+    return isFieldUserModified('generateSeoMetadata', formData.generateSeoMetadata) ||
+           isFieldUserModified('generateScores', formData.generateScores) ||
+           isFieldUserModified('generateGeoScore', formData.generateGeoScore) ||
+           isFieldUserModified('prioritizeWordCount', formData.prioritizeWordCount) ||
+           isFieldUserModified('adhereToLittleWordCount', formData.adhereToLittleWordCount) ||
+           isFieldUserModified('forceKeywordIntegration', formData.forceKeywordIntegration) ||
+           isFieldUserModified('forceElaborationsExamples', formData.forceElaborationsExamples) ||
+           isFieldUserModified('enhanceForGEO', formData.enhanceForGEO) ||
+           isFieldUserModified('addTldrSummary', formData.addTldrSummary) ||
+           isFieldUserModified('geoRegions', formData.geoRegions) ||
+           isFieldUserModified('numUrlSlugs', formData.numUrlSlugs) ||
+           isFieldUserModified('numMetaDescriptions', formData.numMetaDescriptions) ||
+           isFieldUserModified('numH1Variants', formData.numH1Variants) ||
+           isFieldUserModified('numH2Variants', formData.numH2Variants) ||
+           isFieldUserModified('numH3Variants', formData.numH3Variants) ||
+           isFieldUserModified('numOgTitles', formData.numOgTitles) ||
+           isFieldUserModified('numOgDescriptions', formData.numOgDescriptions) ||
+           isFieldUserModified('wordCountTolerancePercentage', formData.wordCountTolerancePercentage) ||
+           isFieldUserModified('littleWordCountTolerancePercentage', formData.littleWordCountTolerancePercentage);
   };
 
   // Don't render anything if display mode is 'populated' and no fields are populated
@@ -104,7 +104,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
       </Tooltip>
       
       <div className="flex items-start">
-        <div className={displayMode === 'populated' && !formData.generateSeoMetadata && !isFieldPopulated(formData.numUrlSlugs) && !isFieldPopulated(formData.numMetaDescriptions) ? 'hidden' : ''}>
+        <div className={displayMode === 'populated' && !isFieldUserModified('generateSeoMetadata', formData.generateSeoMetadata) ? 'hidden' : ''}>
           <Checkbox
             id="generateSeoMetadata"
             checked={formData.generateSeoMetadata || false}
@@ -132,7 +132,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
         </div>
       </div>
       
-      <div className={displayMode === 'populated' && !formData.generateScores ? 'hidden' : ''}>
+      <div className={displayMode === 'populated' && !isFieldUserModified('generateScores', formData.generateScores) ? 'hidden' : ''}>
         <div className="flex items-center">
           <Checkbox
             id="generateScores"
@@ -160,7 +160,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
       </div>
       
       {/* GEO Score Generation Toggle */}
-      <div className={displayMode === 'populated' && !formData.generateGeoScore ? 'hidden' : ''}>
+      <div className={displayMode === 'populated' && !isFieldUserModified('generateGeoScore', formData.generateGeoScore) ? 'hidden' : ''}>
         <div className="flex items-center">
           <Checkbox
             id="generateGeoScore"
@@ -188,7 +188,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
       </div>
       
       {/* Strict Word Count Adherence Toggle */}
-      <div className={displayMode === 'populated' && !formData.prioritizeWordCount ? 'hidden' : ''}>
+      <div className={displayMode === 'populated' && !isFieldUserModified('prioritizeWordCount', formData.prioritizeWordCount) ? 'hidden' : ''}>
         <div className="flex items-center">
           <Checkbox
             id="prioritizeWordCount"
@@ -216,7 +216,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
         </div>
       </div>
           
-          {formData.generateSeoMetadata && (displayMode === 'all' || isFieldPopulated(formData.numUrlSlugs) || isFieldPopulated(formData.numMetaDescriptions)) && (
+          {formData.generateSeoMetadata && (displayMode === 'all' || isFieldUserModified('numUrlSlugs', formData.numUrlSlugs) || isFieldUserModified('numMetaDescriptions', formData.numMetaDescriptions)) && (
             <div className="mt-3 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
               <div className="flex items-center mb-3">
                 <span className="text-sm font-medium text-gray-700 dark:text-gray-300">📎 SEO & Metadata Outputs</span>
@@ -357,7 +357,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
           )}
       
       {/* Word Count Tolerance Percentage - Only show when prioritizeWordCount is enabled */}
-      {formData.prioritizeWordCount && (displayMode === 'all' || isFieldPopulated(formData.wordCountTolerancePercentage)) && (
+      {formData.prioritizeWordCount && (displayMode === 'all' || isFieldUserModified('wordCountTolerancePercentage', formData.wordCountTolerancePercentage)) && (
         <div className="ml-6 mt-2">
           <div className="flex items-center space-x-2">
             <label htmlFor="wordCountTolerancePercentage" className="text-xs text-gray-600 dark:text-gray-400">
@@ -383,7 +383,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
       )}
       
       {/* Little Word Count Adherence Toggle - Only show for targets below 100 words */}
-      {isLittleWordCount && (displayMode === 'all' || formData.adhereToLittleWordCount) && (
+      {isLittleWordCount && (displayMode === 'all' || isFieldUserModified('adhereToLittleWordCount', formData.adhereToLittleWordCount)) && (
         <div className="flex items-start">
           <Checkbox
             id="adhereToLittleWordCount"
@@ -439,7 +439,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
       )}
       
       {/* SEO keyword integration */}
-      <div className={displayMode === 'populated' && !formData.forceKeywordIntegration ? 'hidden' : ''}>
+      <div className={displayMode === 'populated' && !isFieldUserModified('forceKeywordIntegration', formData.forceKeywordIntegration) ? 'hidden' : ''}>
         <div className="flex items-center">
           <Checkbox
             id="forceKeywordIntegration"
@@ -467,7 +467,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
       </div>
 
       {/* Force detailed elaborations and examples */}
-      <div className={displayMode === 'populated' && !formData.forceElaborationsExamples ? 'hidden' : ''}>
+      <div className={displayMode === 'populated' && !isFieldUserModified('forceElaborationsExamples', formData.forceElaborationsExamples) ? 'hidden' : ''}>
         <div className="flex items-center">
           <Checkbox
             id="forceElaborationsExamples"
@@ -495,7 +495,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
       </div>
 
       {/* GEO enhancement */}
-      <div className={displayMode === 'populated' && !formData.enhanceForGEO ? 'hidden' : ''}>
+      <div className={displayMode === 'populated' && !isFieldUserModified('enhanceForGEO', formData.enhanceForGEO) ? 'hidden' : ''}>
         <div className="flex items-center">
           <Checkbox
             id="enhanceForGEO"
@@ -523,11 +523,11 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
       </div>
 
       {/* TL;DR Summary Toggle - Only show when GEO is enabled */}
-      {formData.enhanceForGEO && (displayMode === 'all' || formData.addTldrSummary) && (
+      {formData.enhanceForGEO && (displayMode === 'all' || isFieldUserModified('addTldrSummary', formData.addTldrSummary)) && (
         <div className="flex items-start">
           {/* Check if structured output is selected */}
           {(() => {
-            const hasStructuredOutput = formState.outputStructure && formState.outputStructure.length > 0;
+            const hasStructuredOutput = formData.outputStructure && formData.outputStructure.length > 0;
             return (
               <>
           <Checkbox
@@ -604,7 +604,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
       )}
       
       {/* Target Countries or Regions - Only show when GEO is enabled */}
-      {formData.enhanceForGEO && (displayMode === 'all' || isFieldPopulated(formData.geoRegions)) && (
+      {formData.enhanceForGEO && (displayMode === 'all' || isFieldUserModified('geoRegions', formData.geoRegions)) && (
         <div className="ml-6 mt-2">
           <label htmlFor="geoRegions" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Target Countries or Regions

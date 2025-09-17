@@ -7,6 +7,7 @@ import { Label } from './ui/label';
 import { useMemo } from 'react';
 import { useInputField } from '../hooks/useInputField';
 import { toast } from 'react-hot-toast';
+import { isFieldUserModified } from '../utils/formUtils';
 
 interface FeatureTogglesProps {
   formData: FormData;
@@ -49,7 +50,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
            formData.forceElaborationsExamples ||
            formData.enhanceForGEO ||
            formData.addTldrSummary ||
-           isFieldPopulated(formData.geoRegions) ||
+           isFieldUserModified('geoRegions', formData.geoRegions) ||
            (formData.numUrlSlugs && formData.numUrlSlugs !== 3) ||
            (formData.numMetaDescriptions && formData.numMetaDescriptions !== 3) ||
            (formData.numH1Variants && formData.numH1Variants !== 3) ||

@@ -1,6 +1,8 @@
 /**
  * Utility functions for form field validation and helpers
  */
+import { DEFAULT_FORM_STATE } from '../constants';
+import { FormState } from '../types';
 
 /**
  * Check if a field value is considered populated (not empty)
@@ -48,4 +50,60 @@ export function isFieldPopulated(value: any): boolean {
 export function hasPopulatedCompetitorUrls(urls: string[]): boolean {
   if (!Array.isArray(urls)) return false;
   return urls.some(url => typeof url === 'string' && url.trim().length > 0);
+}
+
+/**
+ * Check if a field has been modified by the user (differs from default value)
+ * @param fieldName - The name of the field in FormState
+ * @param currentValue - The current value of the field
+ * @returns true if the field has been modified from its default value
+ */
+export function isFieldUserModified(fieldName: keyof FormState, currentValue: any): boolean {
+  const defaultValue = DEFAULT_FORM_STATE[fieldName];
+  
+  // Handle null/undefined cases
+  if (currentValue === null || currentValue === undefined) {
+    return defaultValue !== null && defaultValue !== undefined;
+  }
+  
+  if (defaultValue === null || defaultValue === undefined) {
+    return currentValue !== null && currentValue !== undefined;
+  }
+  
+  // Handle arrays
+  if (Array.isArray(currentValue) && Array.isArray(defaultValue)) {
+    // For arrays, check if length differs or if any elements are populated
+    if (currentValue.length !== defaultValue.length) return true;
+    
+    // Check if any elements are different or populated
+    return currentValue.some((item, index) => {
+      if (typeof item === 'string') {
+        return item.trim() !== (defaultValue[index] || '').trim();
+      }
+      return item !== defaultValue[index];
+    });
+  }
+  
+  // Handle strings
+  if (typeof currentValue === 'string' && typeof defaultValue === 'string') {
+    return currentValue.trim() !== defaultValue.trim();
+  }
+  
+  // Handle numbers
+  if (typeof currentValue === 'number' && typeof defaultValue === 'number') {
+    return currentValue !== defaultValue;
+  }
+  
+  // Handle booleans
+  if (typeof currentValue === 'boolean' && typeof defaultValue === 'boolean') {
+    return currentValue !== defaultValue;
+  }
+  
+  // Handle objects (like outputStructure)
+  if (typeof currentValue === 'object' && typeof defaultValue === 'object') {
+    return JSON.stringify(currentValue) !== JSON.stringify(defaultValue);
+  }
+  
+  // For other types, do direct comparison
+  return currentValue !== defaultValue;
 }

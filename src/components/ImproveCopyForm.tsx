@@ -6,7 +6,7 @@ import ContentQualityIndicator from './ui/ContentQualityIndicator';
 import { Zap } from 'lucide-react';
 import { evaluateContentQuality } from '../services/apiService';
 import { Tooltip } from './ui/Tooltip';
-import { isFieldPopulated } from '../utils/formUtils';
+import { isFieldUserModified } from '../utils/formUtils';
 
 interface ImproveCopyFormProps {
   formData: FormData;
@@ -47,11 +47,11 @@ const ImproveCopyForm: React.FC<ImproveCopyFormProps> = ({
   // Get original copy word count
   const originalCopyWordCount = countWords(originalCopyField.inputValue);
 
-  // Check if any field in this form is populated
+  // Check if any field in this form has been modified by the user
   const hasPopulatedFields = () => {
-    return isFieldPopulated(formData.section) ||
-           isFieldPopulated(formData.originalCopy) ||
-           isFieldPopulated(formData.excludedTerms);
+    return isFieldUserModified('section', formData.section) ||
+           isFieldUserModified('originalCopy', formData.originalCopy) ||
+           isFieldUserModified('excludedTerms', formData.excludedTerms);
   };
 
   // Don't render anything if display mode is 'populated' and no fields are populated
@@ -99,7 +99,7 @@ const ImproveCopyForm: React.FC<ImproveCopyFormProps> = ({
   return (
     <div className="space-y-6">
       {/* Section Dropdown */}
-      <div className={displayMode === 'populated' && !isFieldPopulated(formData.section) ? 'hidden' : ''}>
+      <div className={displayMode === 'populated' && !isFieldUserModified('section', formData.section) ? 'hidden' : ''}>
         <div>
           <label htmlFor="section" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Section
@@ -117,7 +117,7 @@ const ImproveCopyForm: React.FC<ImproveCopyFormProps> = ({
       </div>
 
       {/* Original Copy */}
-      <div className={displayMode === 'populated' && !isFieldPopulated(formData.originalCopy) ? 'hidden' : ''}>
+      <div className={displayMode === 'populated' && !isFieldUserModified('originalCopy', formData.originalCopy) ? 'hidden' : ''}>
         <div>
           <div className="mb-1">
             <label htmlFor="originalCopy" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -153,7 +153,7 @@ const ImproveCopyForm: React.FC<ImproveCopyFormProps> = ({
       </div>
 
       {/* Exclude Specific Terms */}
-      <div className={displayMode === 'populated' && !isFieldPopulated(formData.excludedTerms) ? 'hidden' : ''}>
+      <div className={displayMode === 'populated' && !isFieldUserModified('excludedTerms', formData.excludedTerms) ? 'hidden' : ''}>
         <div>
           <label htmlFor="excludedTerms" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Exclude specific terms from output
