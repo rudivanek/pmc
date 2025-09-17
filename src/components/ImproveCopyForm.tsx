@@ -99,7 +99,7 @@ const ImproveCopyForm: React.FC<ImproveCopyFormProps> = ({
   return (
     <div className="space-y-6">
       {/* Section Dropdown */}
-      {(displayMode === 'all' || isFieldPopulated(formData.section)) && (
+      <div className={displayMode === 'populated' && !isFieldPopulated(formData.section) ? 'hidden' : ''}>
         <div>
           <label htmlFor="section" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Section
@@ -114,10 +114,10 @@ const ImproveCopyForm: React.FC<ImproveCopyFormProps> = ({
             placeholder="e.g., Hero Section, Benefits, Features, FAQ..."
           />
         </div>
-      )}
+      </div>
 
       {/* Original Copy */}
-      {(displayMode === 'all' || isFieldPopulated(formData.originalCopy)) && (
+      <div className={displayMode === 'populated' && !isFieldPopulated(formData.originalCopy) ? 'hidden' : ''}>
         <div>
           <div className="mb-1">
             <label htmlFor="originalCopy" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -150,10 +150,10 @@ const ImproveCopyForm: React.FC<ImproveCopyFormProps> = ({
             />
           </div>
         </div>
-      )}
+      </div>
 
       {/* Exclude Specific Terms */}
-      {(displayMode === 'all' || isFieldPopulated(formData.excludedTerms)) && (
+      <div className={displayMode === 'populated' && !isFieldPopulated(formData.excludedTerms) ? 'hidden' : ''}>
         <div>
           <label htmlFor="excludedTerms" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Exclude specific terms from output
@@ -171,7 +171,7 @@ const ImproveCopyForm: React.FC<ImproveCopyFormProps> = ({
             List words or brand names you don't want the AI to include in the generated copy, separated by commas
           </p>
         </div>
-      )}
+      </div>
     </div>
   );
 };

@@ -563,6 +563,7 @@ const CopyForm: React.FC<CopyFormProps> = ({
         handleToggle={handleToggle}
         currentUser={currentUser}
         onGetSuggestion={onGetSuggestion}
+        displayMode={displayMode}
         isLoadingSuggestions={isLoadingSuggestions}
         activeSuggestionField={activeSuggestionField}
         isSmartMode={isSmartMode}
