@@ -688,7 +688,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
             <PrefillSelector
               formState={formState}
               setFormState={setFormState}
-              setDisplayMode={() => {}} // Placeholder, as displayMode is handled internally by CopyMakerForm
+              setDisplayMode={setDisplayMode}
             />
           </div>
 
