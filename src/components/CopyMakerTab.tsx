@@ -59,8 +59,6 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
   onCancel,
   loadFormStateFromPrefill,
   loadFormStateFromTemplate,
-  displayMode,
-  setDisplayMode,
   isTemplateSuggestionModalOpen,
   setIsTemplateSuggestionModalOpen
 }) => {
