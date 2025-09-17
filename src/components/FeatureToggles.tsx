@@ -96,7 +96,8 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
   }
   
   return (
-    <div className="space-y-3 py-4 border-t border-gray-300 dark:border-gray-800">
+    <>
+      <div className="space-y-3 py-4 border-t border-gray-300 dark:border-gray-800">
       <Tooltip content="Enhance your output with alternative versions, humanized styles, scoring, and voice emulation options." delayDuration={300}>
         <div className="flex items-center">
           <div className="w-1 h-5 bg-primary-500 mr-2"></div>
@@ -552,7 +553,6 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
           </Label>
         </div>
       </div>
-    </div>
 
       {/* TL;DR Summary Toggle - Only show when GEO is enabled */}
       {formData.enhanceForGEO && (displayMode === 'all' || isFieldPopulated(formData.addTldrSummary)) && (
@@ -655,7 +655,8 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
           </p>
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 };
 
