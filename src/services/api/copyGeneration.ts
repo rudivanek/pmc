@@ -645,7 +645,7 @@ The final output must meet or exceed the target word count of ${targetWordCount}
 /**
  * Build the user prompt based on form state
  */
-function buildUserPrompt(formState: FormState, targetWordCount: number): string {
+function buildUserPrompt(formState: FormState, targetWordCount: number, currentVersion: number = 1, totalVersions: number = 1): string {
   let userPrompt = '';
   
   // Different prompts based on tab (create/improve)
@@ -661,6 +661,12 @@ ${formState.businessDescription}
 """
 ${formState.originalCopy}
 """`;
+  }
+  
+  // Add version-specific context for multiple outputs
+  if (totalVersions > 1) {
+    userPrompt += `\n\nVERSION CONTEXT: This is version ${currentVersion} of ${totalVersions} distinct variations requested. 
+    Please create a unique approach that offers a different angle, emphasis, or perspective from other versions while maintaining the core message and requirements.`;
   }
   
   // Add key information
