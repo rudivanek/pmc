@@ -3,7 +3,7 @@ import { FormState } from '../types';
 import { Tooltip } from './ui/Tooltip';
 import { InfoIcon } from 'lucide-react';
 import { Checkbox } from './ui/checkbox';
-import { Label } from './ui/label';
+import { isFieldUserModified, hasPopulatedCompetitorUrls, isFieldPopulated } from '../utils/formUtils';
 import { useMemo } from 'react';
 import { useInputField } from '../hooks/useInputField';
 import { toast } from 'react-hot-toast';
