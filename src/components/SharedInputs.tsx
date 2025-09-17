@@ -245,14 +245,6 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
            isFieldUserModified('outputStructure', formData.outputStructure);
   };
 
-  // Check if any field in the Tone & Style section is populated
-  const hasPopulatedToneAndStyleFields = () => {
-    return isFieldPopulated(formData.toneLevel) ||
-           isFieldPopulated(formData.preferredWritingStyle) ||
-           isFieldPopulated(formData.languageStyleConstraints) ||
-           isFieldPopulated(formData.outputStructure);
-  };
-
   return (
     <div className="space-y-6">
       {/* COPY TARGETING SECTION */}
