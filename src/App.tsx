@@ -434,6 +434,8 @@ const AppRouter: React.FC = () => {
               loadedTemplateName={loadedTemplateName}
               setLoadedTemplateName={setLoadedTemplateName}
               isSmartMode={isSmartMode}
+              displayMode={displayMode}
+              setDisplayMode={setDisplayMode}
               onEvaluateInputs={handleEvaluateInputs}
               onSaveTemplate={() => setIsSaveTemplateModalOpen(true)}
               onSaveOutput={handleSaveOutput}

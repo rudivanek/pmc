@@ -48,6 +48,8 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
   loadedTemplateName,
   setLoadedTemplateName,
   isSmartMode,
+  displayMode,
+  setDisplayMode,
   onEvaluateInputs,
   onSaveTemplate,
   onSaveOutput,
