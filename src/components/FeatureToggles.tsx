@@ -78,6 +78,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
            isFieldPopulated(formData.enhanceForGEO) ||
            isFieldPopulated(formData.addTldrSummary) ||
            isFieldPopulated(formData.geoRegions) ||
+           isFieldPopulated(formData.numberOfPrimaryOutputs) ||
            isFieldUserModified('numUrlSlugs', formData.numUrlSlugs) ||
            isFieldUserModified('numMetaDescriptions', formData.numMetaDescriptions) ||
            isFieldUserModified('numH1Variants', formData.numH1Variants) ||
@@ -497,7 +498,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
       </div>
 
       {/* Number of Primary Outputs */}
-      <div className={displayMode === 'populated' && !isFieldUserModified('numberOfPrimaryOutputs', formData.numberOfPrimaryOutputs) ? 'hidden' : ''}>
+      <div className={displayMode === 'populated' && !isFieldPopulated(formData.numberOfPrimaryOutputs) ? 'hidden' : ''}>
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <label htmlFor="numberOfPrimaryOutputs" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
