@@ -655,7 +655,6 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
           </p>
         </div>
       )}
-      </div>
     </>
   );
 };
