@@ -98,6 +98,31 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
       </Tooltip>
       
       <div className="flex items-start">
+        <Checkbox
+          id="generateSeoMetadata"
+          checked={formData.generateSeoMetadata || false}
+          onCheckedChange={(checked) => {
+            handleToggle({ 
+              target: { 
+                name: 'generateSeoMetadata', 
+                checked: checked === true 
+              }
+            } as React.ChangeEvent<HTMLInputElement>);
+          }}
+        />
+        <div className="ml-2 flex-1">
+          <Label htmlFor="generateSeoMetadata" className="cursor-pointer">
+            <span className="text-sm">Generate SEO metadata</span>
+            <Tooltip content="Generates URL slugs, meta descriptions, H1/H2/H3 variants, and Open Graph titles/descriptions">
+              <span className="ml-1 text-gray-500 cursor-help">
+                <InfoIcon size={14} />
+              </span>
+            </Tooltip>
+          </Label>
+          
+          {formData.generateSeoMetadata && (
+            <div className="mt-2">
+              <p className="text-xs text-gray-500 dark:text-gray-400">
                 All SEO elements will be generated for each content variation and voice style. Character counters will show live feedback in the output.
               </p>
             </div>
@@ -349,7 +374,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
         <div className="flex items-start">
           {/* Check if structured output is selected */}
           {(() => {
-            const hasStructuredOutput = formState.outputStructure && formState.outputStructure.length > 0;
+            const hasStructuredOutput = formData.outputStructure && formData.outputStructure.length > 0;
             return (
               <>
           <Checkbox
