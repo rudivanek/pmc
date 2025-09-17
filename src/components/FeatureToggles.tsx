@@ -48,10 +48,6 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
   };
 
   // Don't render anything if display mode is 'populated' and no fields are populated
-  if (displayMode === 'populated' && !hasPopulatedFeatureTogglesFields()) {
-    return null;
-  }
-  
   // Calculate if the current word count target is "little" (below 100 words)
   const isLittleWordCount = useMemo(() => {
     if (formData.wordCount === 'Custom') {
