@@ -552,6 +552,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
           </Label>
         </div>
       </div>
+    </div>
 
       {/* TL;DR Summary Toggle - Only show when GEO is enabled */}
       {formData.enhanceForGEO && (displayMode === 'all' || isFieldPopulated(formData.addTldrSummary)) && (
