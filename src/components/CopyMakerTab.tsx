@@ -34,6 +34,8 @@ interface CopyMakerTabProps {
   onCancel?: () => void;
   loadFormStateFromPrefill: any;
   loadFormStateFromTemplate: any;
+  displayMode: 'all' | 'populated';
+  setDisplayMode: (mode: 'all' | 'populated') => void;
   isTemplateSuggestionModalOpen: boolean;
   setIsTemplateSuggestionModalOpen: (open: boolean) => void;
 }
@@ -57,6 +59,8 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
   onCancel,
   loadFormStateFromPrefill,
   loadFormStateFromTemplate,
+  displayMode,
+  setDisplayMode,
   isTemplateSuggestionModalOpen,
   setIsTemplateSuggestionModalOpen
 }) => {
@@ -785,6 +789,8 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
             businessDescriptionRef={businessDescriptionRef}
             originalCopyRef={originalCopyRef}
             isPrefillEditingMode={isPrefillEditingMode}
+            displayMode={displayMode}
+            setDisplayMode={setDisplayMode}
             displayMode={displayMode}
           />
           

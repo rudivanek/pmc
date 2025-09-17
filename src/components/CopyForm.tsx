@@ -35,6 +35,8 @@ interface CopyFormProps {
   projectDescriptionRef?: React.RefObject<HTMLInputElement>;
   businessDescriptionRef?: React.RefObject<HTMLTextAreaElement>;
   originalCopyRef?: React.RefObject<HTMLTextAreaElement>;
+  displayMode: 'all' | 'populated';
+  setDisplayMode: (mode: 'all' | 'populated') => void;
 }
 
 const CopyForm: React.FC<CopyFormProps> = ({
@@ -53,7 +55,9 @@ const CopyForm: React.FC<CopyFormProps> = ({
   isPrefillEditingMode = false,
   projectDescriptionRef,
   businessDescriptionRef,
-  originalCopyRef
+  originalCopyRef,
+  displayMode,
+  setDisplayMode
 }) => {
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
@@ -64,7 +68,6 @@ const CopyForm: React.FC<CopyFormProps> = ({
   const [showSuggestionModal, setShowSuggestionModal] = useState(false);
   const [currentSuggestions, setCurrentSuggestions] = useState<string[]>([]);
   const [currentSuggestionField, setCurrentSuggestionField] = useState<string>('');
-  const [displayMode, setDisplayMode] = useState<'all' | 'populated'>('all');
 
   // Input field hooks
   const projectDescriptionField = useInputField({
