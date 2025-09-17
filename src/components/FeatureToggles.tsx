@@ -62,6 +62,54 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
     return false; // Medium and Long are not considered little
   }, [formData.wordCount, formData.customWordCount]);
   
+  // Don't render anything if display mode is 'populated' and no fields are populated
+  // EXCEPT for Number of Primary Outputs which should always be visible
+  if (displayMode === 'populated' && !hasPopulatedFeatureTogglesFields()) {
+    // Still show Number of Primary Outputs even in populated mode
+    return (
+      <div className="space-y-3 py-4 border-t border-gray-300 dark:border-gray-800">
+        <Tooltip content="Enhance your output with alternative versions, humanized styles, scoring, and voice emulation options." delayDuration={300}>
+          <div className="flex items-center">
+            <div className="w-1 h-5 bg-primary-500 mr-2"></div>
+            <div className="font-medium text-base text-gray-700 dark:text-gray-300">Optional Features</div>
+          </div>
+        </Tooltip>
+        
+        {/* Number of Primary Outputs - ALWAYS VISIBLE */}
+        <div>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <label htmlFor="numberOfPrimaryOutputs" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Number of Primary Outputs
+              </label>
+              <Tooltip content="Generate multiple distinct primary versions of the copy. Each will be a full output card with unique approaches.">
+                <span className="ml-1 text-gray-500 cursor-help">
+                  <InfoIcon size={14} />
+                </span>
+              </Tooltip>
+            </div>
+            <div className="flex items-center">
+              <input
+                type="number"
+                id="numberOfPrimaryOutputs"
+                name="numberOfPrimaryOutputs"
+                min="1"
+                max="5"
+                value={formData.numberOfPrimaryOutputs || 1}
+                onChange={handleChange}
+                className="w-16 bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 p-1.5"
+              />
+              <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">versions</span>
+            </div>
+          </div>
+          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+            Generate multiple distinct approaches and angles from your initial generation. Each version will be a separate output card.
+          </p>
+        </div>
+      </div>
+    );
+  }
+  
   return (
     <div className="space-y-3 py-4 border-t border-gray-300 dark:border-gray-800">
       <Tooltip content="Enhance your output with alternative versions, humanized styles, scoring, and voice emulation options." delayDuration={300}>
@@ -323,7 +371,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
       </div>
 
       {/* Number of Primary Outputs */}
-      <div>
+      <div className="block">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <label htmlFor="numberOfPrimaryOutputs" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
