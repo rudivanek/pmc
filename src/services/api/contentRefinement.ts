@@ -179,7 +179,7 @@ export async function reviseContentForWordCount(
         formState.model,
         'revise_word_count',
         `Refine word count (target: ${targetWordCount})`,
-        sessionId,
+        undefined, // Don't pass sessionId to avoid foreign key constraint issues
         formState.projectDescription
       );
       
@@ -621,7 +621,7 @@ async function performSecondRevision(
         formState.model,
         'revise_word_count_second_attempt',
         `Second word count revision (target: ${targetWordCount})`,
-        sessionId,
+        undefined, // Don't pass sessionId to avoid foreign key constraint issues
         formState.projectDescription
       );
       
