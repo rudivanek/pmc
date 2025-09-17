@@ -130,5 +130,3 @@ export function isFieldUserModified(fieldName: keyof FormState, currentValue: an
   // For other types, do direct comparison
   return currentValue !== defaultValue;
 }
-
-export { isFieldUserModified, hasPopulatedCompetitorUrls }
