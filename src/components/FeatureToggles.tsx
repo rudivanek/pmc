@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormData } from '../types';
+import { FormState } from '../types';
 import { Tooltip } from './ui/Tooltip';
 import { InfoIcon } from 'lucide-react';
 import { Checkbox } from './ui/checkbox';
@@ -7,10 +7,10 @@ import { Label } from './ui/label';
 import { useMemo } from 'react';
 import { useInputField } from '../hooks/useInputField';
 import { toast } from 'react-hot-toast';
-import { isFieldUserModified, isFieldPopulated } from '../utils/formUtils';
+import { isFieldPopulated } from '../utils/formUtils';
 
 interface FeatureTogglesProps {
-  formData: FormData;
+  formData: FormState;
   handleToggle: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleChange: (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => void;
   isSmartMode: boolean;
