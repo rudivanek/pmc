@@ -587,6 +587,10 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
           }
         }
       } else if (actionType === 'score') {
+        // Check if source content exists
+        if (!sourceItem.content) {
+          throw new Error('No content available to score. Please regenerate the content first.');
+        }
         addProgressMessage(`Generating score for ${sourceItem.sourceDisplayName || sourceItem.type}...`);
         const score = await generateContentScores(
           sourceItem.content,
