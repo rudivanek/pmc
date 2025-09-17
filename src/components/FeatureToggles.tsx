@@ -7,7 +7,7 @@ import { Label } from './ui/label';
 import { useMemo } from 'react';
 import { useInputField } from '../hooks/useInputField';
 import { toast } from 'react-hot-toast';
-import { isFieldUserModified } from '../utils/formUtils';
+import { isFieldUserModified, isFieldPopulated } from '../utils/formUtils';
 
 interface FeatureTogglesProps {
   formData: FormData;
@@ -88,8 +88,6 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
            isFieldUserModified('numOgDescriptions', formData.numOgDescriptions) ||
            isFieldUserModified('wordCountTolerancePercentage', formData.wordCountTolerancePercentage) ||
            isFieldUserModified('littleWordCountTolerancePercentage', formData.littleWordCountTolerancePercentage);
-           isFieldPopulated(formData.wordCountTolerancePercentage) ||
-           isFieldPopulated(formData.littleWordCountTolerancePercentage);
   };
 
   // Don't render anything if display mode is 'populated' and no fields are populated
