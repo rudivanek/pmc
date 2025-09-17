@@ -516,17 +516,20 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
           addProgressMessage
         );
 
+        // Ensure personaUsed is defined, fallback to selectedPersona
+        const effectivePersona = personaUsed || selectedPersona || 'Unknown Persona';
+
         newItem = {
           id: uuidv4(),
           type: GeneratedContentItemType.RestyledImproved,
           content: restyledContent,
-          persona: personaUsed || selectedPersona,
+          persona: effectivePersona,
           generatedAt: new Date().toISOString(),
           sourceId: sourceItem.id,
           sourceType: sourceItem.type,
-          sourceDisplayName: `${personaUsed || selectedPersona}'s Voice from ${sourceItem.sourceDisplayName || sourceItem.type}`
+          sourceDisplayName: `${effectivePersona}'s Voice from ${sourceItem.sourceDisplayName || sourceItem.type}`
         };
-        addProgressMessage(`Applied ${personaUsed}'s voice style.`);
+        addProgressMessage(`Applied ${effectivePersona}'s voice style.`);
         
         // Add FAQ schema if it was generated in the response
         if (typeof restyledContent === 'object' && 'faqSchema' in restyledContent) {
@@ -539,20 +542,20 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
         
         // Generate SEO metadata if enabled
         if (formState.generateSeoMetadata) {
-          addProgressMessage(`Generating SEO metadata for ${personaUsed}'s voice content...`);
+          addProgressMessage(`Generating SEO metadata for ${effectivePersona}'s voice content...`);
           try {
             const seoMetadata = await generateSeoMetadata(newItem.content, formState, currentUser, addProgressMessage);
             newItem.seoMetadata = seoMetadata;
-            addProgressMessage(`SEO metadata generated for ${personaUsed}'s voice content.`);
+            addProgressMessage(`SEO metadata generated for ${effectivePersona}'s voice content.`);
           } catch (seoError) {
-            console.error(`Error generating SEO metadata for ${personaUsed}'s voice:`, seoError);
-            addProgressMessage(`Error generating SEO metadata for ${personaUsed}'s voice, continuing...`);
+            console.error(`Error generating SEO metadata for ${effectivePersona}'s voice:`, seoError);
+            addProgressMessage(`Error generating SEO metadata for ${effectivePersona}'s voice, continuing...`);
           }
         }
         
         // Generate content scores if enabled
         if (formState.generateScores) {
-          addProgressMessage(`Generating score for ${personaUsed}'s voice content...`);
+          addProgressMessage(`Generating score for ${effectivePersona}'s voice content...`);
           try {
             const score = await generateContentScores(
               newItem.content,
@@ -564,23 +567,23 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
               addProgressMessage
             );
             newItem.score = score;
-            addProgressMessage(`Score generated for ${personaUsed}'s voice content.`);
+            addProgressMessage(`Score generated for ${effectivePersona}'s voice content.`);
           } catch (scoreError) {
-            console.error(`Error generating score for ${personaUsed}'s voice:`, scoreError);
-            addProgressMessage(`Error generating score for ${personaUsed}'s voice, continuing...`);
+            console.error(`Error generating score for ${effectivePersona}'s voice:`, scoreError);
+            addProgressMessage(`Error generating score for ${effectivePersona}'s voice, continuing...`);
           }
         }
         
         // Generate GEO score if enabled
         if (formState.generateGeoScore) {
-          addProgressMessage(`Calculating GEO score for ${personaUsed}'s voice content...`);
+          addProgressMessage(`Calculating GEO score for ${effectivePersona}'s voice content...`);
           try {
             const geoScore = await calculateGeoScore(newItem.content, formState, currentUser, addProgressMessage);
             newItem.geoScore = geoScore;
-            addProgressMessage(`GEO score calculated for ${personaUsed}'s voice content.`);
+            addProgressMessage(`GEO score calculated for ${effectivePersona}'s voice content.`);
           } catch (geoError) {
-            console.error(`Error calculating GEO score for ${personaUsed}'s voice:`, geoError);
-            addProgressMessage(`Error calculating GEO score for ${personaUsed}'s voice, continuing...`);
+            console.error(`Error calculating GEO score for ${effectivePersona}'s voice:`, geoError);
+            addProgressMessage(`Error calculating GEO score for ${effectivePersona}'s voice, continuing...`);
           }
         }
       } else if (actionType === 'score') {
