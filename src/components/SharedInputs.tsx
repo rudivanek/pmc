@@ -235,11 +235,11 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
 
   // Check if any field in the Tone & Style section is populated
   const hasPopulatedToneAndStyleFields = () => {
-    return isFieldPopulated(formData.language) ||
-           isFieldPopulated(formData.tone) ||
-           isFieldPopulated(formData.wordCount) ||
+    return isFieldUserModified('language', formData.language) ||
+           isFieldUserModified('tone', formData.tone) ||
+           isFieldUserModified('wordCount', formData.wordCount) ||
            isFieldPopulated(formData.customWordCount) ||
-           isFieldPopulated(formData.toneLevel) ||
+           isFieldUserModified('toneLevel', formData.toneLevel) ||
            isFieldPopulated(formData.preferredWritingStyle) ||
            isFieldPopulated(formData.languageStyleConstraints) ||
            isFieldPopulated(formData.outputStructure);
@@ -402,7 +402,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
           {/* Language Dropdown */}
-          <div>
+          <div className={displayMode === 'populated' && !isFieldUserModified('language', formData.language) ? 'hidden' : ''}>
             <label htmlFor="language" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Language
             </label>
@@ -422,7 +422,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
           </div>
 
           {/* Tone Dropdown */}
-          <div>
+          <div className={displayMode === 'populated' && !isFieldUserModified('tone', formData.tone) ? 'hidden' : ''}>
             <label htmlFor="tone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Tone
             </label>
@@ -442,7 +442,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
           </div>
 
           {/* Word Count Dropdown */}
-          <div>
+          <div className={displayMode === 'populated' && !isFieldUserModified('wordCount', formData.wordCount) ? 'hidden' : ''}>
             <label htmlFor="wordCount" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Target Word Count
             </label>
@@ -463,7 +463,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         </div>
 
         {/* Custom Word Count */}
-        {formData.wordCount === 'Custom' && (
+        {formData.wordCount === 'Custom' && (displayMode === 'all' || isFieldPopulated(formData.customWordCount)) && (
           <div className="mb-6">
             <div className="flex justify-between items-center">
               <label htmlFor="customWordCount" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -559,7 +559,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         </div>
 
         {/* Preferred Writing Style - HIDE in Smart Mode */}
-        <div className={`${isSmartMode ? 'hidden' : ''} ${displayMode === 'populated' && !isFieldUserModified('preferredWritingStyle', formData.preferredWritingStyle) ? 'hidden' : ''}`}>
+        <div className={`${isSmartMode ? 'hidden' : ''} ${displayMode === 'populated' && !isFieldPopulated(formData.preferredWritingStyle) ? 'hidden' : ''}`}>
           <div className="mb-6">
             <div className="flex justify-between items-center mb-1">
               <label htmlFor="preferredWritingStyle" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -583,7 +583,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         </div>
 
         {/* Language Style Constraints - HIDE in Smart Mode */}
-        <div className={`${isSmartMode ? 'hidden' : ''} ${displayMode === 'populated' && !isFieldUserModified('languageStyleConstraints', formData.languageStyleConstraints) ? 'hidden' : ''}`}>
+        <div className={`${isSmartMode ? 'hidden' : ''} ${displayMode === 'populated' && !isFieldPopulated(formData.languageStyleConstraints) ? 'hidden' : ''}`}>
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
               Language Style Constraints
@@ -609,7 +609,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         </div>
 
         {/* Output Structure - HIDE in Smart Mode */}
-        <div className={`${isSmartMode ? 'hidden' : ''} ${displayMode === 'populated' && !isFieldUserModified('outputStructure', formData.outputStructure) ? 'hidden' : ''}`}>
+        <div className={`${isSmartMode ? 'hidden' : ''} ${displayMode === 'populated' && !isFieldPopulated(formData.outputStructure) ? 'hidden' : ''}`}>
           <div>
             <label htmlFor="outputStructure" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Output Structure
