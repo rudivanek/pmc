@@ -24,6 +24,11 @@ export async function generateContentScores(
   targetWordCount?: number,
   progressCallback?: (message: string) => void
 ): Promise<ScoreData> {
+  // Handle null or undefined content
+  if (content === null || content === undefined) {
+    content = '';
+  }
+
   // Extract text content from structured content if needed
   const textContent = typeof content === 'string' 
     ? content 
@@ -35,6 +40,9 @@ export async function generateContentScores(
           ).join('\n\n')}`
         : JSON.stringify(content);
   
+  // Ensure textContent is always a string to prevent trim() errors
+  const safeTextContent = textContent || '';
+  
   // Get API configuration
   const { apiKey, baseUrl, headers, maxTokens } = getApiConfig(model);
   
@@ -44,7 +52,7 @@ export async function generateContentScores(
   }
   
   // Count the actual words in the content
-  const contentWords = textContent.trim().split(/\s+/).length;
+  const contentWords = safeTextContent.trim().split(/\s+/).filter(word => word.length > 0).length;
   
   // Build the system prompt
   const systemPrompt = `You are an expert content evaluator who provides detailed scoring and analysis of marketing copy.
@@ -58,7 +66,7 @@ export async function generateContentScores(
   let userPrompt = `Please evaluate this ${contentType}:
 
 """
-${textContent}
+${safeTextContent}
 """`;
 
   // Add original content for comparison if provided
