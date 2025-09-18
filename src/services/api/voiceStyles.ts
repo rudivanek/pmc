@@ -28,103 +28,6 @@ export async function restyleCopyWithPersona(
   targetWordCount?: number,
   progressCallback?: (message: string) => void
 ): Promise<{ content: any; personaUsed: string }> {
-  // Helper function to generate GEO score and return content
-  const generateGeoScoreAndReturn = async (finalContent: any): Promise<{ content: any; personaUsed: string; geoScore?: any }> => {
-    if (formState?.generateGeoScore && !isHeadlineArray) {
-      console.log('🎯 GEO Score Generation for Voice Style:');
-      console.log('- formState.generateGeoScore:', formState?.generateGeoScore);
-      console.log('- isHeadlineArray:', isHeadlineArray);
-      console.log('- About to call calculateGeoScore...');
-      
-      if (progressCallback) {
-        progressCallback(`Calculating GEO score for ${persona}'s voice style...`);
-      }
-      
-      try {
-        const geoScore = await calculateGeoScore(finalContent, formState, currentUser, progressCallback);
-        console.log('🎯 GEO Score calculated for voice style:', geoScore);
-        console.log('- GEO Score overall:', geoScore?.overall);
-        console.log('- GEO Score breakdown length:', geoScore?.breakdown?.length);
-        return { content: finalContent, personaUsed: persona, geoScore };
-      } catch (geoError) {
-        console.error('Error calculating GEO score for restyled content:', geoError);
-        console.log('❌ GEO Score calculation failed for voice style:', geoError.message);
-        if (progressCallback) {
-          progressCallback('Error calculating GEO score for restyled content, continuing...');
-        }
-      }
-    }
-    // Generate FAQ Schema if faqJson is selected in output structure
-    let faqSchema;
-    if (formState.outputStructure && formState.outputStructure.some(element => 
-      element.value === 'faqJson' || element.label?.toLowerCase().includes('faq (json)')
-    )) {
-      if (progressCallback) {
-        progressCallback('Generating FAQ Schema from restyled content...');
-      }
-      
-      try {
-        const { generateFaqSchemaFromText } = await import('./seoGeneration');
-        faqSchema = await generateFaqSchemaFromText(
-          typeof revisedRestyledCopy === 'string' ? revisedRestyledCopy : JSON.stringify(revisedRestyledCopy),
-          formState,
-          currentUser,
-          progressCallback
-        );
-      } catch (faqError) {
-        console.error('Error generating FAQ schema for restyled content:', faqError);
-        if (progressCallback) {
-          progressCallback('Error generating FAQ schema for restyled content, continuing...');
-        }
-      }
-    }
-    
-    // Return the restyled content with optional GEO score and FAQ schema
-    return {
-      hasGeoScoreEnabled: formState?.generateGeoScore,
-      isHeadlineArray,
-      willReturnGeoScore: false
-    };
-    
-    return { content: finalContent, personaUsed: persona };
-  };
-
-  // Helper function for plain text GEO score generation
-  const generateGeoScoreAndReturnPlainText = async (finalContent: any): Promise<{ content: any; personaUsed: string; geoScore?: any }> => {
-    if (formState?.generateGeoScore && !isHeadlineArray) {
-      console.log('🎯 GEO Score Generation for Voice Style (Plain Text):');
-      console.log('- formState.generateGeoScore:', formState?.generateGeoScore);
-      console.log('- isHeadlineArray:', isHeadlineArray);
-      console.log('- About to call calculateGeoScore...');
-      
-      if (progressCallback) {
-        progressCallback(`Calculating GEO score for ${persona}'s voice style...`);
-      }
-      
-      try {
-        const geoScore = await calculateGeoScore(finalContent, formState, currentUser, progressCallback);
-        console.log('🎯 GEO Score calculated for voice style (Plain Text):', geoScore);
-        console.log('- GEO Score overall:', geoScore?.overall);
-        console.log('- GEO Score breakdown length:', geoScore?.breakdown?.length);
-        return { content: finalContent, personaUsed: persona, geoScore };
-      } catch (geoError) {
-        console.error('Error calculating GEO score for restyled content (Plain Text):', geoError);
-        console.log('❌ GEO Score calculation failed for voice style (Plain Text):', geoError.message);
-        if (progressCallback) {
-          progressCallback('Error calculating GEO score for restyled content, continuing...');
-        }
-      }
-    }
-    
-    console.log('🎯 Final return for voice style (no GEO score - Plain Text):', {
-      hasGeoScoreEnabled: formState?.generateGeoScore,
-      isHeadlineArray,
-      willReturnGeoScore: false
-    });
-    
-    return { content: finalContent, personaUsed: persona };
-  };
-
   // Check if content is an array of headlines
   const isHeadlineArray = Array.isArray(content) && content.every(item => typeof item === 'string');
   
@@ -140,7 +43,7 @@ export async function restyleCopyWithPersona(
   let systemPrompt = '';
   
   // Add CRITICAL TL;DR formatting requirement at the very beginning if enabled
-  if (formState?.enhanceForGEO && formState?.addTldrSummary) {
+  if (formState?.enhanceForGEO && formState?.addTldrSummary && !isHeadlineArray) {
     systemPrompt = `CRITICAL FORMATTING REQUIREMENT - TL;DR SUMMARY PLACEMENT:
 
 You MUST begin your response with a TL;DR summary as the very first element. This is NON-NEGOTIABLE.
@@ -204,6 +107,15 @@ You are an expert copywriter who can perfectly mimic the voice, style, and manne
     - Personal anecdotes and relatable examples
     - Use of questions to engage the reader
     - Occasional playful humor and slang`;
+  } else if (persona === 'Brené Brown') {
+    systemPrompt += `\n\nBrené Brown's voice is characterized by:
+    - Vulnerable, authentic, and deeply empathetic tone
+    - Research-backed insights combined with personal storytelling
+    - Language around courage, vulnerability, and emotional intelligence
+    - Warm but professional approach to difficult topics
+    - Use of inclusive, non-judgmental language
+    - Emphasis on human connection and belonging
+    - Gentle but powerful calls to action around personal growth`;
   } else if (persona === 'Simon Sinek') {
     systemPrompt += `\n\nSimon Sinek's voice is characterized by:
     - Clear, focused on "why" over "what" or "how"
@@ -272,9 +184,11 @@ You are an expert copywriter who can perfectly mimic the voice, style, and manne
         systemPrompt += `\n\nCRITICAL WORD COUNT REQUIREMENT: The final content MUST be EXACTLY ${targetWordCount} words. This is a non-negotiable requirement.
       
       You MUST count your words meticulously. If your first draft is shorter than ${targetWordCount} words, you MUST expand the content by adding more:
-      3. Additional context and background information
-      4. Supporting evidence, quotes, or statistics
-      5. Practical applications or implications
+      - Detailed examples in ${persona}'s style
+      - Supporting evidence or anecdotes typical of ${persona}
+      - Additional context and background information
+      - Supporting evidence, quotes, or statistics
+      - Practical applications or implications
       
       Do NOT use filler text or repetitive content. Every added word must provide substantive value while maintaining ${persona}'s distinctive voice.
       
@@ -476,6 +390,9 @@ MANDATORY JSON REQUIREMENTS:
 - Generate 5-8 question-answer pairs total
 - All text must be properly escaped for JSON format
 - Do NOT include any text before or after the JSON object`;
+
+        // Return here to avoid adding other format instructions
+        return userPrompt;
       } else if (hasQAFormat) {
         userPrompt += `\n\nSince this is Q&A content, you MUST return your response as a JSON object with this exact structure:
 {
@@ -573,10 +490,27 @@ CRITICAL: Transform each Q&A pair to sound like ${persona} would ask and answer 
     
     // Extract the content from the response
     let responseContent = data.choices[0]?.message?.content;
-    let processedContent: any = content; // Initialize with original content as fallback
     
-    if (!responseContent) {
-      throw new Error('No content in response');
+    if (!responseContent || responseContent.trim() === '') {
+      throw new Error(`${persona} voice styling returned empty content. This may be due to content length or model limitations.`);
+    }
+    
+    // Handle headline array responses
+    if (isHeadlineArray) {
+      try {
+        const headlineArray = JSON.parse(responseContent);
+        if (Array.isArray(headlineArray)) {
+          if (progressCallback) {
+            progressCallback(`✓ Generated ${headlineArray.length} headlines in ${persona}'s voice`);
+          }
+          return { content: headlineArray, personaUsed: persona };
+        } else {
+          throw new Error('Response is not an array of headlines');
+        }
+      } catch (parseError) {
+        console.error('Error parsing headline array response:', parseError);
+        throw new Error(`Failed to parse ${persona}'s headline response. The AI may have returned invalid JSON.`);
+      }
     }
     
     // If we expected structured content
@@ -584,7 +518,6 @@ CRITICAL: Transform each Q&A pair to sound like ${persona} would ask and answer 
       try {
         // Parse JSON response
         const parsedResponse = JSON.parse(responseContent);
-        processedContent = parsedResponse; // Store successfully parsed content
         
         // Check if it has the expected structure
         if (parsedResponse.headline && Array.isArray(parsedResponse.sections)) {
@@ -592,154 +525,91 @@ CRITICAL: Transform each Q&A pair to sound like ${persona} would ask and answer 
           const contentWordCount = extractWordCount(parsedResponse);
           
           if (progressCallback) {
-            progressCallback(`Generated content in ${persona}'s voice: ${contentWordCount} words (${Math.round(contentWordCount/targetWordCount*100)}% of target)`);
+            progressCallback(`Generated content in ${persona}'s voice: ${contentWordCount} words (${targetWordCount ? Math.round(contentWordCount/targetWordCount*100) : 'no target'}% of target)`);
           }
           
           // Check if word count revision is needed
-          if (targetWordCount && formState?.prioritizeWordCount) {
-            // Stricter threshold - now using 98% of target as minimum acceptable
-            const minimumAcceptable = Math.floor(targetWordCount * 0.98);
+          if (targetWordCount && (formState?.prioritizeWordCount || formState?.adhereToLittleWordCount)) {
+            const targetWordCountInfo = formState ? calculateTargetWordCount(formState) : { target: targetWordCount };
             
-            // If the content is significantly shorter than requested, try to revise it
-            if (contentWordCount < minimumAcceptable) {
+            let needsRevision = false;
+            let revisionReason = '';
+            
+            if (targetWordCountInfo.min !== undefined && targetWordCountInfo.max !== undefined) {
+              // Little word count mode - check if within range
+              if (contentWordCount < targetWordCountInfo.min) {
+                needsRevision = true;
+                revisionReason = `below range (${contentWordCount} < ${targetWordCountInfo.min})`;
+              } else if (contentWordCount > targetWordCountInfo.max) {
+                needsRevision = true;
+                revisionReason = `above range (${contentWordCount} > ${targetWordCountInfo.max})`;
+              }
+            } else {
+              // Regular strict mode
+              const minimumAcceptable = Math.floor(targetWordCount * 0.98);
+              if (contentWordCount < minimumAcceptable) {
+                needsRevision = true;
+                revisionReason = `too short (${contentWordCount}/${targetWordCount} words)`;
+              }
+            }
+            
+            // If the content needs revision, try to revise it
+            if (needsRevision) {
               if (progressCallback) {
-                progressCallback(`${persona}-styled content too short (${contentWordCount}/${targetWordCount} words, ${Math.round(contentWordCount/targetWordCount*100)}%). Revising...`);
+                progressCallback(`${persona}-styled content ${revisionReason}. Revising...`);
               }
               
-              console.warn(`${persona}-styled content too short: ${contentWordCount} words vs target of ${targetWordCount} words`);
-              
               try {
-                // FIRST REVISION ATTEMPT - WITH ENHANCED PARAMETERS
                 const revisedContent = await reviseContentForWordCount(
                   parsedResponse,
-                  targetWordCount,
-                  // Pass enhanced form state with additional flags to ensure word count is met
+                  targetWordCountInfo,
                   {
                     ...formState,
-                    prioritizeWordCount: true, // Force prioritizeWordCount to true
-                    forceElaborationsExamples: true // Add examples to help reach word count
+                    prioritizeWordCount: true,
+                    forceElaborationsExamples: true
                   },
                   currentUser,
                   progressCallback,
-                  persona // Pass the persona to maintain voice style during revision
+                  persona,
+                  formState?.sessionId
                 );
                 
-                // Get revised word count
-                const revisedWordCount = extractWordCount(revisedContent);
-                
-                if (progressCallback) {
-                  progressCallback(`Revised ${persona}-styled content: ${revisedWordCount} words (${Math.round(revisedWordCount/targetWordCount*100)}% of target)`);
-                }
-                
-                // SECOND REVISION ATTEMPT IF STILL TOO SHORT
-                if (revisedWordCount < minimumAcceptable) {
+                // Generate GEO score if enabled
+                if (formState?.generateGeoScore) {
                   if (progressCallback) {
-                    progressCallback(`${persona}-styled content still below target (${revisedWordCount}/${targetWordCount}, ${Math.round(revisedWordCount/targetWordCount*100)}%). Making second attempt...`);
+                    progressCallback(`Calculating GEO score for ${persona}'s voice style...`);
                   }
                   
                   try {
-                    // Make a more aggressive second attempt with maximum elaboration settings
-                    const secondRevision = await reviseContentForWordCount(
-                      revisedContent,
-                      targetWordCount,
-                      {
-                        ...formState,
-                        prioritizeWordCount: true,
-                        forceElaborationsExamples: true,
-                        forceKeywordIntegration: true // Add this to encourage more content
-                      },
-                      currentUser,
-                      progressCallback,
-                      persona // Pass the persona to maintain voice style during revision
-                    );
+                    const geoScore = await calculateGeoScore(revisedContent, formState, currentUser, progressCallback);
                     
-                    const finalWordCount = extractWordCount(secondRevision);
-                    
-                    if (progressCallback) {
-                      progressCallback(`Second revision complete: ${finalWordCount} words (${Math.round(finalWordCount/targetWordCount*100)}% of target)`);
-                    }
-                    
-                    // THIRD EMERGENCY REVISION ATTEMPT IF STILL SHORT
-                    if (finalWordCount < minimumAcceptable) {
+                    // Generate FAQ Schema if needed
+                    if (formState.outputStructure && formState.outputStructure.some(element => 
+                      element.value === 'faqJson' || element.label?.toLowerCase().includes('faq (json)')
+                    )) {
                       if (progressCallback) {
-                        progressCallback(`Content still below target. Making final emergency revision...`);
+                        progressCallback('Generating FAQ Schema from restyled content...');
                       }
-                      
-                      // Construct a special system prompt focused only on expansion
-                      const expansionSystemPrompt = `You are ${persona}. Your only task is to expand this content to EXACTLY ${targetWordCount} words without changing its meaning or style. Add substantive, valuable content - detailed examples, case studies, elaborations, and supporting evidence. Never use filler or fluff.`;
-                      
-                      const expansionUserPrompt = `This content needs to be expanded to EXACTLY ${targetWordCount} words while maintaining my (${persona}'s) distinctive voice and style:
-                      
-                      """
-                      ${typeof secondRevision === 'string' ? secondRevision : JSON.stringify(secondRevision, null, 2)}
-                      """
-                      
-                      Current length: ${finalWordCount} words
-                      Target length: ${targetWordCount} words
-                      
-                      Expand this content by adding more depth, examples, and elaboration - never filler text. Return the complete expanded content that is EXACTLY ${targetWordCount} words long.
-                      
-                      I'll ONLY accept content that is ${targetWordCount} words or longer. DO NOT conclude until you've reached this word count.
-                      
-                      CRITICAL: Count your words meticulously before submitting your response. The word count must be exact.`;
-                      
-                      // Make a desperate final attempt with special prompt
-                      const emergencyRequestBody = {
-                        model,
-                        messages: [
-                          { role: 'system', content: expansionSystemPrompt },
-                          { role: 'user', content: expansionUserPrompt }
-                        ],
-                        temperature: 1.0, // Higher temperature for more creativity
-                        max_tokens: maxTokens,
-                        response_format: { type: "json_object" }
-                      };
                       
                       try {
-                        const emergencyResponse = await fetch(`${baseUrl}/chat/completions`, {
-                          method: 'POST',
-                          headers,
-                          body: JSON.stringify(emergencyRequestBody)
-                        });
+                        const { generateFaqSchemaFromText } = await import('./seoGeneration');
+                        const faqSchema = await generateFaqSchemaFromText(
+                          typeof revisedContent === 'string' ? revisedContent : JSON.stringify(revisedContent),
+                          formState,
+                          currentUser,
+                          progressCallback
+                        );
                         
-                        const emergencyData = await handleApiResponse<{
-                          choices: { message: { content: string } }[];
-                        }>(emergencyResponse);
-                        
-                        const emergencyContent = emergencyData.choices[0]?.message?.content;
-                        
-                        if (emergencyContent) {
-                          try {
-                            const finalContent = JSON.parse(emergencyContent);
-                            const finalFinalWordCount = extractWordCount(finalContent);
-                            
-                            if (progressCallback) {
-                              progressCallback(`🎯 Final emergency revision: ${finalFinalWordCount} words (${Math.round(finalFinalWordCount/targetWordCount*100)}% of target)`);
-                            }
-                            
-                            return { content: finalContent, personaUsed: persona };
-                          } catch (parseError) {
-                            // If parsing fails, return the second revision
-                            return { content: secondRevision, personaUsed: persona };
-                          }
-                        }
-                      } catch (emergencyError) {
-                        console.error('Emergency revision failed:', emergencyError);
-                        if (progressCallback) {
-                          progressCallback(`❌ Emergency revision failed for ${persona} voice. Using second revision.`);
-                        }
-                        // Return the second revision if emergency attempt fails
-                        return { content: secondRevision, personaUsed: persona };
+                        return { content: { content: revisedContent, faqSchema }, personaUsed: persona };
+                      } catch (faqError) {
+                        console.error('Error generating FAQ schema for restyled content:', faqError);
+                        // Continue without FAQ schema
                       }
                     }
                     
-                    return { content: secondRevision, personaUsed: persona };
-                  } catch (secondRevisionError) {
-                    console.error(`Error in second revision of ${persona}-styled content:`, secondRevisionError);
-                    if (progressCallback) {
-                      progressCallback(`❌ Second revision failed for ${persona} voice. Using first revision.`);
-                    }
-                    // Keep first revision if second fails
+                    return { content: revisedContent, personaUsed: persona };
+                  } catch (geoError) {
+                    console.error('Error calculating GEO score for restyled content:', geoError);
                     return { content: revisedContent, personaUsed: persona };
                   }
                 }
@@ -751,75 +621,65 @@ CRITICAL: Transform each Q&A pair to sound like ${persona} would ask and answer 
                   progressCallback(`Error revising ${persona}-styled content: ${revisionError.message}`);
                 }
                 // Continue with original content if revision fails
-                return { content: parsedResponse, personaUsed: persona };
               }
             }
           }
           
-          // Use the helper function to potentially add GEO score
-          return await generateGeoScoreAndReturn(parsedResponse);
+          // Generate GEO score if enabled (for non-revised content)
+          if (formState?.generateGeoScore) {
+            if (progressCallback) {
+              progressCallback(`Calculating GEO score for ${persona}'s voice style...`);
+            }
+            
+            try {
+              const geoScore = await calculateGeoScore(parsedResponse, formState, currentUser, progressCallback);
+              
+              // Generate FAQ Schema if needed
+              if (formState.outputStructure && formState.outputStructure.some(element => 
+                element.value === 'faqJson' || element.label?.toLowerCase().includes('faq (json)')
+              )) {
+                if (progressCallback) {
+                  progressCallback('Generating FAQ Schema from restyled content...');
+                }
+                
+                try {
+                  const { generateFaqSchemaFromText } = await import('./seoGeneration');
+                  const faqSchema = await generateFaqSchemaFromText(
+                    typeof parsedResponse === 'string' ? parsedResponse : JSON.stringify(parsedResponse),
+                    formState,
+                    currentUser,
+                    progressCallback
+                  );
+                  
+                  return { content: { content: parsedResponse, faqSchema }, personaUsed: persona };
+                } catch (faqError) {
+                  console.error('Error generating FAQ schema for restyled content:', faqError);
+                  // Continue without FAQ schema
+                }
+              }
+              
+              return { content: parsedResponse, personaUsed: persona };
+            } catch (geoError) {
+              console.error('Error calculating GEO score for restyled content:', geoError);
+              return { content: parsedResponse, personaUsed: persona };
+            }
+          }
+          
+          return { content: parsedResponse, personaUsed: persona };
         }
         
         // If it doesn't have the expected structure, convert it to our expected format
         const convertedResponse = {
           headline: persona + "'s Version",
-          sections: []
+          sections: [
+            {
+              title: "Restyled Content",
+              content: responseContent
+            }
+          ]
         };
-        processedContent = convertedResponse; // Update processedContent
         
-        // Convert flat object format to structured format
-        if (typeof parsedResponse === 'object' && !Array.isArray(parsedResponse)) {
-          convertedResponse.headline = Object.keys(parsedResponse)[0] || (persona + "'s Version");
-          
-          // Add each key-value pair as a section
-          Object.entries(parsedResponse).forEach(([key, value]) => {
-            convertedResponse.sections.push({
-              title: key,
-              content: value as string
-            });
-          });
-        } else {
-          // Fallback for unexpected formats
-          convertedResponse.sections.push({
-            title: "Restyled Content",
-            content: responseContent
-          });
-        }
-        processedContent = convertedResponse; // Update processedContent
-        
-        // Check if word count revision is needed for converted response
-        if (targetWordCount && formState?.prioritizeWordCount) {
-          const contentWordCount = extractWordCount(convertedResponse);
-          const minimumAcceptable = Math.floor(targetWordCount * 0.98);
-          
-          // If the content is significantly shorter than requested, try to revise it
-          if (contentWordCount < minimumAcceptable) {
-            if (progressCallback) {
-              progressCallback(`${persona}-styled content too short (${contentWordCount}/${targetWordCount} words). Revising...`);
-            }
-            
-            try {
-              const revisedContent = await reviseContentForWordCount(
-                convertedResponse,
-                targetWordCount,
-                {
-                  ...formState,
-                  prioritizeWordCount: true,
-                  forceElaborationsExamples: true
-                },
-                currentUser,
-                progressCallback,
-                persona
-              );
-              return await generateGeoScoreAndReturn(revisedContent);
-            } catch (revisionError) {
-              console.error(`Error revising ${persona}-styled content:`, revisionError);
-              // Continue with converted content if revision fails
-            }
-          }
-        }
-        
-        return await generateGeoScoreAndReturn(convertedResponse);
+        return { content: convertedResponse, personaUsed: persona };
       } catch (err) {
         console.warn('Error parsing structured content response:', err);
         
@@ -833,61 +693,52 @@ CRITICAL: Transform each Q&A pair to sound like ${persona} would ask and answer 
             }
           ]
         };
-        processedContent = structuredFallback; // Store fallback content
         
-        // Check if word count revision is needed for fallback
-        if (targetWordCount && formState?.prioritizeWordCount) {
-          const contentWordCount = extractWordCount(structuredFallback);
-          const minimumAcceptable = Math.floor(targetWordCount * 0.98);
-          
-          if (contentWordCount < minimumAcceptable) {
-            try {
-              const revisedContent = await reviseContentForWordCount(
-                structuredFallback,
-                targetWordCount,
-                {
-                  ...formState,
-                  prioritizeWordCount: true,
-                  forceElaborationsExamples: true
-                },
-                currentUser,
-                progressCallback,
-                persona
-              );
-              return await generateGeoScoreAndReturn(revisedContent);
-            } catch (revisionError) {
-              console.error(`Error revising fallback ${persona}-styled content:`, revisionError);
-              // Continue with fallback if revision fails
-            }
-          }
-        }
-        
-        return await generateGeoScoreAndReturn(structuredFallback);
+        return { content: structuredFallback, personaUsed: persona };
       }
     }
     
     // For plain text content
-    if (targetWordCount && formState?.prioritizeWordCount) {
+    if (targetWordCount && (formState?.prioritizeWordCount || formState?.adhereToLittleWordCount)) {
       // Get current word count
       const contentWords = responseContent.trim().split(/\s+/).length;
-      processedContent = responseContent; // Store processed content for plain text
-      const minimumAcceptable = Math.floor(targetWordCount * 0.98); // Stricter threshold
+      const targetWordCountInfo = formState ? calculateTargetWordCount(formState) : { target: targetWordCount };
       
-      if (progressCallback) {
-        progressCallback(`Generated content in ${persona}'s voice: ${contentWords} words (${Math.round(contentWords/targetWordCount*100)}% of target)`);
+      let needsRevision = false;
+      let revisionReason = '';
+      
+      if (targetWordCountInfo.min !== undefined && targetWordCountInfo.max !== undefined) {
+        // Little word count mode - check if within range
+        if (contentWords < targetWordCountInfo.min) {
+          needsRevision = true;
+          revisionReason = `below range (${contentWords} < ${targetWordCountInfo.min})`;
+        } else if (contentWords > targetWordCountInfo.max) {
+          needsRevision = true;
+          revisionReason = `above range (${contentWords} > ${targetWordCountInfo.max})`;
+        }
+      } else {
+        // Regular strict mode
+        const minimumAcceptable = Math.floor(targetWordCount * 0.98);
+        if (contentWords < minimumAcceptable) {
+          needsRevision = true;
+          revisionReason = `too short (${contentWords}/${targetWordCount} words)`;
+        }
       }
       
-      // If the content is significantly shorter than requested, try to revise it
-      if (contentWords < minimumAcceptable) {
+      if (progressCallback) {
+        progressCallback(`Generated content in ${persona}'s voice: ${contentWords} words (${targetWordCount ? Math.round(contentWords/targetWordCount*100) : 'no target'}% of target)`);
+      }
+      
+      // If the content needs revision, try to revise it
+      if (needsRevision) {
         if (progressCallback) {
-          progressCallback(`${persona}-styled content too short (${contentWords}/${targetWordCount} words). Revising...`);
+          progressCallback(`${persona}-styled content ${revisionReason}. Revising...`);
         }
         
         try {
-          // FIRST REVISION ATTEMPT - Enhanced parameters for better word count adherence
           const revisedContent = await reviseContentForWordCount(
             responseContent,
-            targetWordCount,
+            targetWordCountInfo,
             {
               ...formState,
               prioritizeWordCount: true,
@@ -895,186 +746,52 @@ CRITICAL: Transform each Q&A pair to sound like ${persona} would ask and answer 
             },
             currentUser,
             progressCallback,
-            persona
+            persona,
+            formState?.sessionId
           );
           
-          // Get revised word count
-          const revisedWords = typeof revisedContent === 'string' 
-            ? revisedContent.trim().split(/\s+/).length
-            : extractWordCount(revisedContent);
-          
-          if (progressCallback) {
-            progressCallback(`Revised ${persona}-styled content: ${revisedWords} words (${Math.round(revisedWords/targetWordCount*100)}% of target)`);
-          }
-          
-          // SECOND REVISION ATTEMPT IF STILL TOO SHORT
-          if (revisedWords < minimumAcceptable) {
+          // Generate GEO score if enabled
+          if (formState?.generateGeoScore) {
             if (progressCallback) {
-              progressCallback(`${persona}-styled content still below target. Making second attempt...`);
+              progressCallback(`Calculating GEO score for ${persona}'s voice style...`);
             }
             
             try {
-              // Make a more aggressive second attempt with maximum elaboration settings
-              const secondRevision = await reviseContentForWordCount(
-                revisedContent,
-                targetWordCount,
-                {
-                  ...formState,
-                  prioritizeWordCount: true,
-                  forceElaborationsExamples: true,
-                  forceKeywordIntegration: true // Add keyword integration to encourage more content
-                },
-                currentUser,
-                progressCallback,
-                persona,
-                formState?.sessionId
-              );
-              
-              const secondRevisedWords = typeof secondRevision === 'string'
-                ? secondRevision.trim().split(/\s+/).length
-                : extractWordCount(secondRevision);
-                
-              if (progressCallback) {
-                progressCallback(`Second revision: ${secondRevisedWords} words (${Math.round(secondRevisedWords/targetWordCount*100)}% of target)`);
-              }
-              
-              // THIRD EMERGENCY REVISION IF STILL SHORT
-              if (secondRevisedWords < minimumAcceptable) {
-                if (progressCallback) {
-                  progressCallback(`Content still below target. Making final emergency revision...`);
-                }
-                
-                try {
-                  // Direct approach with highest temperature and focus solely on expansion
-                  const expansionSystemPrompt = `You are ${persona}. Your ONLY task is to expand this content to EXACTLY ${targetWordCount} words while maintaining my distinctive voice. Add valuable content with detailed examples, stories, and elaborations. NEVER use filler or fluff.`;
-                  
-                  const expansionUserPrompt = `This content needs to be expanded to EXACTLY ${targetWordCount} words:
-                  
-                  """
-                  ${typeof secondRevision === 'string' ? secondRevision : JSON.stringify(secondRevision, null, 2)}
-                  """
-                  
-                  Current word count: ${secondRevisedWords} words
-                  Target: ${targetWordCount} words (currently at ${Math.round(secondRevisedWords/targetWordCount*100)}%)
-                  
-                  Add more substantive content - examples, analogies, elaborations, details - while keeping my (${persona}'s) distinctive voice and style.
-                  
-                  CRITICAL: The content MUST be EXACTLY ${targetWordCount} words. Count your words meticulously before submitting. This is a non-negotiable requirement.
-                  
-                  Return your response as a valid JSON object with the expanded content.`;
-                  
-                  const emergencyRequestBody = {
-                    model,
-                    messages: [
-                      { role: 'system', content: expansionSystemPrompt },
-                      { role: 'user', content: expansionUserPrompt }
-                    ],
-                    temperature: 1.0,
-                    max_tokens: maxTokens,
-                    response_format: typeof secondRevision === 'object' ? { type: "json_object" } : undefined
-                  };
-                  
-                  const emergencyResponse = await fetch(`${baseUrl}/chat/completions`, {
-                    method: 'POST',
-                    headers,
-                    body: JSON.stringify(emergencyRequestBody)
-                  });
-                  
-                  const emergencyData = await handleApiResponse<{
-                    choices: { message: { content: string } }[];
-                  }>(emergencyResponse);
-                  
-                  const emergencyContent = emergencyData.choices[0]?.message?.content;
-                  
-                  if (emergencyContent) {
-                    const finalWordCount = emergencyContent.trim().split(/\s+/).length;
-                    
-                    if (progressCallback) {
-                      progressCallback(`🎯 Final emergency revision: ${finalWordCount} words (${Math.round(finalWordCount/targetWordCount*100)}% of target)`);
-                    }
-                    
-                    return await generateGeoScoreAndReturn(emergencyContent);
-                  }
-                } catch (emergencyError) {
-                  console.error(`Error in emergency revision of ${persona}-styled content:`, emergencyError);
-                  if (progressCallback) {
-                    progressCallback(`❌ Emergency revision failed for ${persona} voice. Using second revision.`);
-                  }
-                  // Fall back to second revision if emergency attempt fails
-                  return await generateGeoScoreAndReturn(secondRevision);
-                }
-              }
-              
-              return await generateGeoScoreAndReturn(secondRevision);
-            } catch (secondRevisionError) {
-              console.error(`Error in second revision of ${persona}-styled text content:`, secondRevisionError);
-              if (progressCallback) {
-                progressCallback(`❌ Second revision failed for ${persona} voice. Using first revision.`);
-              }
-              // Return the first revision if second fails
-              return await generateGeoScoreAndReturn(revisedContent);
+              const geoScore = await calculateGeoScore(revisedContent, formState, currentUser, progressCallback);
+              return { content: revisedContent, personaUsed: persona };
+            } catch (geoError) {
+              console.error('Error calculating GEO score for restyled content:', geoError);
+              return { content: revisedContent, personaUsed: persona };
             }
           }
           
-          return await generateGeoScoreAndReturn(revisedContent);
+          return { content: revisedContent, personaUsed: persona };
         } catch (revisionError) {
-          console.error(`Error revising ${persona}-styled text content:`, revisionError);
+          console.error(`Error revising ${persona}-styled content:`, revisionError);
           if (progressCallback) {
-            progressCallback(`❌ Error revising ${persona} content: ${revisionError.message}. Using original.`);
+            progressCallback(`Error revising ${persona}-styled content: ${revisionError.message}`);
           }
-          // Return the original response content if revision fails
-        }
-      } else if (progressCallback) {
-        const targetWordCountInfo = formState ? calculateTargetWordCount(formState) : { target: targetWordCount };
-        if (targetWordCountInfo.min !== undefined && targetWordCountInfo.max !== undefined) {
-          progressCallback(`✓ Generated content in ${persona}'s voice: ${contentWords} words (range: ${targetWordCountInfo.min}-${targetWordCountInfo.max})`);
-        } else {
-          progressCallback(`✓ Generated content in ${persona}'s voice: ${contentWords} words`);
+          // Continue with original content if revision fails
         }
       }
-    } else if (progressCallback) {
-      const wordCount = extractWordCount(responseContent);
-      processedContent = responseContent; // Store processed content
-      progressCallback(`✓ Generated content in ${persona}'s voice: ${wordCount} words`);
     }
-     
-    // Create a helper function to generate GEO score and return content for plain text
-    const generateGeoScoreAndReturnPlainText = async (finalContent: any): Promise<{ content: any; personaUsed: string; geoScore?: any }> => {
-      if (formState?.generateGeoScore && !isHeadlineArray) {
-        console.log('🎯 GEO Score Generation for Voice Style (Plain Text):');
-        console.log('- formState.generateGeoScore:', formState?.generateGeoScore);
-        console.log('- isHeadlineArray:', isHeadlineArray);
-        console.log('- About to call calculateGeoScore...');
-        
-        if (progressCallback) {
-          progressCallback(`Calculating GEO score for ${persona}'s voice style...`);
-        }
-        
-        try {
-          const geoScore = await calculateGeoScore(finalContent, formState, currentUser, progressCallback);
-          console.log('🎯 GEO Score calculated for voice style (Plain Text):', geoScore);
-          console.log('- GEO Score overall:', geoScore?.overall);
-          console.log('- GEO Score breakdown length:', geoScore?.breakdown?.length);
-          return { content: finalContent, personaUsed: persona, geoScore };
-        } catch (geoError) {
-          console.error('Error calculating GEO score for restyled content (Plain Text):', geoError);
-          console.log('❌ GEO Score calculation failed for voice style (Plain Text):', geoError.message);
-          if (progressCallback) {
-            progressCallback('Error calculating GEO score for restyled content, continuing...');
-          }
-        }
+    
+    // Generate GEO score if enabled (for non-revised plain text content)
+    if (formState?.generateGeoScore && !isHeadlineArray) {
+      if (progressCallback) {
+        progressCallback(`Calculating GEO score for ${persona}'s voice style...`);
       }
       
-      console.log('🎯 Final return for voice style (no GEO score - Plain Text):', {
-        hasGeoScoreEnabled: formState?.generateGeoScore,
-        isHeadlineArray,
-        willReturnGeoScore: false
-      });
-      
-      return { content: finalContent, personaUsed: persona };
-    };
+      try {
+        const geoScore = await calculateGeoScore(responseContent, formState, currentUser, progressCallback);
+        return { content: responseContent, personaUsed: persona };
+      } catch (geoError) {
+        console.error('Error calculating GEO score for restyled content:', geoError);
+        return { content: responseContent, personaUsed: persona };
+      }
+    }
     
-    return await generateGeoScoreAndReturnPlainText(processedContent);
+    return { content: responseContent, personaUsed: persona };
   } catch (error) {
     console.error(`Error applying ${persona}'s voice:`, error);
     
@@ -1085,7 +802,7 @@ CRITICAL: Transform each Q&A pair to sound like ${persona} would ask and answer 
       progressCallback(`Error applying ${persona}'s voice: ${errorMessage}`);
     }
     
-    // Return the original content in case of error
-    return { content, personaUsed: persona };
+    // Throw the error to be caught by the calling function
+    throw new Error(`Failed to generate ${persona}'s voice style: ${errorMessage}`);
   }
 }
