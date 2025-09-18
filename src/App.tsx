@@ -72,6 +72,14 @@ const AppRouter: React.FC = () => {
     }
   }, [location.pathname, currentUser]);
 
+  // Clear all form state
+  const handleClearAllOverride = () => {
+    setFormState(DEFAULT_FORM_STATE);
+    setLoadedTemplateId(null);
+    setLoadedTemplateName('');
+    toast.success('Form cleared successfully!');
+  };
+
   // Enhanced logout handler that navigates to homepage
   const handleEnhancedLogout = async () => {
     await handleLogout();
@@ -345,37 +353,6 @@ const AppRouter: React.FC = () => {
       </div>
     );
   }
-          element={
-            currentUser ? (
-              <CopyMakerTab
-                currentUser={currentUser}
-                formState={formState}
-                setFormState={setFormState}
-                onClearAll={handleClearAllOverride}
-                loadedTemplateId={loadedTemplateId}
-                setLoadedTemplateId={setLoadedTemplateId}
-                loadedTemplateName={loadedTemplateName}
-                setLoadedTemplateName={setLoadedTemplateName}
-                isSmartMode={isSmartMode}
-                onEvaluateInputs={handleEvaluateInputs}
-                onSaveTemplate={() => setIsSaveTemplateModalOpen(true)}
-                onSaveOutput={handleSaveOutput}
-                onViewPrompts={handleViewPrompts}
-                onCancel={handleCancelOperation}
-                loadFormStateFromPrefill={loadFormStateFromPrefill}
-                loadFormStateFromTemplate={loadFormStateFromTemplate}
-                displayMode={displayMode}
-                setDisplayMode={setDisplayMode}
-                isTemplateSuggestionModalOpen={isTemplateSuggestionModalOpen}
-                setIsTemplateSuggestionModalOpen={setIsTemplateSuggestionModalOpen}
-              />
-            ) : (
-              <Navigate to="/login" replace />
-            )
-          }
-        }}
-      />
-      
       <Routes>
         <Route 
           path="/" 
@@ -411,7 +388,34 @@ const AppRouter: React.FC = () => {
         />
         <Route 
           path="/copy-maker" 
-          element={<Navigate to="/copy-maker" replace />}
+          element={
+            currentUser ? (
+              <CopyMakerTab
+                currentUser={currentUser}
+                formState={formState}
+                setFormState={setFormState}
+                onClearAll={handleClearAllOverride}
+                loadedTemplateId={loadedTemplateId}
+                setLoadedTemplateId={setLoadedTemplateId}
+                loadedTemplateName={loadedTemplateName}
+                setLoadedTemplateName={setLoadedTemplateName}
+                isSmartMode={isSmartMode}
+                onEvaluateInputs={handleEvaluateInputs}
+                onSaveTemplate={() => setIsSaveTemplateModalOpen(true)}
+                onSaveOutput={handleSaveOutput}
+                onViewPrompts={handleViewPrompts}
+                onCancel={handleCancelOperation}
+                loadFormStateFromPrefill={loadFormStateFromPrefill}
+                loadFormStateFromTemplate={loadFormStateFromTemplate}
+                displayMode={displayMode}
+                setDisplayMode={setDisplayMode}
+                isTemplateSuggestionModalOpen={isTemplateSuggestionModalOpen}
+                setIsTemplateSuggestionModalOpen={setIsTemplateSuggestionModalOpen}
+              />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
         />
         <Route path="/features" element={<Features />} />
         <Route path="/documentation" element={<Documentation />} />
