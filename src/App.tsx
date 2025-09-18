@@ -345,33 +345,33 @@ const AppRouter: React.FC = () => {
       </div>
     );
   }
-
-  return (
-    <div className="min-h-screen bg-white dark:bg-black overflow-x-hidden">
-      {/* URL Parameter Loader - handles sessionId, templateId, savedOutputId */}
-      <UrlParamLoader
-        currentUser={currentUser}
-        isInitialized={isInitialized}
-        formState={formState}
-        setFormState={setFormState}
-        loadFormStateFromTemplate={loadFormStateFromTemplate}
-        loadFormStateFromSession={loadFormStateFromSession}
-        loadFormStateFromSavedOutput={loadFormStateFromSavedOutput}
-        addProgressMessage={addProgressMessage}
-        setLoadedTemplateId={setLoadedTemplateId}
-        setLoadedTemplateName={setLoadedTemplateName}
-        setDisplayMode={setDisplayMode}
-      />
-      
-      <MainMenu 
-        userName={currentUser?.user_metadata?.name || currentUser?.email?.split('@')[0] || 'User'} 
-        onLogout={handleEnhancedLogout}
-        onOpenTemplateSuggestion={() => {
-          // Check if we're on the copy-maker page
-          if (location.pathname === '/copy-maker') {
-            setIsTemplateSuggestionModalOpen(true);
-          } else {
-            toast('Template JSON Generator is only available on the Copy Maker page');
+          element={
+            currentUser ? (
+              <CopyMakerTab
+                currentUser={currentUser}
+                formState={formState}
+                setFormState={setFormState}
+                onClearAll={handleClearAllOverride}
+                loadedTemplateId={loadedTemplateId}
+                setLoadedTemplateId={setLoadedTemplateId}
+                loadedTemplateName={loadedTemplateName}
+                setLoadedTemplateName={setLoadedTemplateName}
+                isSmartMode={isSmartMode}
+                onEvaluateInputs={handleEvaluateInputs}
+                onSaveTemplate={() => setIsSaveTemplateModalOpen(true)}
+                onSaveOutput={handleSaveOutput}
+                onViewPrompts={handleViewPrompts}
+                onCancel={handleCancelOperation}
+                loadFormStateFromPrefill={loadFormStateFromPrefill}
+                loadFormStateFromTemplate={loadFormStateFromTemplate}
+                displayMode={displayMode}
+                setDisplayMode={setDisplayMode}
+                isTemplateSuggestionModalOpen={isTemplateSuggestionModalOpen}
+                setIsTemplateSuggestionModalOpen={setIsTemplateSuggestionModalOpen}
+              />
+            ) : (
+              <Navigate to="/login" replace />
+            )
           }
         }}
       />
