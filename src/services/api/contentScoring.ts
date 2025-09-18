@@ -33,7 +33,7 @@ export async function generateContentScores(
         ? `${content.headline}\n\n${content.sections.map((s: any) => 
             `${s.title}\n${s.content || (s.listItems || []).join('\n')}`
           ).join('\n\n')}`
-        : JSON.stringify(content);
+        : JSON.stringify(content) || '';
   
   // Get API configuration
   const { apiKey, baseUrl, headers, maxTokens } = getApiConfig(model);
