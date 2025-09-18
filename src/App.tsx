@@ -11,7 +11,6 @@ import Dashboard from './components/Dashboard';
 import Features from './components/Features';
 import Documentation from './components/Documentation';
 import Privacy from './components/Privacy';
-import App from './components/App';
 import CopyMakerTab from './components/CopyMakerTab';
 import ManageUsers from './components/ManageUsers';
 import PromptDisplay from './components/PromptDisplay';
@@ -405,16 +404,6 @@ const AppRouter: React.FC = () => {
               userId={currentUser.id} 
               onLogout={handleLogout}
             />
-            ) : (
-              <Navigate to="/login" replace />
-            )
-          } 
-        />
-        <Route 
-          path="/app" 
-          element={
-            currentUser ? (
-            <App onViewPrompts={handleViewPrompts} />
             ) : (
               <Navigate to="/login" replace />
             )
