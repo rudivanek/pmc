@@ -401,7 +401,7 @@ export const DEFAULT_FORM_STATE = {
   forceElaborationsExamples: false, // Default to false for forcing elaborations
   // Strict word count control
   prioritizeWordCount: false, // Default to false for strict word count adherence
-  wordCountTolerancePercentage: 2, // Default to 2% below target triggers revision
+  wordCountTolerancePercentage: 20, // Default to 20% below target triggers revision
   faqSchemaEnabled: false, // Default to false for FAQPage Schema generation
   // Little word count control
   adhereToLittleWordCount: false, // Default to false for little word count adherence
