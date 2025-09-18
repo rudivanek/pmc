@@ -306,7 +306,7 @@ The JSON should follow this structure:
       model,
       'evaluate_content_quality',
       `Evaluate ${contentType}`,
-      undefined, // Don't pass sessionId - evaluation doesn't guarantee session exists
+      sessionId,
       undefined // No project description available in content quality context
     );
     

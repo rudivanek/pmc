@@ -129,7 +129,7 @@ export async function generateCopy(
       formState.model,
       `generate_${formState.tab}_copy`,
       formState.briefDescription || `Generate ${formState.tab} copy`,
-      undefined, // Don't pass sessionId - session may not exist yet
+      undefined, // Don't pass sessionId until session is created in database
       formState.projectDescription
     );
     
@@ -369,7 +369,7 @@ export async function generateCopy(
 /**
  * Build the system prompt based on form state
  */
-function buildSystemPrompt(formState: FormState, targetWordCountInfo: { target: number; min?: number; max?: number } | number, currentVersion: number = 1, totalVersions: number = 1): string {
+function buildSystemPrompt(formState: FormState, targetWordCountInfo: { target: number; min?: number; max?: number } | number): string {
   const targetWordCount = typeof targetWordCountInfo === 'number' ? targetWordCountInfo : targetWordCountInfo.target;
   const minWordCount = typeof targetWordCountInfo === 'object' ? targetWordCountInfo.min : undefined;
   const maxWordCount = typeof targetWordCountInfo === 'object' ? targetWordCountInfo.max : undefined;
@@ -381,7 +381,6 @@ function buildSystemPrompt(formState: FormState, targetWordCountInfo: { target: 
   
   // Add CRITICAL TL;DR formatting requirement at the very beginning if enabled
   if (formState.enhanceForGEO && formState.addTldrSummary && !useJsonFormat) {
-    const versionNote = totalVersions > 1 ? `\n\nThis is version ${currentVersion} of ${totalVersions} distinct versions. Create a unique approach that differs from other versions.` : '';
     systemPrompt = `ABSOLUTE MANDATORY REQUIREMENT - TL;DR SUMMARY:
 
 Your response MUST begin with "TL;DR:" followed by exactly one concise sentence that directly answers the main question.
@@ -402,22 +401,13 @@ CRITICAL TL;DR RULES:
 - Follow with blank line, then main content
 
 FAILURE TO START WITH "TL;DR:" = COMPLETE REJECTION
-${versionNote}
 
 ---
 
 You are an expert copywriter with years of experience in creating persuasive, engaging, and effective marketing copy.`;
   }
   
-  systemPrompt += `\n\nYour task is to create new marketing copy based on the provided information.`;
-  
-  // Add version-specific instructions for multiple outputs
-  if (totalVersions > 1) {
-    systemPrompt += `\n\nIMPORTANT: This is version ${currentVersion} of ${totalVersions} distinct variations. Each version should offer a unique approach, angle, or perspective. 
-    Be creative and provide a genuinely different take from other versions while maintaining the core requirements.`;
-  }
-  
-  systemPrompt += `
+  systemPrompt += `\n\nYour task is to create new marketing copy based on the provided information.
 
 The copy should be in ${formState.language} language with a ${formState.tone} tone.
 
