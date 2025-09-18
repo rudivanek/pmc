@@ -516,6 +516,16 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
           addProgressMessage
         );
 
+        // Validate that restyledContent is not empty or invalid
+        if (!restyledContent || 
+            (typeof restyledContent === 'string' && restyledContent.trim().length === 0) ||
+            (typeof restyledContent === 'object' && restyledContent !== null && 
+             (!restyledContent.content || 
+              (typeof restyledContent.content === 'string' && restyledContent.content.trim().length === 0)))) {
+          toast.error(`Failed to generate ${selectedPersona}'s voice style. The AI returned empty content. Please try again or use a different model.`);
+          return;
+        }
+
         // Ensure personaUsed is defined, fallback to selectedPersona
         const effectivePersona = personaUsed || selectedPersona || 'Unknown Persona';
 
