@@ -28,6 +28,7 @@ interface CopyFormProps {
   setLoadedTemplateId: (id: string | null) => void;
   loadedTemplateName: string;
   setLoadedTemplateName: (name: string) => void;
+  isSmartMode: boolean;
   onEvaluateInputs?: () => void;
   onSaveTemplate?: () => void;
   isPrefillEditingMode?: boolean;
@@ -48,6 +49,7 @@ const CopyForm: React.FC<CopyFormProps> = ({
   setLoadedTemplateId,
   loadedTemplateName,
   setLoadedTemplateName,
+  isSmartMode,
   onEvaluateInputs,
   onSaveTemplate,
   isPrefillEditingMode = false,
@@ -567,7 +569,9 @@ const CopyForm: React.FC<CopyFormProps> = ({
         displayMode={displayMode}
         isLoadingSuggestions={isLoadingSuggestions}
         activeSuggestionField={activeSuggestionField}
+        isSmartMode={isSmartMode}
         setFormState={setFormState}
+        displayMode={displayMode}
       />
 
       {/* Feature Toggles */}
@@ -575,6 +579,7 @@ const CopyForm: React.FC<CopyFormProps> = ({
         formData={formState}
         handleToggle={handleToggle}
         handleChange={handleChange}
+        isSmartMode={isSmartMode}
         displayMode={displayMode}
       />
 
