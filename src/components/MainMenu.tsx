@@ -166,14 +166,6 @@ const MainMenu: React.FC<MainMenuProps> = ({ userName, onLogout, onOpenTemplateS
               Dashboard
             </Link>
             
-            <Link 
-              to="/app" 
-              className="hidden"
-            >
-              <LuZap size={18} className="mr-2" />
-              Copy Maker
-            </Link>
-            
             </nav>
           </div>
         )}

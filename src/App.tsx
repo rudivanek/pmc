@@ -411,34 +411,7 @@ const AppRouter: React.FC = () => {
         />
         <Route 
           path="/copy-maker" 
-          element={
-            currentUser ? (
-            <CopyMakerTab
-              currentUser={currentUser}
-              formState={formState}
-              setFormState={setFormState}
-              onClearAll={() => setFormState(DEFAULT_FORM_STATE)}
-              loadedTemplateId={loadedTemplateId}
-              setLoadedTemplateId={setLoadedTemplateId}
-              loadedTemplateName={loadedTemplateName}
-              setLoadedTemplateName={setLoadedTemplateName}
-              isSmartMode={isSmartMode}
-              displayMode={displayMode}
-              setDisplayMode={setDisplayMode}
-              onEvaluateInputs={handleEvaluateInputs}
-              onSaveTemplate={() => setIsSaveTemplateModalOpen(true)}
-              onSaveOutput={handleSaveOutput}
-              onViewPrompts={handleViewPrompts}
-              onCancel={handleCancelOperation}
-              loadFormStateFromPrefill={loadFormStateFromPrefill}
-              loadFormStateFromTemplate={loadFormStateFromTemplate}
-              isTemplateSuggestionModalOpen={isTemplateSuggestionModalOpen}
-              setIsTemplateSuggestionModalOpen={setIsTemplateSuggestionModalOpen}
-            />
-            ) : (
-              <Navigate to="/login" replace />
-            )
-          } 
+          element={<Navigate to="/copy-maker" replace />}
         />
         <Route path="/features" element={<Features />} />
         <Route path="/documentation" element={<Documentation />} />

@@ -46,6 +46,14 @@ const GeneratedCopyCard: React.FC<GeneratedCopyCardProps> = ({
       return { text: '', wordCount: 0, isStructured: false, isHeadlines: false };
     }
 
+    // CRITICAL: Unwrap nested content structure first
+    // This handles cases where restyleCopyWithPersona returns { content: actualContent, faqSchema: {...} }
+    let actualContent = card.content;
+    if (typeof card.content === 'object' && card.content !== null && 'content' in card.content) {
+      actualContent = (card.content as any).content;
+      console.log('Unwrapped nested content structure:', actualContent);
+    }
+
     // Check if this is SEO metadata
     if (card.type === GeneratedContentItemType.SeoMetadata && card.seoMetadata) {
       // This card type should no longer exist as SEO metadata is now embedded in content cards
@@ -53,47 +61,10 @@ const GeneratedCopyCard: React.FC<GeneratedCopyCardProps> = ({
     }
 
     // Check if content is structured
-    if (typeof card.content === 'object') {
-      // Check if this is a response object with nested content and seoMetadata
-      if (card.content && typeof card.content === 'object' && 'content' in card.content && 'seoMetadata' in card.content) {
-        // Extract the actual content and seoMetadata from the nested structure
-        const actualContent = card.content.content;
-        // Note: seoMetadata should now be in card.seoMetadata, not nested in content
-        
-        // Process the actual content (which should be structured copy)
-        if (actualContent && typeof actualContent === 'object' && 'headline' in actualContent && 'sections' in actualContent) {
-          const structuredContent = actualContent as StructuredCopyOutput;
-          let text = stripMarkdown(structuredContent.headline) + '\n\n';
-          structuredContent.sections.forEach(section => {
-            if (section && section.title) {
-              text += stripMarkdown(section.title) + '\n';
-              if (section.content) {
-                text += stripMarkdown(section.content) + '\n\n';
-              } else if (section.listItems && section.listItems.length > 0) {
-                section.listItems.forEach(item => {
-                  text += '• ' + stripMarkdown(item) + '\n';
-                });
-                text += '\n';
-              }
-            }
-          });
-          
-          const wordCount = text ? text.trim().split(/\s+/).length : 0;
-          
-          return { 
-            text, 
-            wordCount, 
-            isStructured: true, 
-            isHeadlines: false,
-            structuredContent: structuredContent,
-            wordCountAccuracy: structuredContent.wordCountAccuracy
-          };
-        }
-      }
-      
+    if (typeof actualContent === 'object') {
       // Check if content is structured copy
-      if (card.content && typeof card.content === 'object' && 'headline' in card.content && 'sections' in card.content) {
-        const structuredContent = card.content as StructuredCopyOutput;
+      if (actualContent && typeof actualContent === 'object' && 'headline' in actualContent && 'sections' in actualContent) {
+        const structuredContent = actualContent as StructuredCopyOutput;
         // Calculate word count from structured content
         let text = stripMarkdown(structuredContent.headline) + '\n\n';
         structuredContent.sections.forEach(section => {
@@ -122,39 +93,41 @@ const GeneratedCopyCard: React.FC<GeneratedCopyCardProps> = ({
         };
       } else {
         // Handle other object formats by checking common text-containing properties
-        if (card.content.text && typeof card.content.text === 'string') {
-          const text = stripMarkdown(card.content.text);
+        if (actualContent.text && typeof actualContent.text === 'string') {
+          const text = stripMarkdown(actualContent.text);
           const wordCount = text ? text.trim().split(/\s+/).length : 0;
-          return { text, wordCount, isStructured: false, isHeadlines: false };
-        } else if (card.content.content && typeof card.content.content === 'string') {
-          const text = stripMarkdown(card.content.content);
+          return { text, wordCount, isStructured: false, isHeadlines: false, isFaqJson: false };
+        } else if (actualContent.content && typeof actualContent.content === 'string') {
+          const text = stripMarkdown(actualContent.content);
           const wordCount = text ? text.trim().split(/\s+/).length : 0;
-          return { text, wordCount, isStructured: false, isHeadlines: false };
-        } else if (card.content.output && typeof card.content.output === 'string') {
-          const text = stripMarkdown(card.content.output);
+          return { text, wordCount, isStructured: false, isHeadlines: false, isFaqJson: false };
+        } else if (actualContent.output && typeof actualContent.output === 'string') {
+          const text = stripMarkdown(actualContent.output);
           const wordCount = text ? text.trim().split(/\s+/).length : 0;
-          return { text, wordCount, isStructured: false, isHeadlines: false };
-        } else if (card.content.message && typeof card.content.message === 'string') {
-          const text = stripMarkdown(card.content.message);
+          return { text, wordCount, isStructured: false, isHeadlines: false, isFaqJson: false };
+        } else if (actualContent.message && typeof actualContent.message === 'string') {
+          const text = stripMarkdown(actualContent.message);
           const wordCount = text ? text.trim().split(/\s+/).length : 0;
-          return { text, wordCount, isStructured: false, isHeadlines: false };
+          return { text, wordCount, isStructured: false, isHeadlines: false, isFaqJson: false };
         } else {
           // Fallback: Handle objects that don't match any known format
           try {
-            const formattedText = JSON.stringify(card.content, null, 2);
+            const formattedText = JSON.stringify(actualContent, null, 2);
             const wordCount = formattedText ? formattedText.trim().split(/\s+/).length : 0;
             return { 
               text: formattedText, 
               wordCount, 
               isStructured: false,
-              isHeadlines: false
+              isHeadlines: false,
+              isFaqJson: false
             };
           } catch (e) {
             return { 
               text: 'Invalid content format', 
               wordCount: 0, 
               isStructured: false,
-              isHeadlines: false
+              isHeadlines: false,
+              isFaqJson: false
             };
           }
         }
@@ -162,11 +135,11 @@ const GeneratedCopyCard: React.FC<GeneratedCopyCardProps> = ({
     }
     
     // Handle string content
-    const stringContent = String(card.content);
+    const stringContent = String(actualContent);
     const strippedContent = stripMarkdown(stringContent);
     const wordCount = strippedContent ? strippedContent.trim().split(/\s+/).length : 0;
     
-    return { text: strippedContent, wordCount, isStructured: false, isHeadlines: false };
+    return { text: strippedContent, wordCount, isStructured: false, isHeadlines: false, isFaqJson: false };
   }, [card.content]);
 
   // Get word count accuracy text and color
