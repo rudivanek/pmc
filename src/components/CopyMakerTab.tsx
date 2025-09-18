@@ -316,7 +316,9 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
         generatedVersions: [] // Clear previous results
       }
     }));
-    addProgressMessage('Starting copy generation...');
+    
+    const totalPrimaryOutputs = formState.numberOfPrimaryOutputs || 1;
+    addProgressMessage(`Starting copy generation for ${totalPrimaryOutputs} primary output(s)...`);
 
     // Ensure session record exists in database before any token tracking
     let actualSessionId = formState.sessionId;
@@ -347,55 +349,65 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
       setFormState(prev => ({ ...prev, sessionId: actualSessionId }));
     }
 
+    const generatedPrimaryOutputs: GeneratedContentItem[] = [];
+
     try {
-      // Generate initial copy
-      const result = await generateCopy(formState, currentUser, actualSessionId, addProgressMessage);
-      const improvedCopyItem: GeneratedContentItem = {
-        id: uuidv4(),
-        type: GeneratedContentItemType.Improved,
-        content: result.improvedCopy,
-        generatedAt: new Date().toISOString(),
-        sourceDisplayName: 'Generated Copy 1'
-      };
+      // Generate multiple primary outputs
+      for (let i = 0; i < totalPrimaryOutputs; i++) {
+        addProgressMessage(`Generating primary output ${i + 1} of ${totalPrimaryOutputs}...`);
+        
+        const result = await generateCopy(formState, currentUser, actualSessionId, addProgressMessage, i + 1, totalPrimaryOutputs);
+        const improvedCopyItem: GeneratedContentItem = {
+          id: uuidv4(),
+          type: GeneratedContentItemType.Improved,
+          content: result.improvedCopy,
+          generatedAt: new Date().toISOString(),
+          sourceDisplayName: totalPrimaryOutputs > 1 ? `Generated Copy ${i + 1}` : 'Generated Copy 1'
+        };
 
-      // Add GEO score if it was generated
-      if (result.geoScore) {
-        improvedCopyItem.geoScore = result.geoScore;
-      }
-
-      // Add SEO metadata if it was generated
-      if (result.seoMetadata) {
-        improvedCopyItem.seoMetadata = result.seoMetadata;
-      }
-
-      // Generate score for improved copy if enabled
-      if (formState.generateScores) {
-        addProgressMessage('Generating score for copy...');
-        const score = await generateContentScores(
-          result.improvedCopy,
-          'Generated Copy',
-          formState.model,
-          currentUser,
-          formState.tab === 'improve' ? formState.originalCopy : formState.businessDescription,
-          calculateTargetWordCount(formState).target,
-          addProgressMessage
-        );
-        improvedCopyItem.score = score;
-        addProgressMessage('Score generated.');
-      }
-
-      // Add FAQ schema if it was generated
-      if (result.faqSchema) {
-        improvedCopyItem.faqSchema = result.faqSchema;
-      }
-
-      setFormState(prev => ({
-        ...prev,
-        copyResult: {
-          improvedCopy: result.improvedCopy, // Keep for backward compatibility
-          generatedVersions: [improvedCopyItem]
+        // Add GEO score if it was generated
+        if (result.geoScore) {
+          improvedCopyItem.geoScore = result.geoScore;
         }
-      }));
+
+        // Add SEO metadata if it was generated
+        if (result.seoMetadata) {
+          improvedCopyItem.seoMetadata = result.seoMetadata;
+        }
+
+        // Generate score for improved copy if enabled
+        if (formState.generateScores) {
+          addProgressMessage(`Generating score for copy ${i + 1}...`);
+          const score = await generateContentScores(
+            result.improvedCopy,
+            `Generated Copy ${i + 1}`,
+            formState.model,
+            currentUser,
+            formState.tab === 'improve' ? formState.originalCopy : formState.businessDescription,
+            calculateTargetWordCount(formState).target,
+            addProgressMessage
+          );
+          improvedCopyItem.score = score;
+          addProgressMessage(`Score generated for copy ${i + 1}.`);
+        }
+
+        // Add FAQ schema if it was generated
+        if (result.faqSchema) {
+          improvedCopyItem.faqSchema = result.faqSchema;
+        }
+
+        generatedPrimaryOutputs.push(improvedCopyItem);
+        
+        // Update form state with current progress
+        setFormState(prev => ({
+          ...prev,
+          copyResult: {
+            improvedCopy: generatedPrimaryOutputs[0].content, // Keep first for backward compatibility
+            generatedVersions: [...generatedPrimaryOutputs]
+          }
+        }));
+      }
+
       addProgressMessage('Copy generation complete.');
       toast.success('Copy generated successfully!');
     } catch (error: any) {

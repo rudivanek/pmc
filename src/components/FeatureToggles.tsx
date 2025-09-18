@@ -1,16 +1,15 @@
 import React from 'react';
-import { FormData } from '../types';
+import { FormState } from '../types';
 import { Tooltip } from './ui/Tooltip';
 import { InfoIcon } from 'lucide-react';
 import { Checkbox } from './ui/checkbox';
-import { Label } from './ui/label';
+import { isFieldUserModified, hasPopulatedCompetitorUrls, isFieldPopulated } from '../utils/formUtils';
 import { useMemo } from 'react';
 import { useInputField } from '../hooks/useInputField';
 import { toast } from 'react-hot-toast';
-import { isFieldUserModified } from '../utils/formUtils';
 
 interface FeatureTogglesProps {
-  formData: FormData;
+  formData: FormState;
   handleToggle: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleChange: (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => void;
   isSmartMode: boolean;
@@ -24,24 +23,31 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
   isSmartMode,
   displayMode
 }) => {
-  // Initialize locationField using useInputField hook
-  const locationField = useInputField({
-    value: formData.location || '',
-    onChange: (value: string) => {
-      // Create proper event structure for handleChange
-      const syntheticEvent = {
-        target: {
-          name: 'location',
-          value: value
-        }
-      } as React.ChangeEvent<HTMLInputElement>;
-      handleChange(syntheticEvent);
-    }
-  });
+  // Check if any field in the Optional Features section is populated
+  const hasPopulatedFeatureTogglesFields = () => {
+    return formData.generateSeoMetadata ||
+           formData.generateScores ||
+           formData.generateGeoScore ||
+           formData.prioritizeWordCount ||
+           formData.adhereToLittleWordCount ||
+           formData.forceKeywordIntegration ||
+           formData.forceElaborationsExamples ||
+           formData.enhanceForGEO ||
+           formData.addTldrSummary ||
+           isFieldPopulated(formData.geoRegions) ||
+           isFieldPopulated(formData.numberOfPrimaryOutputs) ||
+           isFieldUserModified('numUrlSlugs', formData.numUrlSlugs) ||
+           isFieldUserModified('numMetaDescriptions', formData.numMetaDescriptions) ||
+           isFieldUserModified('numH1Variants', formData.numH1Variants) ||
+           isFieldUserModified('numH2Variants', formData.numH2Variants) ||
+           isFieldUserModified('numH3Variants', formData.numH3Variants) ||
+           isFieldUserModified('numOgTitles', formData.numOgTitles) ||
+           isFieldUserModified('numOgDescriptions', formData.numOgDescriptions) ||
+           isFieldUserModified('wordCountTolerancePercentage', formData.wordCountTolerancePercentage) ||
+           isFieldUserModified('littleWordCountTolerancePercentage', formData.littleWordCountTolerancePercentage);
+  };
 
-  // We're removing this conditional return so the component is always displayed
-  // regardless of Smart Mode or Pro Mode
-  
+  // Don't render anything if display mode is 'populated' and no fields are populated
   // Calculate if the current word count target is "little" (below 100 words)
   const isLittleWordCount = useMemo(() => {
     if (formData.wordCount === 'Custom') {
@@ -56,45 +62,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
     return false; // Medium and Long are not considered little
   }, [formData.wordCount, formData.customWordCount]);
   
-  // Diagnostic logging to help debug visibility issues
-  React.useEffect(() => {
-    console.log('FeatureToggles Diagnostic:', {
-      wordCount: formData.wordCount,
-      customWordCount: formData.customWordCount,
-      isLittleWordCount: isLittleWordCount,
-      shouldShowLittleWordCountControl: isLittleWordCount
-    });
-  }, [formData.wordCount, formData.customWordCount, isLittleWordCount]);
-  
-  // Check if any field in the Optional Features section is populated
-  const hasPopulatedFeatureTogglesFields = () => {
-    return isFieldPopulated(formData.generateSeoMetadata) ||
-           isFieldPopulated(formData.generateScores) ||
-           isFieldPopulated(formData.generateGeoScore) ||
-           isFieldPopulated(formData.prioritizeWordCount) ||
-           isFieldPopulated(formData.adhereToLittleWordCount) ||
-           isFieldPopulated(formData.forceKeywordIntegration) ||
-           isFieldPopulated(formData.forceElaborationsExamples) ||
-           isFieldPopulated(formData.enhanceForGEO) ||
-           isFieldPopulated(formData.addTldrSummary) ||
-           isFieldPopulated(formData.geoRegions) ||
-           isFieldUserModified('numUrlSlugs', formData.numUrlSlugs) ||
-           isFieldUserModified('numMetaDescriptions', formData.numMetaDescriptions) ||
-           isFieldUserModified('numH1Variants', formData.numH1Variants) ||
-           isFieldUserModified('numH2Variants', formData.numH2Variants) ||
-           isFieldUserModified('numH3Variants', formData.numH3Variants) ||
-           isFieldUserModified('numOgTitles', formData.numOgTitles) ||
-           isFieldUserModified('numOgDescriptions', formData.numOgDescriptions) ||
-           isFieldUserModified('wordCountTolerancePercentage', formData.wordCountTolerancePercentage) ||
-           isFieldUserModified('littleWordCountTolerancePercentage', formData.littleWordCountTolerancePercentage);
-           isFieldPopulated(formData.wordCountTolerancePercentage) ||
-           isFieldPopulated(formData.littleWordCountTolerancePercentage);
-  };
-
   // Don't render anything if display mode is 'populated' and no fields are populated
-  if (displayMode === 'populated' && !hasPopulatedFeatureTogglesFields()) {
-    return null;
-  }
   
   return (
     <div className="space-y-3 py-4 border-t border-gray-300 dark:border-gray-800">
@@ -105,8 +73,9 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
         </div>
       </Tooltip>
       
-      <div className="flex items-start">
-        <div className={displayMode === 'populated' && !isFieldPopulated(formData.generateSeoMetadata) ? 'hidden' : ''}>
+      {/* Generate SEO Metadata */}
+      <div className={displayMode === 'populated' && !formData.generateSeoMetadata ? 'hidden' : ''}>
+        <div className="flex items-start">
           <Checkbox
             id="generateSeoMetadata"
             checked={formData.generateSeoMetadata || false}
@@ -121,20 +90,27 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
           />
           <div className="ml-2 flex-1">
             <Label htmlFor="generateSeoMetadata" className="cursor-pointer">
-              <span className="text-sm">
-              Generate SEO Metadata and Structural Elements Automatically
-              </span>
-              <Tooltip content="Generate URL slugs, meta descriptions, H1/H2/H3 headings, and Open Graph tags for your content">
+              <span className="text-sm">Generate SEO metadata</span>
+              <Tooltip content="Generates URL slugs, meta descriptions, H1/H2/H3 variants, and Open Graph titles/descriptions">
                 <span className="ml-1 text-gray-500 cursor-help">
                   <InfoIcon size={14} />
                 </span>
               </Tooltip>
             </Label>
+            
+            {formData.generateSeoMetadata && (
+              <div className="mt-2">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  All SEO elements will be generated for each content variation and voice style. Character counters will show live feedback in the output.
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>
       
-      <div className={displayMode === 'populated' && !isFieldPopulated(formData.generateScores) ? 'hidden' : ''}>
+      {/* Generate Content Scores */}
+      <div className={displayMode === 'populated' && !formData.generateScores ? 'hidden' : ''}>
         <div className="flex items-center">
           <Checkbox
             id="generateScores"
@@ -149,9 +125,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
             }}
           />
           <Label htmlFor="generateScores" className="ml-2 cursor-pointer">
-            <span className="text-sm">
-            Generate content scores
-            </span>
+            <span className="text-sm">Generate content scores</span>
             <Tooltip content="Automatically evaluates the quality of each generated version and provides improvement explanations">
               <span className="ml-1 text-gray-500 cursor-help">
                 <InfoIcon size={14} />
@@ -161,8 +135,8 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
         </div>
       </div>
       
-      {/* GEO Score Generation Toggle */}
-      <div className={displayMode === 'populated' && !isFieldPopulated(formData.generateGeoScore) ? 'hidden' : ''}>
+      {/* Generate GEO Scores */}
+      <div className={displayMode === 'populated' && !formData.generateGeoScore ? 'hidden' : ''}>
         <div className="flex items-center">
           <Checkbox
             id="generateGeoScore"
@@ -177,9 +151,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
             }}
           />
           <Label htmlFor="generateGeoScore" className="ml-2 cursor-pointer">
-            <span className="text-sm">
-            Generate GEO scores
-            </span>
+            <span className="text-sm">Generate GEO scores</span>
             <Tooltip content="Evaluates how well content is optimized for AI assistants and geographical visibility (Generative Engine Optimization)">
               <span className="ml-1 text-gray-500 cursor-help">
                 <InfoIcon size={14} />
@@ -189,8 +161,8 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
         </div>
       </div>
       
-      {/* Strict Word Count Adherence Toggle */}
-      <div className={displayMode === 'populated' && !isFieldPopulated(formData.prioritizeWordCount) ? 'hidden' : ''}>
+      {/* Strict Word Count Adherence */}
+      <div className={displayMode === 'populated' && !formData.prioritizeWordCount ? 'hidden' : ''}>
         <div className="flex items-center">
           <Checkbox
             id="prioritizeWordCount"
@@ -217,149 +189,9 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
           </Label>
         </div>
       </div>
-          
-          {formData.generateSeoMetadata && (displayMode === 'all' || formData.numUrlSlugs !== 3 || formData.numMetaDescriptions !== 3) && (
-            <div className="mt-3 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
-              <div className="flex items-center mb-3">
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">📎 SEO & Metadata Outputs</span>
-              </div>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* URL Slug */}
-                <div>
-                  <label htmlFor="numUrlSlugs" className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-                    URL Slug (max 60 chars)
-                  </label>
-                  <input
-                    id="numUrlSlugs"
-                    name="numUrlSlugs"
-                    type="number"
-                    min="1"
-                    max="5"
-                    className="w-16 bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 p-1.5"
-                    value={formData.numUrlSlugs || 1}
-                    onChange={handleChange}
-                  />
-                  <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">variants</span>
-                </div>
-                
-                {/* Meta Description */}
-                <div>
-                  <label htmlFor="numMetaDescriptions" className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-                    Meta Description (155-160 chars)
-                  </label>
-                  <input
-                    id="numMetaDescriptions"
-                    name="numMetaDescriptions"
-                    type="number"
-                    min="1"
-                    max="5"
-                    className="w-16 bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 p-1.5"
-                    value={formData.numMetaDescriptions || 1}
-                    onChange={handleChange}
-                  />
-                  <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">variants</span>
-                </div>
-                
-                {/* H1 Variants */}
-                <div>
-                  <label htmlFor="numH1Variants" className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-                    H1 (Page Title, max 60 chars)
-                  </label>
-                  <input
-                    id="numH1Variants"
-                    name="numH1Variants"
-                    type="number"
-                    min="1"
-                    max="5"
-                    className="w-16 bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 p-1.5"
-                    value={formData.numH1Variants || 1}
-                    onChange={handleChange}
-                  />
-                  <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">variants</span>
-                </div>
-                
-                {/* H2 Variants */}
-                <div>
-                  <label htmlFor="numH2Variants" className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-                    H2 Headings (max 70 chars each)
-                  </label>
-                  <input
-                    id="numH2Variants"
-                    name="numH2Variants"
-                    type="number"
-                    min="1"
-                    max="10"
-                    className="w-16 bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 p-1.5"
-                    value={formData.numH2Variants || 2}
-                    onChange={handleChange}
-                  />
-                  <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">variants</span>
-                </div>
-                
-                {/* H3 Variants */}
-                <div>
-                  <label htmlFor="numH3Variants" className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-                    H3 Headings (max 70 chars each)
-                  </label>
-                  <input
-                    id="numH3Variants"
-                    name="numH3Variants"
-                    type="number"
-                    min="1"
-                    max="10"
-                    className="w-16 bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 p-1.5"
-                    value={formData.numH3Variants || 2}
-                    onChange={handleChange}
-                  />
-                  <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">variants</span>
-                </div>
-                
-                {/* OG Title */}
-                <div>
-                  <label htmlFor="numOgTitles" className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-                    OG Title (max 60 chars)
-                  </label>
-                  <input
-                    id="numOgTitles"
-                    name="numOgTitles"
-                    type="number"
-                    min="1"
-                    max="5"
-                    className="w-16 bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 p-1.5"
-                    value={formData.numOgTitles || 1}
-                    onChange={handleChange}
-                  />
-                  <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">variants</span>
-                </div>
-                
-                {/* OG Description */}
-                <div>
-                  <label htmlFor="numOgDescriptions" className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-                    OG Description (max 110 chars)
-                  </label>
-                  <input
-                    id="numOgDescriptions"
-                    name="numOgDescriptions"
-                    type="number"
-                    min="1"
-                    max="5"
-                    className="w-16 bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 p-1.5"
-                    value={formData.numOgDescriptions || 1}
-                    onChange={handleChange}
-                  />
-                  <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">variants</span>
-                </div>
-              </div>
-              
-              <p className="mt-3 text-xs text-gray-500 dark:text-gray-400">
-                All SEO elements will be generated for each content variation and voice style. Character counters will show live feedback in the output.
-              </p>
-            </div>
-          )}
       
-      {/* Word Count Tolerance Percentage - Only show when prioritizeWordCount is enabled */}
-      {formData.prioritizeWordCount && (displayMode === 'all' || isFieldUserModified('wordCountTolerancePercentage', formData.wordCountTolerancePercentage)) && (
+      {/* Word Count Tolerance - Only show when prioritizeWordCount is enabled */}
+      {formData.prioritizeWordCount && (displayMode === 'all' || formData.prioritizeWordCount) && (
         <div className="ml-6 mt-2">
           <div className="flex items-center space-x-2">
             <label htmlFor="wordCountTolerancePercentage" className="text-xs text-gray-600 dark:text-gray-400">
@@ -384,8 +216,8 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
         </div>
       )}
       
-      {/* Little Word Count Adherence Toggle - Only show for targets below 100 words */}
-      {isLittleWordCount && (displayMode === 'all' || isFieldPopulated(formData.adhereToLittleWordCount)) && (
+      {/* Little Word Count Adherence - Only show for targets below 100 words */}
+      {isLittleWordCount && (displayMode === 'all' || formData.adhereToLittleWordCount) && (
         <div className="flex items-start">
           <Checkbox
             id="adhereToLittleWordCount"
@@ -440,8 +272,8 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
         </div>
       )}
       
-      {/* SEO keyword integration */}
-      <div className={displayMode === 'populated' && !isFieldPopulated(formData.forceKeywordIntegration) ? 'hidden' : ''}>
+      {/* Force SEO Keyword Integration */}
+      <div className={displayMode === 'populated' && !formData.forceKeywordIntegration ? 'hidden' : ''}>
         <div className="flex items-center">
           <Checkbox
             id="forceKeywordIntegration"
@@ -456,9 +288,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
             }}
           />
           <Label htmlFor="forceKeywordIntegration" className="ml-2 cursor-pointer">
-            <span className="text-sm">
-            Force SEO keyword integration
-            </span>
+            <span className="text-sm">Force SEO keyword integration</span>
             <Tooltip content="Ensures all keywords appear naturally throughout the copy for better SEO">
               <span className="ml-1 text-gray-500 cursor-help">
                 <InfoIcon size={14} />
@@ -468,8 +298,8 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
         </div>
       </div>
 
-      {/* Force detailed elaborations and examples */}
-      <div className={displayMode === 'populated' && !isFieldPopulated(formData.forceElaborationsExamples) ? 'hidden' : ''}>
+      {/* Force Detailed Elaborations */}
+      <div className={displayMode === 'populated' && !formData.forceElaborationsExamples ? 'hidden' : ''}>
         <div className="flex items-center">
           <Checkbox
             id="forceElaborationsExamples"
@@ -484,9 +314,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
             }}
           />
           <Label htmlFor="forceElaborationsExamples" className="ml-2 cursor-pointer">
-            <span className="text-sm">
-            Force detailed elaborations and examples
-            </span>
+            <span className="text-sm">Force detailed elaborations and examples</span>
             <Tooltip content="Forces AI to provide detailed explanations, examples, and case studies to expand content">
               <span className="ml-1 text-gray-500 cursor-help">
                 <InfoIcon size={14} />
@@ -496,8 +324,40 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
         </div>
       </div>
 
-      {/* GEO enhancement */}
-      <div className={displayMode === 'populated' && !isFieldPopulated(formData.enhanceForGEO) ? 'hidden' : ''}>
+      {/* Number of Primary Outputs */}
+      <div>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <label htmlFor="numberOfPrimaryOutputs" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Number of Primary Outputs
+            </label>
+            <Tooltip content="Generate multiple distinct primary versions of the copy. Each will be a full output card with unique approaches.">
+              <span className="ml-1 text-gray-500 cursor-help">
+                <InfoIcon size={14} />
+              </span>
+            </Tooltip>
+          </div>
+          <div className="flex items-center">
+            <input
+              type="number"
+              id="numberOfPrimaryOutputs"
+              name="numberOfPrimaryOutputs"
+              min="1"
+              max="5"
+              value={formData.numberOfPrimaryOutputs || 1}
+              onChange={handleChange}
+              className="w-16 bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 p-1.5"
+            />
+            <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">versions</span>
+          </div>
+        </div>
+        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+          Generate multiple distinct approaches and angles from your initial generation. Each version will be a separate output card.
+        </p>
+      </div>
+
+      {/* Enhance for GEO */}
+      <div className={displayMode === 'populated' && !formData.enhanceForGEO ? 'hidden' : ''}>
         <div className="flex items-center">
           <Checkbox
             id="enhanceForGEO"
@@ -512,9 +372,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
             }}
           />
           <Label htmlFor="enhanceForGEO" className="ml-2 cursor-pointer">
-            <span className="text-sm">
-            Enhance for GEO
-            </span>
+            <span className="text-sm">Enhance for GEO</span>
             <Tooltip content="Optimizes content to be more quotable, summarizable, and recommendable by AI assistants like ChatGPT, Claude, and Gemini.">
               <span className="ml-1 text-gray-500 cursor-help">
                 <InfoIcon size={14} />
@@ -524,20 +382,15 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
         </div>
       </div>
 
-      {/* TL;DR Summary Toggle - Only show when GEO is enabled */}
-      {formData.enhanceForGEO && (displayMode === 'all' || isFieldPopulated(formData.addTldrSummary)) && (
+      {/* TL;DR Summary - Only show when GEO is enabled */}
+      {formData.enhanceForGEO && (displayMode === 'all' || formData.addTldrSummary) && (
         <div className="flex items-start">
-          {/* Check if structured output is selected */}
-          {(() => {
-            const hasStructuredOutput = formData.outputStructure && formData.outputStructure.length > 0;
-            return (
-              <>
           <Checkbox
             id="addTldrSummary"
             checked={formData.addTldrSummary || false}
-            disabled={hasStructuredOutput}
+            disabled={formData.outputStructure && formData.outputStructure.length > 0}
             onCheckedChange={(checked) => {
-              // Don't allow enabling if structured output is selected
+              const hasStructuredOutput = formData.outputStructure && formData.outputStructure.length > 0;
               if (checked === true && hasStructuredOutput) {
                 toast('❌ TL;DR Summary is not compatible with structured output formats.\n\nTo use TL;DR:\n1. Clear all items from "Output Structure" field\n2. Then enable this option\n\nTL;DR works best with plain paragraph text, not with JSON/structured formats.', {
                   duration: 6000,
@@ -553,7 +406,6 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
                 return;
               }
               
-              // Show toast notification when checkbox is checked
               if (checked === true) {
                 toast('💡 TL;DR summaries work best for blogs, long-form pages, service pages, and FAQs.\n\nThey improve AI visibility, boost quotability, and help readers grasp the value instantly.\nAvoid using TL;DR for short ads, H1s, or slogans — those already serve as the summary.', {
                   duration: 6000,
@@ -579,9 +431,10 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
           <div className="ml-2 flex-1">
             <Label htmlFor="addTldrSummary" className="cursor-pointer">
               <span className="text-sm">
-              Add TL;DR Summary at the Top {hasStructuredOutput && (
-                <span className="text-gray-400">(disabled for structured output)</span>
-              )}
+                Add TL;DR Summary at the Top
+                {formData.outputStructure && formData.outputStructure.length > 0 && (
+                  <span className="text-gray-400"> (disabled for structured output)</span>
+                )}
               </span>
               <Tooltip content="Adds a brief 1–2 sentence answer-style summary before the main content that AI assistants can easily quote">
                 <span className="ml-1 text-gray-500 cursor-help">
@@ -589,23 +442,17 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
                 </span>
               </Tooltip>
             </Label>
-            {hasStructuredOutput ? (
-              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                TL;DR summaries are not compatible with structured output formats. Clear the "Output Structure" field to use this feature.
-              </p>
-            ) : (
-              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                Prepends a concise summary that directly answers the main question or user intent
-              </p>
-            )}
+            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+              {formData.outputStructure && formData.outputStructure.length > 0
+                ? 'TL;DR summaries are not compatible with structured output formats. Clear the "Output Structure" field to use this feature.'
+                : 'Prepends a concise summary that directly answers the main question or user intent'
+              }
+            </p>
           </div>
-              </>
-            );
-          })()}
         </div>
       )}
       
-      {/* Target Countries or Regions - Only show when GEO is enabled */}
+      {/* Target Countries/Regions - Only show when GEO is enabled */}
       {formData.enhanceForGEO && (displayMode === 'all' || isFieldPopulated(formData.geoRegions)) && (
         <div className="ml-6 mt-2">
           <label htmlFor="geoRegions" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -622,6 +469,140 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
           />
           <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
             Enter countries, regions, or cities to help tailor the content for local AI search results (e.g., México, LATAM, CDMX, España).
+          </p>
+        </div>
+      )}
+
+      {/* SEO Metadata Counts - Only show when SEO metadata is enabled */}
+      {formData.generateSeoMetadata && (displayMode === 'all' || formData.numUrlSlugs !== 3 || formData.numMetaDescriptions !== 3) && (
+        <div className="mt-3 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
+          <div className="flex items-center mb-3">
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">📎 SEO & Metadata Outputs</span>
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="numUrlSlugs" className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                URL Slug (max 60 chars)
+              </label>
+              <input
+                id="numUrlSlugs"
+                name="numUrlSlugs"
+                type="number"
+                min="1"
+                max="5"
+                className="w-16 bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 p-1.5"
+                value={formData.numUrlSlugs || 1}
+                onChange={handleChange}
+              />
+              <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">variants</span>
+            </div>
+            
+            <div>
+              <label htmlFor="numMetaDescriptions" className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                Meta Description (155-160 chars)
+              </label>
+              <input
+                id="numMetaDescriptions"
+                name="numMetaDescriptions"
+                type="number"
+                min="1"
+                max="5"
+                className="w-16 bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 p-1.5"
+                value={formData.numMetaDescriptions || 1}
+                onChange={handleChange}
+              />
+              <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">variants</span>
+            </div>
+            
+            <div>
+              <label htmlFor="numH1Variants" className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                H1 (Page Title, max 60 chars)
+              </label>
+              <input
+                id="numH1Variants"
+                name="numH1Variants"
+                type="number"
+                min="1"
+                max="5"
+                className="w-16 bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 p-1.5"
+                value={formData.numH1Variants || 1}
+                onChange={handleChange}
+              />
+              <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">variants</span>
+            </div>
+            
+            <div>
+              <label htmlFor="numH2Variants" className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                H2 Headings (max 70 chars each)
+              </label>
+              <input
+                id="numH2Variants"
+                name="numH2Variants"
+                type="number"
+                min="1"
+                max="10"
+                className="w-16 bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 p-1.5"
+                value={formData.numH2Variants || 2}
+                onChange={handleChange}
+              />
+              <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">variants</span>
+            </div>
+            
+            <div>
+              <label htmlFor="numH3Variants" className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                H3 Headings (max 70 chars each)
+              </label>
+              <input
+                id="numH3Variants"
+                name="numH3Variants"
+                type="number"
+                min="1"
+                max="10"
+                className="w-16 bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 p-1.5"
+                value={formData.numH3Variants || 2}
+                onChange={handleChange}
+              />
+              <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">variants</span>
+            </div>
+            
+            <div>
+              <label htmlFor="numOgTitles" className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                OG Title (max 60 chars)
+              </label>
+              <input
+                id="numOgTitles"
+                name="numOgTitles"
+                type="number"
+                min="1"
+                max="5"
+                className="w-16 bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 p-1.5"
+                value={formData.numOgTitles || 1}
+                onChange={handleChange}
+              />
+              <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">variants</span>
+            </div>
+            
+            <div>
+              <label htmlFor="numOgDescriptions" className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                OG Description (max 110 chars)
+              </label>
+              <input
+                id="numOgDescriptions"
+                name="numOgDescriptions"
+                type="number"
+                min="1"
+                max="5"
+                className="w-16 bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 p-1.5"
+                value={formData.numOgDescriptions || 1}
+                onChange={handleChange}
+              />
+              <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">variants</span>
+            </div>
+          </div>
+          
+          <p className="mt-3 text-xs text-gray-500 dark:text-gray-400">
+            All SEO elements will be generated for each content variation and voice style. Character counters will show live feedback in the output.
           </p>
         </div>
       )}
