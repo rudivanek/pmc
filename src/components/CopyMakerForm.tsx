@@ -363,7 +363,32 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
         keywords: formState.keywords,
         context: formState.context,
         competitorCopyText: formState.competitorCopyText
-      }
+      };
+
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { 
+        type: 'application/json' 
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `copy-maker-form-${Date.now()}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      toast.success('Form data exported successfully!');
+    } catch (error) {
+      console.error('Error exporting form:', error);
+      toast.error('Failed to export form data');
+    } finally {
+      setIsExporting(false);
     }
-  }
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Form content will be added here */}
+    </div>
+  );
 }
