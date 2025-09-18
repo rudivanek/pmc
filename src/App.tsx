@@ -353,6 +353,9 @@ const AppRouter: React.FC = () => {
       </div>
     );
   }
+
+  return (
+    <div>
       <Routes>
         <Route 
           path="/" 
