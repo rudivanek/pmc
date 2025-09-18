@@ -390,13 +390,13 @@ export const DEFAULT_FORM_STATE = {
   generateGeoScore: false, // Default to false for GEO score generation
   sessionId: undefined,
   // SEO metadata variant counts
-  numUrlSlugs: 3,
-  numMetaDescriptions: 3,
-  numH1Variants: 3,
-  numH2Variants: 3,
-  numH3Variants: 3,
-  numOgTitles: 3,
-  numOgDescriptions: 3,
+  numUrlSlugs: 1,
+  numMetaDescriptions: 1,
+  numH1Variants: 1,
+  numH2Variants: 1,
+  numH3Variants: 1,
+  numOgTitles: 1,
+  numOgDescriptions: 1,
   // Word count control
   forceElaborationsExamples: false, // Default to false for forcing elaborations
   // Strict word count control
