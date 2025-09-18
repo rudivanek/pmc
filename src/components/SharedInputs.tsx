@@ -246,7 +246,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
   return (
     <div className="space-y-6">
       {/* COPY TARGETING SECTION */}
-      <div className={`${isSmartMode ? 'hidden' : ''} ${displayMode === 'populated' && !hasPopulatedCopyTargetingFields() ? 'hidden' : ''}`}>
+      <div className={displayMode === 'populated' && !hasPopulatedCopyTargetingFields() ? 'hidden' : ''}>
         <Tooltip content="Describe your target audience and competitive landscape. The more precise this is, the better your copy will resonate with readers." delayDuration={300}>
           <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-4 pb-2 border-b border-gray-300 dark:border-gray-700 flex items-center">
             <div className="w-1 h-5 bg-primary-500 mr-2"></div>
@@ -648,7 +648,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
       </div>
 
       {/* STRATEGIC MESSAGING SECTION */}
-      <div className={`${displayMode === 'populated' && !hasPopulatedStrategicMessagingFields() ? 'hidden' : ''}`}>
+      <div className={displayMode === 'populated' && !hasPopulatedStrategicMessagingFields() ? 'hidden' : ''}>
         <Tooltip content="Define the key message, emotions, and SEO keywords to guide your copy's core message and impact." delayDuration={300}>
           <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-4 pb-2 border-b border-gray-300 dark:border-gray-700 flex items-center">
             <div className="w-1 h-5 bg-primary-500 mr-2"></div>
