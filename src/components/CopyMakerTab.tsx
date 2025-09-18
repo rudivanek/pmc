@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useRef } from 'react';
 import { toast } from 'react-hot-toast';
 import { v4 as uuidv4 } from 'uuid';
+import MainMenu from './MainMenu';
 import CopyMakerForm from './CopyMakerForm';
 import AppSpinner from './ui/AppSpinner';
 import LoadingSpinner from './ui/LoadingSpinner';
@@ -696,6 +697,16 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
   };
   return (
     <div className="relative min-h-screen">
+      {/* Main Menu/Header */}
+      <MainMenu
+        userName={currentUser?.user_metadata?.name || currentUser?.email?.split('@')[0]}
+        onLogout={() => {
+          // Handle logout - you might want to pass this from parent component
+          console.log('Logout from copy maker');
+        }}
+        onOpenTemplateSuggestion={() => setIsTemplateSuggestionModalOpen(true)}
+      />
+      
       {/* Main Content Layout */}
       <div className="space-y-8">
         {/* Prefill and Template Loaders */}
