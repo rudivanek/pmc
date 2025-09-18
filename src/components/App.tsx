@@ -644,9 +644,6 @@ const App: React.FC<AppProps> = ({ onViewPrompts }) => {
               setLoadedTemplateId={setLoadedTemplateId}
               loadedTemplateName={loadedTemplateName}
               setLoadedTemplateName={setLoadedTemplateName}
-             loadFormStateFromTemplate={loadFormStateFromTemplate}
-             loadFormStateFromSession={loadFormStateFromSession}
-             loadFormStateFromSavedOutput={loadFormStateFromSavedOutput}
               isSmartMode={isSmartMode}
               onEvaluateInputs={handleEvaluateInputs}
               onSaveTemplate={() => setIsSaveTemplateModalOpen(true)}

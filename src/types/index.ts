@@ -102,7 +102,6 @@ export interface FormData {
   forceElaborationsExamples?: boolean; // New field to force detailed explanations and examples
   // Strict word count control
   prioritizeWordCount?: boolean; // New field to prioritize exact word count adherence
-  numberOfPrimaryOutputs?: number; // New field for number of primary outputs to generate
   wordCountTolerancePercentage?: number; // Percentage below target that triggers revision (default: 2%)
   // Little word count control
   faqSchemaEnabled?: boolean; // New field for FAQPage Schema generation
