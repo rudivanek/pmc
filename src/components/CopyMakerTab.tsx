@@ -26,7 +26,6 @@ interface CopyMakerTabProps {
   setLoadedTemplateId: (id: string | null) => void;
   loadedTemplateName: string;
   setLoadedTemplateName: (name: string) => void;
-  isSmartMode: boolean;
   onEvaluateInputs?: () => void;
   onSaveTemplate?: () => void;
   onSaveOutput?: () => void;
@@ -49,7 +48,6 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
   setLoadedTemplateId,
   loadedTemplateName,
   setLoadedTemplateName,
-  isSmartMode,
   displayMode,
   setDisplayMode,
   onEvaluateInputs,
@@ -787,7 +785,6 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
             setLoadedTemplateId={setLoadedTemplateId}
             loadedTemplateName={loadedTemplateName}
             setLoadedTemplateName={setLoadedTemplateName}
-            isSmartMode={isSmartMode}
             onEvaluateInputs={onEvaluateInputs}
             onSaveTemplate={onSaveTemplate}
             projectDescriptionRef={projectDescriptionRef}
@@ -796,7 +793,6 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
             isPrefillEditingMode={isPrefillEditingMode}
             displayMode={displayMode}
             setDisplayMode={setDisplayMode}
-            displayMode={displayMode}
           />
           
           {/* Prefill Action Buttons */}
