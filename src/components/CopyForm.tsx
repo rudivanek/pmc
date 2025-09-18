@@ -403,14 +403,6 @@ const CopyForm: React.FC<CopyFormProps> = ({
         </div>
       </div>
       
-      {/* Prefill Selector */}
-      <PrefillSelector
-        formState={formState}
-        setFormState={setFormState}
-        setDisplayMode={setDisplayMode}
-      />
-
-
       {/* Project Setup Section */}
       <div className="space-y-6 mb-8">
         <div>
