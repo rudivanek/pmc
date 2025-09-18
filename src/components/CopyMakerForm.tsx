@@ -363,3 +363,7 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
         keywords: formState.keywords,
         context: formState.context,
         competitorCopyText: formState.competitorCopyText
+      }
+    }
+  }
+}
