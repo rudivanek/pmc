@@ -31,7 +31,6 @@ interface CopyMakerFormProps {
   loadedTemplateId: string | null;
   setLoadedTemplateId: (id: string | null) => void;
   loadedTemplateName: string;
-  setLoadedTemplateName: (name: string) => void;
   isSmartMode: boolean;
   onEvaluateInputs?: () => void;
   onSaveTemplate?: () => void;
@@ -52,7 +51,6 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
   setLoadedTemplateId,
   loadedTemplateName,
   setLoadedTemplateName,
-  isSmartMode,
   onEvaluateInputs,
   onSaveTemplate,
   isPrefillEditingMode = false,
