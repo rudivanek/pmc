@@ -13,6 +13,7 @@ interface FeatureTogglesProps {
   formData: FormData;
   handleToggle: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleChange: (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => void;
+  isSmartMode: boolean;
   displayMode: 'all' | 'populated';
 }
 
@@ -20,6 +21,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
   formData, 
   handleToggle, 
   handleChange,
+  isSmartMode,
   displayMode
 }) => {
   // Initialize locationField using useInputField hook
