@@ -156,27 +156,32 @@ export function useAuth() {
     // Set up auth state change listener only if Supabase is enabled
     const supabaseEnabled = import.meta.env.VITE_SUPABASE_ENABLED === 'true';
     
-    if (supabaseEnabled) {
+    if (supabaseEnabled && !initError) {
       try {
         const { data: { subscription } } = supabase.auth.onAuthStateChange(
           async (event, session) => {
             console.log('Auth state changed:', event);
             if (session) {
-              // Set user immediately, check access asynchronously
-              setCurrentUser(session.user);
-              setUser(session.user);
-              
-              // Check access asynchronously without blocking auth state change
-              checkUserAccess(session.user.id, session.user.email || '').then(accessResult => {
-                if (!accessResult.hasAccess) {
-                  console.log('User access denied during auth state change:', accessResult.message);
-                  // Show warning but don't sign out automatically during auth state changes
-                  console.log('User will be blocked when trying to generate content');
-                }
-              }).catch(accessError => {
-                console.error('Error checking user access during auth state change:', accessError);
-                // Don't block auth state change due to access check errors
-              });
+              try {
+                // Set user immediately, check access asynchronously
+                setCurrentUser(session.user);
+                setUser(session.user);
+                
+                // Check access asynchronously without blocking auth state change
+                checkUserAccess(session.user.id, session.user.email || '').then(accessResult => {
+                  if (!accessResult.hasAccess) {
+                    console.log('User access denied during auth state change:', accessResult.message);
+                    // Show warning but don't sign out automatically during auth state changes
+                    console.log('User will be blocked when trying to generate content');
+                  }
+                }).catch(accessError => {
+                  console.error('Error checking user access during auth state change:', accessError);
+                  // Don't block auth state change due to access check errors
+                });
+              } catch (error) {
+                console.error('Error in auth state change handler:', error);
+                // Don't crash the app due to auth state change errors
+              }
             } else {
               setCurrentUser(null);
               setUser(null);
@@ -186,7 +191,11 @@ export function useAuth() {
         
         return () => {
           // Clean up subscription when component unmounts
-          subscription.unsubscribe();
+          try {
+            subscription.unsubscribe();
+          } catch (error) {
+            console.error('Error unsubscribing from auth changes:', error);
+          }
         };
       } catch (authListenerError) {
         console.error('Error setting up auth listener:', authListenerError);
@@ -198,45 +207,57 @@ export function useAuth() {
   const handleLogin = useCallback(async (user: any) => {
     console.log('User logged in:', user.email);
     
-    // Check access BEFORE setting user as logged in
-    console.log('Checking user access before completing login...');
     try {
-      const accessResult = await checkUserAccess(user.id, user.email || '');
+      // Check access BEFORE setting user as logged in
+      console.log('Checking user access before completing login...');
       
-      if (!accessResult.hasAccess) {
-        console.log('User access denied during login:', accessResult.message);
-        toast.error(accessResult.message);
+      try {
+        const accessResult = await checkUserAccess(user.id, user.email || '');
         
-        // Sign out the user from Supabase since they don't have access
-        try {
-          await supabase.auth.signOut();
-        } catch (signOutError) {
-          console.error('Error signing out user with denied access:', signOutError);
+        if (!accessResult.hasAccess) {
+          console.log('User access denied during login:', accessResult.message);
+          toast.error(accessResult.message);
+          
+          // Sign out the user from Supabase since they don't have access
+          try {
+            await supabase.auth.signOut();
+          } catch (signOutError) {
+            console.error('Error signing out user with denied access:', signOutError);
+          }
+          
+          setCurrentUser(null);
+          setUser(null);
+          return; // Exit early, don't complete the login
         }
         
-        setCurrentUser(null);
-        setUser(null);
-        return; // Exit early, don't complete the login
+        console.log('User access granted during login');
+        // Only set user if access is granted
+        setCurrentUser(user);
+        setUser(user);
+        console.log('User login completed successfully');
+      } catch (accessError) {
+        console.error('Error checking user access during login:', accessError);
+        
+        // If access check fails due to network issues, allow login but warn user
+        if (accessError.message && accessError.message.includes('Failed to fetch')) {
+          console.log('Access check failed due to network issues, allowing login');
+          setCurrentUser(user);
+          setUser(user);
+          toast.error('Unable to verify access due to connection issues. Some features may not work properly.');
+        } else {
+          toast.error('Unable to verify access. Please try again.');
+          setCurrentUser(null);
+          setUser(null);
+        }
       }
-      
-      console.log('User access granted during login');
-      // Only set user if access is granted
-      setCurrentUser(user);
-      setUser(user);
-      console.log('User login completed successfully');
     } catch (error) {
       console.error('Error checking user access during login:', error);
-      toast.error('Unable to verify access. Please try again.');
+      console.log('Outer catch in handleLogin, allowing login anyway');
       
-      // If we can't verify access, don't allow login
-      try {
-        await supabase.auth.signOut();
-      } catch (signOutError) {
-        console.error('Error signing out user after access check error:', signOutError);
-      }
-      
-      setCurrentUser(null);
-      setUser(null);
+      // If there's a complete failure, still allow login but warn
+      setCurrentUser(user);
+      setUser(user);
+      toast.error('Unable to verify access due to technical issues. Some features may not work properly.');
     }
   }, []);
 
