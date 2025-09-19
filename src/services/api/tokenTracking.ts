@@ -50,7 +50,7 @@ export async function trackTokenUsage(
       briefDescription,
       model,
       'Copy Generator', // Copy source is always the same for this application
-      sessionId,
+      undefined, // Never pass sessionId to avoid foreign key constraint
       projectDescription
     );
     
