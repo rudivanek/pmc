@@ -40,6 +40,13 @@ export async function restyleCopyWithPersona(
     console.log('🚨 Performing emergency revision for failed content...');
     
     try {
+      // Emergency revision logic would go here
+      return emergencyContent;
+    } catch (emergencyError) {
+      console.error('Emergency revision failed:', emergencyError);
+      throw emergencyError;
+    }
+  };
   
   try {
   // Get API configuration
@@ -530,7 +537,7 @@ CRITICAL: Transform each Q&A pair to sound like ${persona} would ask and answer 
         // Parse JSON response
         console.log('🔍 Attempting to parse structured JSON response for voice styling...');
         const parsedResponse = JSON.parse(responseContent);
-        console.log('✅ Successfully parsed structured JSON response:', parsedContent);
+        console.log('✅ Successfully parsed structured JSON response:', parsedResponse);
         
         // Check if it has the expected structure
         if (parsedResponse.headline && Array.isArray(parsedResponse.sections)) {
@@ -890,5 +897,26 @@ CRITICAL: Transform each Q&A pair to sound like ${persona} would ask and answer 
     // Throw the error to be caught by the calling function
     throw new Error(`Failed to generate ${persona}'s voice style: ${errorMessage}`);
   }
+  } catch (error: any) {
+    console.error(`❌ Critical error in restyleCopyWithPersona for ${persona}:`, error);
+    console.log('📋 Error details:', {
+      persona,
+      model: formState?.model,
+      targetWordCount,
+      useStructuredFormat,
+      isHeadlineArray,
+      errorMessage: error.message
+    });
+    console.error(`Error applying ${persona}'s voice:`, error);
+    
+    // Generate a more specific error message
+    const errorMessage = generateErrorMessage(error);
+    
+    if (progressCallback) {
+      progressCallback(`Error applying ${persona}'s voice: ${errorMessage}`);
+    }
+    
+    // Throw the error to be caught by the calling function
+    throw new Error(`Failed to generate ${persona}'s voice style: ${errorMessage}`);
   }
 }
