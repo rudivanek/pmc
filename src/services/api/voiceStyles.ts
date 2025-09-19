@@ -28,16 +28,20 @@ export async function restyleCopyWithPersona(
   targetWordCount?: number,
   progressCallback?: (message: string) => void
 ): Promise<{ content: any; personaUsed: string }> {
+  // Check if content is an array of headlines
+  const isHeadlineArray = Array.isArray(content) && content.every(item => typeof item === 'string');
+  
+  // Check if we should use structured format
+  const useStructuredFormat = typeof content === 'object' && !isHeadlineArray;
+
   // Helper function to perform emergency revision
   const performEmergencyRevision = async (failedContent: any): Promise<any> => {
     let emergencyContent = null;
     console.log('🚨 Performing emergency revision for failed content...');
     
     try {
-
-  // Check if content is an array of headlines
-  const isHeadlineArray = Array.isArray(content) && content.every(item => typeof item === 'string');
   
+  try {
   // Get API configuration
   const { apiKey, baseUrl, headers, maxTokens } = getApiConfig(model);
   
@@ -864,7 +868,7 @@ CRITICAL: Transform each Q&A pair to sound like ${persona} would ask and answer 
     console.log(`📊 Final content length: ${responseContent.length} characters`);
     console.log(`📝 Final content preview: ${responseContent.substring(0, 100)}...`);
     return { content: responseContent, personaUsed: persona };
-  } catch (error) {
+  } catch (error: any) {
     console.error(`❌ Critical error in restyleCopyWithPersona for ${persona}:`, error);
     console.log('📋 Error details:', {
       persona,
@@ -885,5 +889,6 @@ CRITICAL: Transform each Q&A pair to sound like ${persona} would ask and answer 
     
     // Throw the error to be caught by the calling function
     throw new Error(`Failed to generate ${persona}'s voice style: ${errorMessage}`);
+  }
   }
 }
