@@ -102,7 +102,7 @@ const MainMenu: React.FC<MainMenuProps> = ({ userName, onLogout, onOpenTemplateS
                 <button
                   onClick={onOpenTemplateSuggestion}
                   className="p-2 rounded-md transition-colors duration-200 text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
-                  title="Template JSON Generator"
+                  title="Natural Language Prompt Generator"
                 >
                   <Lightbulb size={18} />
                 </button>
