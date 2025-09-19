@@ -112,13 +112,13 @@ const TemplateSuggestionModal: React.FC<TemplateSuggestionModalProps> = ({
           {/* Instruction Input */}
           <div>
             <label htmlFor="instruction" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Template Instruction
+              Natural Language Prompt
             </label>
             <textarea
               id="instruction"
               rows={4}
               className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-3"
-              placeholder="Describe in natural language the prompt you want to generate. Be specific about content type, word count, target audience, features, etc."
+              placeholder="e.g., a blogpost for twitter marketing, make 400 words long, include SEO metadata, target social media managers..."
               value={instruction}
               onChange={(e) => setInstruction(e.target.value)}
               disabled={isGenerating}
@@ -154,7 +154,7 @@ const TemplateSuggestionModal: React.FC<TemplateSuggestionModalProps> = ({
             <div>
               <div className="flex justify-between items-center mb-2">
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Generated Template JSON
+                  Generated JSON Prompt
                 </label>
                 <button
                   onClick={handleCopyJson}
