@@ -24,6 +24,7 @@ import BetaThanks from './components/BetaThanks';
 import StepByStepGuide from './components/StepByStepGuide';
 import ManagePrefills from './components/ManagePrefills';
 import TemplateSuggestionModal from './components/TemplateSuggestionModal';
+import ErrorBoundary from './components/ErrorBoundary';
 import { getLastPrompts, evaluatePrompt } from './services/apiService';
 import { getCopySession, getTemplate, getSavedOutput, saveTemplate, saveSavedOutput } from './services/supabaseClient';
 import { checkUserAccess } from './services/supabaseClient';
@@ -398,9 +399,11 @@ const AppRouter: React.FC = () => {
           path="/dashboard" 
           element={
             currentUser ? (
-            <Dashboard 
-              userId={currentUser.id} 
-            />
+              <ErrorBoundary>
+                <Dashboard 
+                  userId={currentUser.id} 
+                />
+              </ErrorBoundary>
             ) : (
               <Navigate to="/login" replace />
             )
@@ -445,7 +448,9 @@ const AppRouter: React.FC = () => {
           path="/manage-users" 
           element={
             currentUser ? (
-              <ManageUsers />
+              <ErrorBoundary>
+                <ManageUsers />
+              </ErrorBoundary>
             ) : (
               <Navigate to="/login" replace />
             )
@@ -455,7 +460,9 @@ const AppRouter: React.FC = () => {
           path="/manage-prefills" 
           element={
             currentUser ? (
-              <ManagePrefills />
+              <ErrorBoundary>
+                <ManagePrefills />
+              </ErrorBoundary>
             ) : (
               <Navigate to="/login" replace />
             )
