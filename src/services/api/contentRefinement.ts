@@ -144,7 +144,7 @@ export async function reviseContentForWordCount(
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt }
       ],
-      temperature: 0.5, // Lower temperature for more precise word count adherence
+      temperature: 0.7, // Higher temperature for more creative expansion
       max_tokens: maxTokens, // Use dynamic token limit from API config
       response_format: useStructuredFormat || isStructuredContent ? { type: "json_object" } : undefined
     };
@@ -190,11 +190,14 @@ export async function reviseContentForWordCount(
         throw new Error('No content in response');
       }
       
+      console.log('📝 Raw revision response:', revisedContent.substring(0, 200) + '...');
+      
       // Parse structured content if needed
       if (useStructuredFormat || isStructuredContent) {
         try {
           const parsedContent = JSON.parse(revisedContent);
           revisedContent = parsedContent;
+          console.log('✅ Successfully parsed revised JSON content');
         } catch (err) {
           console.warn('Error parsing structured content, returning as plain text:', err);
           // Keep as plain text if parsing fails
@@ -206,6 +209,35 @@ export async function reviseContentForWordCount(
       const revisedPercentageOfTarget = (revisedWordCount / targetWordCount) * 100;
       
       console.log(`First revision result: ${revisedWordCount} words (target: ${targetWordCount}, ${revisedPercentageOfTarget.toFixed(1)}% of target)`);
+      
+      // CRITICAL CHECK: If word count didn't improve significantly, the revision failed
+      if (Math.abs(revisedWordCount - contentWords) < 10) {
+        console.warn(`⚠️ Revision didn't change word count significantly (${contentWords} → ${revisedWordCount}). AI may have ignored instructions.`);
+        if (progressCallback) {
+          progressCallback(`⚠️ First revision ineffective (${contentWords} → ${revisedWordCount} words). Making enhanced attempt...`);
+        }
+        
+        // Try a more aggressive revision approach immediately
+        try {
+          const aggressiveRevision = await performAggressiveRevision(
+            content,
+            targetWordCountInfo,
+            formState,
+            currentUser,
+            progressCallback,
+            persona,
+            sessionId
+          );
+          
+          if (aggressiveRevision) {
+            const aggressiveWordCount = extractWordCount(aggressiveRevision);
+            console.log(`🔥 Aggressive revision result: ${aggressiveWordCount} words`);
+            return aggressiveRevision;
+          }
+        } catch (aggressiveError) {
+          console.error('Aggressive revision also failed:', aggressiveError);
+        }
+      }
       
       if (progressCallback) {
         progressCallback(`First revision complete: ${revisedWordCount} words (${revisedPercentageOfTarget.toFixed(1)}% of target)`);
@@ -1144,6 +1176,151 @@ ${isStructuredContent ? `Please format your response as a valid JSON object with
   }
   
   return null;
+}
+
+/**
+ * Perform an aggressive revision when normal revision fails to change word count
+ */
+async function performAggressiveRevision(
+  content: any,
+  targetWordCountInfo: { target: number; min?: number; max?: number },
+  formState: FormState,
+  currentUser?: User,
+  progressCallback?: (message: string) => void,
+  persona?: string,
+  sessionId?: string
+): Promise<any> {
+  const { target: targetWordCount, min: minWordCount, max: maxWordCount } = targetWordCountInfo;
+  
+  try {
+    const { apiKey, baseUrl, headers, maxTokens } = getApiConfig(formState.model);
+    
+    // Extract text content
+    const textContent = typeof content === 'string' 
+      ? content 
+      : content.headline 
+        ? `${content.headline}\n\n${content.sections.map((s: any) => 
+            `${s.title}\n${s.content || (s.listItems || []).join('\n')}`
+          ).join('\n\n')}`
+        : JSON.stringify(content);
+    
+    const contentWords = textContent.trim().split(/\s+/).length;
+    const wordsMissing = targetWordCount - contentWords;
+    const isStructuredContent = typeof content === 'object' && content.headline && Array.isArray(content.sections);
+    
+    // Build aggressive system prompt that forces expansion
+    const systemPrompt = `You are an expert copywriter with ONE CRITICAL TASK: EXPAND the provided content to EXACTLY ${targetWordCount} words.
+
+EMERGENCY SITUATION: Previous revision attempts have FAILED to expand this content. You MUST succeed where others failed.
+
+AGGRESSIVE EXPANSION REQUIRED:
+- Current content: ${contentWords} words
+- Required content: ${targetWordCount} words  
+- YOU MUST ADD ${wordsMissing} MORE WORDS
+
+EXPANSION STRATEGIES YOU MUST USE:
+1. Add 2-3 detailed examples or case studies to each section
+2. Include specific statistics, research findings, or expert quotes
+3. Expand explanations with step-by-step processes or methodologies
+4. Add background context, historical perspective, or comparative analysis
+5. Include implementation details, practical applications, or real-world scenarios
+6. Add supporting evidence, testimonials, or success stories
+
+${persona ? `MAINTAIN ${persona}'S VOICE: All added content must sound authentically like ${persona}'s writing style.` : ''}
+
+${isStructuredContent ? 'RESPOND WITH VALID JSON OBJECT ONLY.' : 'RESPOND WITH PLAIN TEXT ONLY.'}
+
+ABSOLUTE SUCCESS CRITERIA: The final content MUST be EXACTLY ${targetWordCount} words. Count every word before submitting.`;
+
+    // Build aggressive user prompt
+    const userPrompt = `CRITICAL EXPANSION TASK: This content needs ${wordsMissing} more words to reach ${targetWordCount} words total.
+
+Content to expand:
+"""
+${textContent}
+"""
+
+MANDATORY REQUIREMENTS:
+- Add substantial, valuable content (never filler)
+- Include detailed examples, case studies, research findings
+- Expand each section with comprehensive explanations
+- Add practical applications and real-world scenarios
+- Include supporting evidence and expert perspectives
+- MUST reach EXACTLY ${targetWordCount} words
+
+${persona ? `- Maintain ${persona}'s distinctive voice throughout all additions` : ''}
+
+${isStructuredContent ? `Format as JSON:
+{
+  "headline": "Expanded headline",
+  "sections": [
+    {
+      "title": "Section title",
+      "content": "Significantly expanded content with examples..."
+    }
+  ],
+  "wordCountAccuracy": 100
+}` : 'Format as plain text with paragraphs.'}
+
+VERIFICATION: Count every word in your response. If not EXACTLY ${targetWordCount} words, revise immediately.`;
+
+    const aggressiveRequestBody = {
+      model: formState.model,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt }
+      ],
+      temperature: 0.8, // Higher temperature for creative expansion
+      max_tokens: maxTokens,
+      response_format: isStructuredContent ? { type: "json_object" } : undefined
+    };
+    
+    if (progressCallback) {
+      progressCallback(`Making aggressive revision attempt to add ${wordsMissing} words...`);
+    }
+    
+    const response = await fetch(`${baseUrl}/chat/completions`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(aggressiveRequestBody)
+    });
+    
+    const data = await handleApiResponse<{ 
+      choices: { message: { content: string } }[];
+      usage?: { total_tokens: number }
+    }>(response);
+    
+    let aggressiveContent = data.choices[0]?.message?.content;
+    
+    if (!aggressiveContent) {
+      throw new Error('No content in aggressive revision response');
+    }
+    
+    // Parse structured content if needed
+    if (isStructuredContent) {
+      try {
+        aggressiveContent = JSON.parse(aggressiveContent);
+      } catch (err) {
+        console.warn('Error parsing aggressive revision JSON, using as plain text');
+      }
+    }
+    
+    const aggressiveWordCount = extractWordCount(aggressiveContent);
+    console.log(`🔥 Aggressive revision result: ${aggressiveWordCount} words (target: ${targetWordCount})`);
+    
+    if (progressCallback) {
+      progressCallback(`🔥 Aggressive revision complete: ${aggressiveWordCount} words`);
+    }
+    
+    return aggressiveContent;
+    
+  } catch (error) {
+    console.error('Aggressive revision failed:', error);
+    if (progressCallback) {
+      progressCallback(`Aggressive revision failed: ${error.message}`);
+    }
+    return null;
+  }
 }
 
 function getRefinementWordCountTolerance(formState: FormState, targetWordCount: number): any {
