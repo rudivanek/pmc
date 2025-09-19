@@ -28,6 +28,13 @@ export async function restyleCopyWithPersona(
   targetWordCount?: number,
   progressCallback?: (message: string) => void
 ): Promise<{ content: any; personaUsed: string }> {
+  // Helper function to perform emergency revision
+  const performEmergencyRevision = async (failedContent: any): Promise<any> => {
+    let emergencyContent = null;
+    console.log('🚨 Performing emergency revision for failed content...');
+    
+    try {
+
   // Check if content is an array of headlines
   const isHeadlineArray = Array.isArray(content) && content.every(item => typeof item === 'string');
   
