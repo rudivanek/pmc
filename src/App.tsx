@@ -24,7 +24,6 @@ import BetaThanks from './components/BetaThanks';
 import StepByStepGuide from './components/StepByStepGuide';
 import ManagePrefills from './components/ManagePrefills';
 import TemplateSuggestionModal from './components/TemplateSuggestionModal';
-import ErrorBoundary from './components/ErrorBoundary';
 import { getLastPrompts, evaluatePrompt } from './services/apiService';
 import { getCopySession, getTemplate, getSavedOutput, saveTemplate, saveSavedOutput } from './services/supabaseClient';
 import { checkUserAccess } from './services/supabaseClient';
@@ -329,10 +328,6 @@ const AppRouter: React.FC = () => {
       promptEvaluation: null,
       sessionId: uuidv4() // Generate new session ID for the new template application
     }));
-   
-   // Force display mode to 'all' to show all fields after loading
-   // This needs to be called if there's a way to access the display mode state
-   console.log('Template applied to form, setting display mode to all');
     toast.success('Template applied to form successfully!');
   };
 
@@ -399,11 +394,9 @@ const AppRouter: React.FC = () => {
           path="/dashboard" 
           element={
             currentUser ? (
-              <ErrorBoundary>
-                <Dashboard 
-                  userId={currentUser.id} 
-                />
-              </ErrorBoundary>
+            <Dashboard 
+              userId={currentUser.id} 
+            />
             ) : (
               <Navigate to="/login" replace />
             )
@@ -448,9 +441,7 @@ const AppRouter: React.FC = () => {
           path="/manage-users" 
           element={
             currentUser ? (
-              <ErrorBoundary>
-                <ManageUsers />
-              </ErrorBoundary>
+              <ManageUsers />
             ) : (
               <Navigate to="/login" replace />
             )
@@ -460,9 +451,7 @@ const AppRouter: React.FC = () => {
           path="/manage-prefills" 
           element={
             currentUser ? (
-              <ErrorBoundary>
-                <ManagePrefills />
-              </ErrorBoundary>
+              <ManagePrefills />
             ) : (
               <Navigate to="/login" replace />
             )

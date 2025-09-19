@@ -239,7 +239,6 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
         loadFormStateFromTemplate(template);
         setLoadedTemplateId(template.id || null);
         setLoadedTemplateName(template.template_name || '');
-       setDisplayMode('all'); // Ensure all fields are visible when loading template
         toast.success(`Template "${template.template_name}" loaded successfully!`);
       }
     } else {

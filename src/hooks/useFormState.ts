@@ -86,13 +86,9 @@ export function useFormState() {
    */
   const loadFormStateFromSession = useCallback((session: CopySession) => {
     if (!session || !session.input_data) {
-     console.log('No session or input_data provided:', session);
       return;
     }
     
-   console.log('Loading session data:', session);
-   console.log('Session input_data:', session.input_data);
-   
     setFormState(prevState => {
       // Extract input data from the session
       const inputData = session.input_data;
@@ -117,8 +113,6 @@ export function useFormState() {
         generationProgress: []
       };
       
-     console.log('New form state after loading session:', newState);
-     
       // Copy Sessions now only restore inputs, not outputs
       // The copyResult will remain undefined (empty) when loading from a copy session
       
