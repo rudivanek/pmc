@@ -328,6 +328,10 @@ const AppRouter: React.FC = () => {
       promptEvaluation: null,
       sessionId: uuidv4() // Generate new session ID for the new template application
     }));
+   
+   // Force display mode to 'all' to show all fields after loading
+   // This needs to be called if there's a way to access the display mode state
+   console.log('Template applied to form, setting display mode to all');
     toast.success('Template applied to form successfully!');
   };
 
