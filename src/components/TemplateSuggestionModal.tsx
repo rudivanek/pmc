@@ -124,7 +124,7 @@ const TemplateSuggestionModal: React.FC<TemplateSuggestionModalProps> = ({
               disabled={isGenerating}
             />
             <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-              Describe what kind of template you want to generate. Be specific about content type, word count, target audience, features, etc.
+              Describe what kind of prompt  you want to generate. Be specific about content type, word count, target audience, features, etc.
             </p>
           </div>
 
