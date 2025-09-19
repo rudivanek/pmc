@@ -484,7 +484,7 @@ CRITICAL: Transform each Q&A pair to sound like ${persona} would ask and answer 
       model,
       'restyle_with_persona',
       `Apply ${persona}'s voice to content`,
-      undefined, // No sessionId available in voice styles context
+      undefined, // Don't pass sessionId to avoid foreign key constraint
       undefined // No project description available in voice styles context
     ).catch(err => console.error('Error tracking token usage:', err));
     
