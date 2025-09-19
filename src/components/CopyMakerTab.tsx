@@ -521,8 +521,16 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
         if (!restyledContent || 
             (typeof restyledContent === 'string' && restyledContent.trim().length === 0) ||
             (typeof restyledContent === 'object' && restyledContent !== null && 
-             (!restyledContent.content || 
-              (typeof restyledContent.content === 'string' && restyledContent.content.trim().length === 0)))) {
+             // Check if it's a nested response with content field
+             ('content' in restyledContent && 
+              (!restyledContent.content || 
+               (typeof restyledContent.content === 'string' && restyledContent.content.trim().length === 0) ||
+               (typeof restyledContent.content === 'object' && restyledContent.content !== null && 
+                (!restyledContent.content.headline && !restyledContent.content.sections)))) ||
+             // Check if it's direct structured content without nested structure
+             (!('content' in restyledContent) && 
+              (!restyledContent.headline && !restyledContent.sections && 
+               typeof restyledContent !== 'string')))) {
           toast.error(`Failed to generate ${selectedPersona}'s voice style. The AI returned empty content. Please try again or use a different model.`);
           return;
         }
