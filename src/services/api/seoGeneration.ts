@@ -131,7 +131,7 @@ Respond only in JSON using the format and limits provided. Do not include any ex
       formState.model,
       'generate_seo_metadata',
       formState.briefDescription || 'Generate SEO metadata',
-      undefined, // Don't pass sessionId to avoid foreign key constraint violations
+      undefined, // Don't pass sessionId to avoid foreign key constraint
       formState.projectDescription
     );
     

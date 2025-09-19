@@ -174,8 +174,8 @@ Keep suggestions concise and practical.`;
       model,
       'get_suggestions',
       `Suggestions for ${fieldType}`,
-      sessionId,
-      projectDescription
+      undefined, // Don't pass sessionId to avoid foreign key constraint
+      undefined // Don't pass projectDescription when sessionId is undefined
     );
     
     // Extract the content from the response

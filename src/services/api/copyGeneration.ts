@@ -129,7 +129,7 @@ export async function generateCopy(
       formState.model,
       `generate_${formState.tab}_copy`,
       formState.briefDescription || `Generate ${formState.tab} copy`,
-      undefined, // Don't pass sessionId until session is created in database
+      undefined, // Don't pass sessionId to avoid foreign key constraint
       formState.projectDescription
     );
     

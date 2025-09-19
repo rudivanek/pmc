@@ -141,7 +141,7 @@ The JSON should follow this structure:
       model,
       'generate_content_scores',
       `Score ${contentType}`,
-      undefined, // No sessionId available in scoring context
+      undefined, // Don't pass sessionId to avoid foreign key constraint
       undefined // No project description available in scoring context
     ).catch(err => console.error('Error tracking token usage:', err));
     
