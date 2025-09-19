@@ -331,7 +331,12 @@ const AppRouter: React.FC = () => {
     toast.success('Template applied to form successfully!');
   };
 
-  // Handle applying template JSON to form
+  // Determine if we should show the main menu
+  const shouldShowMainMenu = () => {
+    const hiddenPaths = ['/', '/login', '/beta-thanks'];
+    return !hiddenPaths.includes(location.pathname);
+  };
+
   // Show loading screen while initializing
   if (!isInitialized) {
     return (
@@ -356,6 +361,15 @@ const AppRouter: React.FC = () => {
 
   return (
     <div>
+      {/* Global Main Menu - Show on all pages except homepage, login, and beta-thanks */}
+      {shouldShowMainMenu() && currentUser && (
+        <MainMenu
+          userName={currentUser?.user_metadata?.name || currentUser?.email?.split('@')[0]}
+          onLogout={handleEnhancedLogout}
+          onOpenTemplateSuggestion={() => setIsTemplateSuggestionModalOpen(true)}
+        />
+      )}
+      
       <Routes>
         <Route 
           path="/" 
@@ -382,7 +396,6 @@ const AppRouter: React.FC = () => {
             currentUser ? (
             <Dashboard 
               userId={currentUser.id} 
-              onLogout={handleLogout}
             />
             ) : (
               <Navigate to="/login" replace />
@@ -412,9 +425,6 @@ const AppRouter: React.FC = () => {
                 loadFormStateFromTemplate={loadFormStateFromTemplate}
                 displayMode={displayMode}
                 setDisplayMode={setDisplayMode}
-                isTemplateSuggestionModalOpen={isTemplateSuggestionModalOpen}
-                setIsTemplateSuggestionModalOpen={setIsTemplateSuggestionModalOpen}
-               onLogout={handleEnhancedLogout}
               />
             ) : (
               <Navigate to="/login" replace />
@@ -468,6 +478,16 @@ const AppRouter: React.FC = () => {
           initialTemplateName={loadedTemplateName || formState.briefDescription || ''}
           initialDescription={formState.briefDescription || ''}
           formStateToSave={formState}
+        />
+      )}
+      
+      {/* Template Suggestion Modal - available across all routes */}
+      {isTemplateSuggestionModalOpen && (
+        <TemplateSuggestionModal
+          isOpen={isTemplateSuggestionModalOpen}
+          onClose={() => setIsTemplateSuggestionModalOpen(false)}
+          currentUser={currentUser}
+          onApplyToForm={handleApplyTemplateToForm}
         />
       )}
       
@@ -529,15 +549,6 @@ const AppRouter: React.FC = () => {
             </div>
           </div>
         </div>
-      )}
-      
-      {isTemplateSuggestionModalOpen && (
-        <TemplateSuggestionModal
-          isOpen={isTemplateSuggestionModalOpen}
-          onClose={() => setIsTemplateSuggestionModalOpen(false)}
-          currentUser={currentUser}
-          onApplyToForm={handleApplyTemplateToForm}
-        />
       )}
       
       {/* Cookie Consent Banner */}

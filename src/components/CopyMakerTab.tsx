@@ -4,7 +4,6 @@ import { useRef } from 'react';
 import { toast } from 'react-hot-toast';
 import { v4 as uuidv4 } from 'uuid';
 
-import MainMenu from './MainMenu';
 import CopyMakerForm from './CopyMakerForm';
 import AppSpinner from './ui/AppSpinner';
 import LoadingSpinner from './ui/LoadingSpinner';
@@ -78,9 +77,6 @@ interface CopyMakerTabProps {
   loadFormStateFromTemplate: any;
   displayMode: 'all' | 'populated';
   setDisplayMode: (mode: 'all' | 'populated') => void;
-  isTemplateSuggestionModalOpen: boolean;
-  setIsTemplateSuggestionModalOpen: (open: boolean) => void;
-  onLogout?: () => void;
 }
 
 const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
@@ -102,9 +98,6 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
   onCancel,
   loadFormStateFromPrefill,
   loadFormStateFromTemplate,
-  isTemplateSuggestionModalOpen,
- setIsTemplateSuggestionModalOpen,
- onLogout
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -736,13 +729,6 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
   };
   return (
     <div className="relative min-h-screen">
-      {/* Main Menu/Header */}
-      <MainMenu
-        userName={currentUser?.user_metadata?.name || currentUser?.email?.split('@')[0]}
-       onLogout={onLogout}
-        onOpenTemplateSuggestion={() => setIsTemplateSuggestionModalOpen(true)}
-      />
-      
       {/* Main Content Layout */}
       <div className="space-y-8">
         {/* Prefill and Template Loaders */}
