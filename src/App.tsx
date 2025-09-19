@@ -414,6 +414,7 @@ const AppRouter: React.FC = () => {
                 setDisplayMode={setDisplayMode}
                 isTemplateSuggestionModalOpen={isTemplateSuggestionModalOpen}
                 setIsTemplateSuggestionModalOpen={setIsTemplateSuggestionModalOpen}
+               onLogout={handleEnhancedLogout}
               />
             ) : (
               <Navigate to="/login" replace />

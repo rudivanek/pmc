@@ -80,6 +80,7 @@ interface CopyMakerTabProps {
   setDisplayMode: (mode: 'all' | 'populated') => void;
   isTemplateSuggestionModalOpen: boolean;
   setIsTemplateSuggestionModalOpen: (open: boolean) => void;
+  onLogout?: () => void;
 }
 
 const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
@@ -102,7 +103,8 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
   loadFormStateFromPrefill,
   loadFormStateFromTemplate,
   isTemplateSuggestionModalOpen,
-  setIsTemplateSuggestionModalOpen
+ setIsTemplateSuggestionModalOpen,
+ onLogout
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -737,10 +739,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
       {/* Main Menu/Header */}
       <MainMenu
         userName={currentUser?.user_metadata?.name || currentUser?.email?.split('@')[0]}
-        onLogout={() => {
-          // Handle logout - you might want to pass this from parent component
-          console.log('Logout from copy maker');
-        }}
+       onLogout={onLogout}
         onOpenTemplateSuggestion={() => setIsTemplateSuggestionModalOpen(true)}
       />
       
