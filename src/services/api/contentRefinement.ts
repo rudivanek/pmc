@@ -76,30 +76,68 @@ export async function reviseContentForWordCount(
   // If within acceptable range, return original content
   if (!needsRevision) {
     if (progressCallback) {
+      console.log('📝 Emergency revision response received:', emergencyContent ? `${emergencyContent.length} chars` : 'EMPTY');
+      
+      // Validate emergency content is not empty
+      if (!emergencyContent || emergencyContent.trim().length === 0) {
+        console.error('❌ Emergency revision returned empty content!');
+        if (progressCallback) {
+          progressCallback('❌ Emergency revision returned empty content. Using second revision.');
+        }
+        return null;
+      }
+      
       progressCallback(`Content within acceptable range: ${contentWords} words (${percentageOfTarget.toFixed(1)}% of target)`);
     }
     return content;
   }
   
   if (progressCallback) {
+        // Validate final content is not empty after parsing
+        if (!finalContent || (typeof finalContent === 'string' && finalContent.trim().length === 0)) {
+          console.error('❌ Emergency revision final content is empty after parsing!');
+          if (progressCallback) {
+            progressCallback('❌ Emergency revision produced empty final content. Using second revision.');
+          }
+          return null;
+        }
+        
     progressCallback(`Content needs revision: ${revisionReason}`);
   }
   
+        console.log(`📊 Emergency revision final result: ${finalWordCount} words (${finalPercentOfTarget}% of target)`);
   try {
     // Get API configuration and validate it
     const { apiKey, baseUrl, headers, maxTokens } = getApiConfig(formState.model);
     
     // Validate API configuration before proceeding
     if (!apiKey) {
+        console.error('❌ Error parsing emergency revision response:', parseError);
       throw new Error(`API key not available for model ${formState.model}`);
+        
+        // Validate emergency content before fallback
+        if (!emergencyContent || emergencyContent.trim().length === 0) {
+          console.error('❌ Emergency content is empty after parse error!');
+          if (progressCallback) {
+            progressCallback('❌ Emergency revision parsing failed and content is empty. Using second revision.');
+          }
+          return null;
+        }
+        
     }
     
     // Report progress if callback provided
+        console.log(`📊 Emergency revision (plain text fallback): ${finalWordCount} words`);
     if (progressCallback) {
       if (minWordCount !== undefined && maxWordCount !== undefined) {
         progressCallback(`Revising content for flexible word count range ${minWordCount}-${maxWordCount} words (currently ${contentWords} words)`);
       } else {
         progressCallback(`Revising content to match target word count of ${targetWordCount} words (currently ${contentWords} words)`);
+      }
+    } else {
+      console.error('❌ Emergency revision returned no content!');
+      if (progressCallback) {
+        progressCallback('❌ Emergency revision returned no content. Using second revision.');
       }
     }
     

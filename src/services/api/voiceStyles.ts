@@ -517,12 +517,16 @@ CRITICAL: Transform each Q&A pair to sound like ${persona} would ask and answer 
     if (typeof content === 'object') {
       try {
         // Parse JSON response
+        console.log('🔍 Attempting to parse structured JSON response for voice styling...');
         const parsedResponse = JSON.parse(responseContent);
+        console.log('✅ Successfully parsed structured JSON response:', parsedContent);
         
         // Check if it has the expected structure
         if (parsedResponse.headline && Array.isArray(parsedResponse.sections)) {
+          console.log('✅ Structured content has valid headline and sections');
           // Get the current word count
           const contentWordCount = extractWordCount(parsedResponse);
+          console.log(`📊 Structured content word count: ${contentWordCount} words (target: ${targetWordCount})`);
           
           if (progressCallback) {
             progressCallback(`Generated content in ${persona}'s voice: ${contentWordCount} words (${targetWordCount ? Math.round(contentWordCount/targetWordCount*100) : 'no target'}% of target)`);
@@ -530,6 +534,7 @@ CRITICAL: Transform each Q&A pair to sound like ${persona} would ask and answer 
           
           // Check if word count revision is needed
           if (targetWordCount && (formState?.prioritizeWordCount || formState?.adhereToLittleWordCount)) {
+            console.log('🔄 Checking if word count revision is needed for structured content...');
             const targetWordCountInfo = formState ? calculateTargetWordCount(formState) : { target: targetWordCount };
             
             let needsRevision = false;
@@ -555,6 +560,7 @@ CRITICAL: Transform each Q&A pair to sound like ${persona} would ask and answer 
             
             // If the content needs revision, try to revise it
             if (needsRevision) {
+              console.log(`⚠️ Structured content ${revisionReason}. Attempting revision...`);
               if (progressCallback) {
                 progressCallback(`${persona}-styled content ${revisionReason}. Revising...`);
               }
@@ -574,6 +580,10 @@ CRITICAL: Transform each Q&A pair to sound like ${persona} would ask and answer 
                   formState?.sessionId
                 );
                 
+                console.log('✅ Successfully revised structured content:', typeof revisedContent);
+                const revisedWordCount = extractWordCount(revisedContent);
+                console.log(`📊 Revised structured content word count: ${revisedWordCount} words`);
+                
                 // Generate GEO score if enabled
                 if (formState?.generateGeoScore) {
                   if (progressCallback) {
@@ -581,7 +591,9 @@ CRITICAL: Transform each Q&A pair to sound like ${persona} would ask and answer 
                   }
                   
                   try {
+                    console.log('🌍 Calculating GEO score for revised structured content...');
                     const geoScore = await calculateGeoScore(revisedContent, formState, currentUser, progressCallback);
+                    console.log('✅ GEO score calculated for revised content');
                     
                     // Generate FAQ Schema if needed
                     if (formState.outputStructure && formState.outputStructure.some(element => 
@@ -592,6 +604,7 @@ CRITICAL: Transform each Q&A pair to sound like ${persona} would ask and answer 
                       }
                       
                       try {
+                        console.log('📋 Generating FAQ Schema from revised structured content...');
                         const { generateFaqSchemaFromText } = await import('./seoGeneration');
                         const faqSchema = await generateFaqSchemaFromText(
                           typeof revisedContent === 'string' ? revisedContent : JSON.stringify(revisedContent),
@@ -599,7 +612,9 @@ CRITICAL: Transform each Q&A pair to sound like ${persona} would ask and answer 
                           currentUser,
                           progressCallback
                         );
+                        console.log('✅ FAQ Schema generated successfully');
                         
+                        console.log('🚀 Returning revised structured content with FAQ schema and GEO score');
                         return { content: { content: revisedContent, faqSchema }, personaUsed: persona };
                       } catch (faqError) {
                         console.error('Error generating FAQ schema for restyled content:', faqError);
@@ -607,16 +622,20 @@ CRITICAL: Transform each Q&A pair to sound like ${persona} would ask and answer 
                       }
                     }
                     
+                    console.log('🚀 Returning revised structured content with GEO score');
                     return { content: revisedContent, personaUsed: persona };
                   } catch (geoError) {
                     console.error('Error calculating GEO score for restyled content:', geoError);
+                    console.log('🚀 Returning revised structured content without GEO score');
                     return { content: revisedContent, personaUsed: persona };
                   }
                 }
                 
+                console.log('🚀 Returning revised structured content (no GEO scoring)');
                 return { content: revisedContent, personaUsed: persona };
               } catch (revisionError) {
                 console.error(`Error revising ${persona}-styled content:`, revisionError);
+                console.log('⚠️ Revision failed, falling back to original parsed content');
                 if (progressCallback) {
                   progressCallback(`Error revising ${persona}-styled content: ${revisionError.message}`);
                 }
@@ -627,12 +646,14 @@ CRITICAL: Transform each Q&A pair to sound like ${persona} would ask and answer 
           
           // Generate GEO score if enabled (for non-revised content)
           if (formState?.generateGeoScore) {
+            console.log('🌍 Calculating GEO score for non-revised structured content...');
             if (progressCallback) {
               progressCallback(`Calculating GEO score for ${persona}'s voice style...`);
             }
             
             try {
               const geoScore = await calculateGeoScore(parsedResponse, formState, currentUser, progressCallback);
+              console.log('✅ GEO score calculated for structured content');
               
               // Generate FAQ Schema if needed
               if (formState.outputStructure && formState.outputStructure.some(element => 
@@ -643,6 +664,7 @@ CRITICAL: Transform each Q&A pair to sound like ${persona} would ask and answer 
                 }
                 
                 try {
+                  console.log('📋 Generating FAQ Schema from structured content...');
                   const { generateFaqSchemaFromText } = await import('./seoGeneration');
                   const faqSchema = await generateFaqSchemaFromText(
                     typeof parsedResponse === 'string' ? parsedResponse : JSON.stringify(parsedResponse),
@@ -650,7 +672,9 @@ CRITICAL: Transform each Q&A pair to sound like ${persona} would ask and answer 
                     currentUser,
                     progressCallback
                   );
+                  console.log('✅ FAQ Schema generated successfully for structured content');
                   
+                  console.log('🚀 Returning structured content with FAQ schema and GEO score');
                   return { content: { content: parsedResponse, faqSchema }, personaUsed: persona };
                 } catch (faqError) {
                   console.error('Error generating FAQ schema for restyled content:', faqError);
@@ -658,17 +682,21 @@ CRITICAL: Transform each Q&A pair to sound like ${persona} would ask and answer 
                 }
               }
               
+              console.log('🚀 Returning structured content with GEO score');
               return { content: parsedResponse, personaUsed: persona };
             } catch (geoError) {
               console.error('Error calculating GEO score for restyled content:', geoError);
+              console.log('🚀 Returning structured content without GEO score');
               return { content: parsedResponse, personaUsed: persona };
             }
           }
           
+          console.log('🚀 Returning structured content (no GEO scoring, no revision needed)');
           return { content: parsedResponse, personaUsed: persona };
         }
         
         // If it doesn't have the expected structure, convert it to our expected format
+        console.log('⚠️ Parsed JSON does not have expected structure, converting...');
         const convertedResponse = {
           headline: persona + "'s Version",
           sections: [
@@ -679,8 +707,11 @@ CRITICAL: Transform each Q&A pair to sound like ${persona} would ask and answer 
           ]
         };
         
+        console.log('🚀 Returning converted structured response');
         return { content: convertedResponse, personaUsed: persona };
       } catch (err) {
+        console.error('❌ Error parsing structured content response:', err);
+        console.log('📝 Raw response that failed to parse:', responseContent);
         console.warn('Error parsing structured content response:', err);
         
         // If parsing fails, create a structured object
@@ -694,14 +725,19 @@ CRITICAL: Transform each Q&A pair to sound like ${persona} would ask and answer 
           ]
         };
         
+        console.log('🚀 Returning structured fallback due to JSON parsing error');
         return { content: structuredFallback, personaUsed: persona };
       }
     }
     
     // For plain text content
+    console.log('📝 Processing plain text content...');
+    console.log(`📊 Plain text content length: ${responseContent.length} characters`);
+    
     if (targetWordCount && (formState?.prioritizeWordCount || formState?.adhereToLittleWordCount)) {
       // Get current word count
       const contentWords = responseContent.trim().split(/\s+/).length;
+      console.log(`📊 Plain text word count: ${contentWords} words (target: ${targetWordCount})`);
       const targetWordCountInfo = formState ? calculateTargetWordCount(formState) : { target: targetWordCount };
       
       let needsRevision = false;
@@ -731,6 +767,7 @@ CRITICAL: Transform each Q&A pair to sound like ${persona} would ask and answer 
       
       // If the content needs revision, try to revise it
       if (needsRevision) {
+        console.log(`⚠️ Plain text content ${revisionReason}. Attempting revision...`);
         if (progressCallback) {
           progressCallback(`${persona}-styled content ${revisionReason}. Revising...`);
         }
@@ -750,24 +787,45 @@ CRITICAL: Transform each Q&A pair to sound like ${persona} would ask and answer 
             formState?.sessionId
           );
           
+          console.log('✅ Successfully revised plain text content:', typeof revisedContent);
+          console.log(`📊 Revised plain text content length: ${typeof revisedContent === 'string' ? revisedContent.length : 'not string'} characters`);
+          
+          // Validate that revisedContent is not empty
+          if (!revisedContent || (typeof revisedContent === 'string' && revisedContent.trim().length === 0)) {
+            console.error('❌ Revision returned empty content! Using original content as fallback.');
+            if (progressCallback) {
+              progressCallback(`⚠️ Content revision returned empty result. Using original content.`);
+            }
+            // Use original content as fallback
+          } else {
+            // Use the revised content
+            responseContent = revisedContent;
+          }
+          
           // Generate GEO score if enabled
           if (formState?.generateGeoScore) {
+            console.log('🌍 Calculating GEO score for revised plain text content...');
             if (progressCallback) {
               progressCallback(`Calculating GEO score for ${persona}'s voice style...`);
             }
             
             try {
-              const geoScore = await calculateGeoScore(revisedContent, formState, currentUser, progressCallback);
-              return { content: revisedContent, personaUsed: persona };
+              const geoScore = await calculateGeoScore(responseContent, formState, currentUser, progressCallback);
+              console.log('✅ GEO score calculated for revised plain text content');
+              console.log('🚀 Returning revised plain text content with GEO score');
+              return { content: responseContent, personaUsed: persona };
             } catch (geoError) {
               console.error('Error calculating GEO score for restyled content:', geoError);
-              return { content: revisedContent, personaUsed: persona };
+              console.log('🚀 Returning revised plain text content without GEO score');
+              return { content: responseContent, personaUsed: persona };
             }
           }
           
-          return { content: revisedContent, personaUsed: persona };
+          console.log('🚀 Returning revised plain text content (no GEO scoring)');
+          return { content: responseContent, personaUsed: persona };
         } catch (revisionError) {
           console.error(`Error revising ${persona}-styled content:`, revisionError);
+          console.log('⚠️ Revision failed for plain text, using original content');
           if (progressCallback) {
             progressCallback(`Error revising ${persona}-styled content: ${revisionError.message}`);
           }
@@ -778,21 +836,37 @@ CRITICAL: Transform each Q&A pair to sound like ${persona} would ask and answer 
     
     // Generate GEO score if enabled (for non-revised plain text content)
     if (formState?.generateGeoScore && !isHeadlineArray) {
+      console.log('🌍 Calculating GEO score for non-revised plain text content...');
       if (progressCallback) {
         progressCallback(`Calculating GEO score for ${persona}'s voice style...`);
       }
       
       try {
         const geoScore = await calculateGeoScore(responseContent, formState, currentUser, progressCallback);
+        console.log('✅ GEO score calculated for plain text content');
+        console.log('🚀 Returning plain text content with GEO score');
         return { content: responseContent, personaUsed: persona };
       } catch (geoError) {
         console.error('Error calculating GEO score for restyled content:', geoError);
+        console.log('🚀 Returning plain text content without GEO score');
         return { content: responseContent, personaUsed: persona };
       }
     }
     
+    console.log('🚀 Returning final plain text content (no GEO scoring, no revision)');
+    console.log(`📊 Final content length: ${responseContent.length} characters`);
+    console.log(`📝 Final content preview: ${responseContent.substring(0, 100)}...`);
     return { content: responseContent, personaUsed: persona };
   } catch (error) {
+    console.error(`❌ Critical error in restyleCopyWithPersona for ${persona}:`, error);
+    console.log('📋 Error details:', {
+      persona,
+      model: formState?.model,
+      targetWordCount,
+      useStructuredFormat,
+      isHeadlineArray,
+      errorMessage: error.message
+    });
     console.error(`Error applying ${persona}'s voice:`, error);
     
     // Generate a more specific error message
