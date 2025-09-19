@@ -143,7 +143,7 @@ const TemplateSuggestionModal: React.FC<TemplateSuggestionModalProps> = ({
               ) : (
                 <>
                   <Zap size={16} className="mr-2" />
-                  Generate Template JSON
+                  Generate JSON Prompt
                 </>
               )}
             </button>
