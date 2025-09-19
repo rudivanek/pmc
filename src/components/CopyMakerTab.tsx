@@ -4,6 +4,21 @@ import { useRef } from 'react';
 import { toast } from 'react-hot-toast';
 import { v4 as uuidv4 } from 'uuid';
 
+import MainMenu from './MainMenu';
+import CopyMakerForm from './CopyMakerForm';
+import AppSpinner from './ui/AppSpinner';
+import LoadingSpinner from './ui/LoadingSpinner';
+import FloatingActionBar from './FloatingActionBar';
+import GeneratedCopyCard from './GeneratedCopyCard';
+import SavePrefillModal from './SavePrefillModal';
+import { JsonLdModal } from './JsonLdModal';
+import { FormState, User, GeneratedContentItem, GeneratedContentItemType, CopyResult, Prefill, Template } from '../types';
+import { generateCopy, generateContentScores, generateSeoMetadata, calculateGeoScore, generateAlternativeCopy, restyleCopyWithPersona } from '../services/apiService';
+import { checkUserAccess, getPrefill, createPrefill, updatePrefill, getUserTemplates, getSupabaseClient } from '../services/supabaseClient';
+import { calculateTargetWordCount } from '../services/api/utils';
+import { RefreshCw, Search } from 'lucide-react';
+import PrefillSelector from './PrefillSelector';
+
 // Helper function to check if content is empty
 function isContentEmpty(content: any): boolean {
   // Null or undefined
@@ -43,21 +58,6 @@ function isContentEmpty(content: any): boolean {
   
   return false;
 }
-
-import MainMenu from './MainMenu';
-import CopyMakerForm from './CopyMakerForm';
-import AppSpinner from './ui/AppSpinner';
-import LoadingSpinner from './ui/LoadingSpinner';
-import FloatingActionBar from './FloatingActionBar';
-import GeneratedCopyCard from './GeneratedCopyCard';
-import SavePrefillModal from './SavePrefillModal';
-import { JsonLdModal } from './JsonLdModal';
-import { FormState, User, GeneratedContentItem, GeneratedContentItemType, CopyResult, Prefill, Template } from '../types';
-import { generateCopy, generateContentScores, generateSeoMetadata, calculateGeoScore, generateAlternativeCopy, restyleCopyWithPersona } from '../services/apiService';
-import { checkUserAccess, getPrefill, createPrefill, updatePrefill, getUserTemplates, getSupabaseClient } from '../services/supabaseClient';
-import { calculateTargetWordCount } from '../services/api/utils';
-import { RefreshCw, Search } from 'lucide-react';
-import PrefillSelector from './PrefillSelector';
 
 interface CopyMakerTabProps {
   currentUser?: User;
