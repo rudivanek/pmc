@@ -33,7 +33,7 @@ import { DEFAULT_FORM_STATE } from './constants';
 import { v4 as uuidv4 } from 'uuid';
 
 const AppRouter: React.FC = () => {
-  const { currentUser, isInitialized, initError, handleLogin, handleLogout, fallbackToDemoMode } = useAuth();
+  const { currentUser, isInitialized, initError, isSupabaseEnabled, isDemoMode, handleLogin, handleLogout, fallbackToDemoMode } = useAuth();
   const { formState, setFormState, loadFormStateFromTemplate, loadFormStateFromSession, loadFormStateFromSavedOutput, loadFormStateFromPrefill } = useFormState();
   const { isSmartMode } = useMode();
   const navigate = useNavigate();
@@ -101,18 +101,20 @@ const AppRouter: React.FC = () => {
       return;
     }
     
-    // Check user access before evaluating inputs
-    try {
-      const accessResult = await checkUserAccess(currentUser.id, currentUser.email || '');
-      
-      if (!accessResult.hasAccess) {
-        toast.error(accessResult.message);
+    // Skip access check in demo mode
+    if (!isDemoMode) {
+      try {
+        const accessResult = await checkUserAccess(currentUser.id, currentUser.email || '');
+        
+        if (!accessResult.hasAccess) {
+          toast.error(accessResult.message);
+          return;
+        }
+      } catch (error) {
+        console.error('Error checking user access for input evaluation:', error);
+        toast.error("Unable to verify access. Please try again.");
         return;
       }
-    } catch (error) {
-      console.error('Error checking user access for input evaluation:', error);
-      toast.error("Unable to verify access. Please try again.");
-      return;
     }
     
     setFormState(prev => ({ ...prev, isEvaluating: true, generationProgress: [] }));
@@ -163,6 +165,12 @@ const AppRouter: React.FC = () => {
     
     if (!currentUser || !currentUser.id) {
       toast.error('You must be logged in to save templates.');
+      return;
+    }
+
+    // Skip template saving in demo mode
+    if (isDemoMode) {
+      toast.error('Template saving is not available in demo mode. Please configure Supabase to save templates.');
       return;
     }
 
@@ -250,6 +258,13 @@ const AppRouter: React.FC = () => {
       toast.error('You must be logged in to save outputs.');
       return;
     }
+    
+    // Skip output saving in demo mode
+    if (isDemoMode) {
+      toast.error('Output saving is not available in demo mode. Please configure Supabase to save outputs.');
+      return;
+    }
+    
     if (!formState.copyResult || !formState.copyResult.generatedVersions || formState.copyResult.generatedVersions.length === 0) {
       toast.error('No content to save.');
       return;
@@ -394,9 +409,13 @@ const AppRouter: React.FC = () => {
           path="/dashboard" 
           element={
             currentUser ? (
+            <ErrorBoundary>
             <Dashboard 
               userId={currentUser.id} 
+              isDemoMode={isDemoMode}
+              isSupabaseEnabled={isSupabaseEnabled}
             />
+            </ErrorBoundary>
             ) : (
               <Navigate to="/login" replace />
             )
@@ -441,7 +460,9 @@ const AppRouter: React.FC = () => {
           path="/manage-users" 
           element={
             currentUser ? (
+            <ErrorBoundary>
               <ManageUsers />
+            </ErrorBoundary>
             ) : (
               <Navigate to="/login" replace />
             )
@@ -451,7 +472,9 @@ const AppRouter: React.FC = () => {
           path="/manage-prefills" 
           element={
             currentUser ? (
+            <ErrorBoundary>
               <ManagePrefills />
+            </ErrorBoundary>
             ) : (
               <Navigate to="/login" replace />
             )

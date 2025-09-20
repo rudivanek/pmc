@@ -6,6 +6,8 @@ export function useAuth() {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [initError, setInitError] = useState<string | null>(null);
+  const [isSupabaseEnabled, setIsSupabaseEnabled] = useState<boolean>(false);
+  const [isDemoMode, setIsDemoMode] = useState<boolean>(false);
   const supabase = getSupabaseClient();
   const [user, setUser] = useState<any>(null);
 
@@ -21,6 +23,7 @@ export function useAuth() {
     };
     setCurrentUser(demoUser);
     setUser(demoUser);
+    setIsDemoMode(true);
     setIsInitialized(true);
   };
 
@@ -37,6 +40,7 @@ export function useAuth() {
         console.log('Checking session...');
         // Check if Supabase is enabled
         const supabaseEnabled = import.meta.env.VITE_SUPABASE_ENABLED === 'true';
+        setIsSupabaseEnabled(supabaseEnabled);
         
         if (!supabaseEnabled) {
           console.log('Supabase is disabled, using demo user');
@@ -95,8 +99,6 @@ export function useAuth() {
                   // Ensure the user exists in our pmc_users table
                   await ensureUserExists(user.id, user.email || '', user.user_metadata?.name);
                   
-                  // Skip access check during initialization to prevent fetch errors
-                  console.log('Setting user without access check during initialization');
                   setCurrentUser(user);
                   setUser(user);
                 } catch (error: any) {
@@ -147,9 +149,8 @@ export function useAuth() {
     checkSession();
     
     // Set up auth state change listener only if Supabase is enabled
-    const supabaseEnabled = import.meta.env.VITE_SUPABASE_ENABLED === 'true';
     
-    if (supabaseEnabled && !initError) {
+    if (isSupabaseEnabled && !initError) {
       try {
         const { data: { subscription } } = supabase.auth.onAuthStateChange(
           async (event, session) => {
@@ -160,8 +161,6 @@ export function useAuth() {
                 setCurrentUser(session.user);
                 setUser(session.user);
                 
-                // Skip access check during auth state changes to prevent network errors
-                console.log('User authenticated, access will be checked when needed');
               } catch (error) {
                 console.error('Error in auth state change handler:', error);
                 // Don't crash the app due to auth state change errors
@@ -192,17 +191,12 @@ export function useAuth() {
     console.log('User logged in:', user.email);
     
     try {
-      // Skip access check during login to prevent network errors from blocking auth
-      console.log('Setting user as logged in without access check');
       setCurrentUser(user);
       setUser(user);
       console.log('User login completed successfully');
       
-      // Access will be checked when user tries to use features that require it
-      console.log('Access verification will occur when user attempts to use features');
     } catch (error) {
       console.error('Error checking user access during login:', error);
-      console.log('Outer catch in handleLogin, allowing login anyway');
       
       // If there's a complete failure, still allow login but warn
       setCurrentUser(user);
@@ -214,9 +208,8 @@ export function useAuth() {
   const handleLogout = useCallback(async () => {
     try {
       console.log('Logging out...');
-      const supabaseEnabled = import.meta.env.VITE_SUPABASE_ENABLED === 'true';
       
-      if (supabaseEnabled) {
+      if (isSupabaseEnabled) {
         try {
           await supabase.auth.signOut();
         } catch (signOutError) {
@@ -227,12 +220,14 @@ export function useAuth() {
       
       setCurrentUser(null);
       setUser(null);
+      setIsDemoMode(false);
       toast.success('Logged out successfully');
     } catch (error) {
       console.error('Error signing out:', error);
       // Still clear local state even if logout fails
       setCurrentUser(null);
       setUser(null);
+      setIsDemoMode(false);
       toast.error('Logged out (with errors)');
     }
   }, []);
@@ -243,6 +238,8 @@ export function useAuth() {
     setCurrentUser,
     isInitialized,
     initError,
+    isSupabaseEnabled,
+    isDemoMode,
     handleLogin,
     handleLogout,
     fallbackToDemoMode
