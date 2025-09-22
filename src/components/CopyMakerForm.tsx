@@ -60,7 +60,6 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
   projectDescriptionRef,
   businessDescriptionRef,
   originalCopyRef,
-  const [displayMode, setDisplayMode] = useState<'all' | 'populated'>('all');
   const [isEvaluatingOriginalCopy, setIsEvaluatingOriginalCopy] = useState(false);
   
   // Get populated fields map for this form state
