@@ -843,7 +843,6 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
             isPrefillEditingMode={isPrefillEditingMode}
             displayMode={displayMode}
             setDisplayMode={setDisplayMode}
-            displayMode={displayMode}
           />
           
           {/* Prefill Action Buttons */}
