@@ -5,6 +5,7 @@ import { toast } from 'react-hot-toast';
 import { v4 as uuidv4 } from 'uuid';
 
 import CopyMakerForm from './CopyMakerForm';
+import CopyForm from './CopyForm';
 import AppSpinner from './ui/AppSpinner';
 import LoadingSpinner from './ui/LoadingSpinner';
 import FloatingActionBar from './FloatingActionBar';
@@ -820,7 +821,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
 
         {/* Form Section */}
         <div>
-          <CopyMakerForm
+          <CopyForm
             currentUser={currentUser}
             formState={formState}
             setFormState={setFormState}
@@ -839,7 +840,6 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
             isPrefillEditingMode={isPrefillEditingMode}
             displayMode={displayMode}
             setDisplayMode={setDisplayMode}
-            displayMode={displayMode}
           />
           
           {/* Prefill Action Buttons */}
