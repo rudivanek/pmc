@@ -3,7 +3,6 @@
  */
 import { FormState, User, CopyResult } from '../../types';
 import { getApiConfig, handleApiResponse, storePrompts, calculateTargetWordCount, extractWordCount, getWordCountTolerance } from './utils';
-import { trackTokenUsage } from './tokenTracking';
 import { saveCopySession, getSupabaseClient } from '../supabaseClient';
 import { reviseContentForWordCount } from './contentRefinement';
 import { generateSeoMetadata } from './seoGeneration';
@@ -111,27 +110,6 @@ export async function generateCopy(
     
     // Extract token usage
     const tokenUsage = data.usage?.total_tokens || 0;
-    
-    // Ensure session exists in database before tracking token usage
-    if (actualSessionId && currentUser) {
-      try {
-        await saveCopySession(formState, null, undefined, actualSessionId);
-      } catch (sessionError) {
-        console.warn('Error creating initial session record:', sessionError);
-        // Continue even if session creation fails
-      }
-    }
-    
-    // Track token usage
-    await trackTokenUsage(
-      currentUser,
-      tokenUsage,
-      formState.model,
-      `generate_${formState.tab}_copy`,
-      formState.briefDescription || `Generate ${formState.tab} copy`,
-      undefined, // Don't pass sessionId to avoid foreign key constraint
-      formState.projectDescription
-    );
     
     // Extract the content from the response
     const content = data.choices[0]?.message?.content;

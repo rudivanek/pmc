@@ -3,7 +3,6 @@
  */
 import { FormState, Model } from '../../types';
 import { getApiConfig, handleApiResponse, extractWordCount, generateErrorMessage, calculateTargetWordCount } from './utils';
-import { trackTokenUsage } from './tokenTracking';
 import { reviseContentForWordCount } from './contentRefinement';
 import { calculateGeoScore } from './geoScoring';
 
@@ -494,17 +493,6 @@ CRITICAL: Transform each Q&A pair to sound like ${persona} would ask and answer 
     
     // Extract token usage
     const tokenUsage = data.usage?.total_tokens || 0;
-    
-    // Track token usage without waiting for the result
-    trackTokenUsage(
-      currentUser,
-      tokenUsage,
-      model,
-      'restyle_with_persona',
-      `Apply ${persona}'s voice to content`,
-      undefined, // Don't pass sessionId to avoid foreign key constraint
-      undefined // No project description available in voice styles context
-    ).catch(err => console.error('Error tracking token usage:', err));
     
     // Extract the content from the response
     let responseContent = data.choices[0]?.message?.content;

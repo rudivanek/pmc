@@ -4,7 +4,6 @@
 import { FormState } from '../../types';
 import { getApiConfig, handleApiResponse, storePrompts, calculateTargetWordCount, extractWordCount } from './utils';
 import { generateSeoMetadata } from './seoGeneration';
-import { trackTokenUsage } from './tokenTracking';
 import { saveCopySession } from '../supabaseClient';
 import { reviseContentForWordCount } from './contentRefinement';
 import { calculateGeoScore } from './geoScoring';
@@ -316,17 +315,6 @@ ${formState.geoRegions && formState.geoRegions.trim()
     
     // Extract token usage
     const tokenUsage = data.usage?.total_tokens || 0;
-    
-    // Track token usage
-    await trackTokenUsage(
-      currentUser,
-      tokenUsage,
-      formState.model,
-      'generate_alternative_copy',
-      formState.briefDescription || 'Generate alternative copy',
-      undefined, // Don't pass sessionId to avoid foreign key constraint
-      formState.projectDescription
-    );
     
     // Extract the content from the response
     let alternativeCopy = data.choices[0]?.message?.content;

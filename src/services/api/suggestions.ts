@@ -3,7 +3,6 @@
  */
 import { Model, User } from '../../types';
 import { getApiConfig, handleApiResponse } from './utils';
-import { trackTokenUsage } from './tokenTracking';
 
 /**
  * Get AI-generated suggestions for a specific field
@@ -166,17 +165,6 @@ Keep suggestions concise and practical.`;
     
     // Extract token usage
     const tokenUsage = data.usage?.total_tokens || 0;
-    
-    // Track token usage
-    await trackTokenUsage(
-      currentUser,
-      tokenUsage,
-      model,
-      'get_suggestions',
-      `Suggestions for ${fieldType}`,
-      undefined, // Don't pass sessionId to avoid foreign key constraint
-      undefined // Don't pass projectDescription when sessionId is undefined
-    );
     
     // Extract the content from the response
     let content = data.choices[0]?.message?.content;

@@ -3,7 +3,6 @@
  */
 import { Model, ScoreData } from '../../types';
 import { getApiConfig, handleApiResponse, calculateTargetWordCount } from './utils';
-import { trackTokenUsage } from './tokenTracking';
 
 /**
  * Generate scores for content
@@ -133,17 +132,6 @@ The JSON should follow this structure:
     
     // Extract token usage
     const tokenUsage = data.usage?.total_tokens || 0;
-    
-    // Track token usage without awaiting the result to not block the flow
-    trackTokenUsage(
-      currentUser,
-      tokenUsage,
-      model,
-      'generate_content_scores',
-      `Score ${contentType}`,
-      undefined, // Don't pass sessionId to avoid foreign key constraint
-      undefined // No project description available in scoring context
-    ).catch(err => console.error('Error tracking token usage:', err));
     
     // Extract the content from the response
     const responseContent = data.choices[0]?.message?.content;
