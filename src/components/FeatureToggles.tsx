@@ -12,7 +12,7 @@ import { isFieldUserModified, isFieldPopulated } from '../utils/formUtils';
 interface FeatureTogglesProps {
   formData: FormData;
   handleToggle: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleChange: (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => void;
+  handleChange: (name: string, value: any) => void;
   isSmartMode: boolean;
   displayMode: 'all' | 'populated';
 }
@@ -28,16 +28,14 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
   const locationField = useInputField({
     value: formData.location || '',
     onChange: (value: string) => {
-      // Create proper event structure for handleChange
-      const syntheticEvent = {
-        target: {
-          name: 'location',
-          value: value
-        }
-      } as React.ChangeEvent<HTMLInputElement>;
-      handleChange(syntheticEvent);
+      handleChange('location', value);
     }
   });
+
+  // Wrapper for standard HTML elements that pass event objects
+  const handleChangeEvent = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => {
+    handleChange(e.target.name, e.target.value);
+  };
 
   // We're removing this conditional return so the component is always displayed
   // regardless of Smart Mode or Pro Mode
@@ -236,7 +234,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
                     max="5"
                     className="w-16 bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 p-1.5"
                     value={formData.numUrlSlugs || 1}
-                    onChange={handleChange}
+                    onChange={handleChangeEvent}
                   />
                   <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">variants</span>
                 </div>
@@ -254,7 +252,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
                     max="5"
                     className="w-16 bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 p-1.5"
                     value={formData.numMetaDescriptions || 1}
-                    onChange={handleChange}
+                    onChange={handleChangeEvent}
                   />
                   <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">variants</span>
                 </div>
@@ -272,7 +270,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
                     max="5"
                     className="w-16 bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 p-1.5"
                     value={formData.numH1Variants || 1}
-                    onChange={handleChange}
+                    onChange={handleChangeEvent}
                   />
                   <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">variants</span>
                 </div>
@@ -290,7 +288,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
                     max="10"
                     className="w-16 bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 p-1.5"
                     value={formData.numH2Variants || 2}
-                    onChange={handleChange}
+                    onChange={handleChangeEvent}
                   />
                   <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">variants</span>
                 </div>
@@ -308,7 +306,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
                     max="10"
                     className="w-16 bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 p-1.5"
                     value={formData.numH3Variants || 2}
-                    onChange={handleChange}
+                    onChange={handleChangeEvent}
                   />
                   <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">variants</span>
                 </div>
@@ -326,7 +324,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
                     max="5"
                     className="w-16 bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 p-1.5"
                     value={formData.numOgTitles || 1}
-                    onChange={handleChange}
+                    onChange={handleChangeEvent}
                   />
                   <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">variants</span>
                 </div>
@@ -344,7 +342,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
                     max="5"
                     className="w-16 bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 p-1.5"
                     value={formData.numOgDescriptions || 1}
-                    onChange={handleChange}
+                    onChange={handleChangeEvent}
                   />
                   <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">variants</span>
                 </div>
@@ -372,7 +370,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
               step="0.5"
               className="w-16 bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 p-1.5"
               value={formData.wordCountTolerancePercentage || 2}
-              onChange={handleChange}
+              onChange={handleChangeEvent}
             />
             <span className="text-xs text-gray-500 dark:text-gray-400">%</span>
           </div>
@@ -425,7 +423,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
                     step="5"
                     className="w-16 bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 p-1.5"
                     value={formData.littleWordCountTolerancePercentage || 20}
-                    onChange={handleChange}
+                    onChange={handleChangeEvent}
                   />
                   <span className="text-xs text-gray-500 dark:text-gray-400">%</span>
                 </div>
@@ -616,7 +614,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
             className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
             placeholder="Ej. México, LATAM, Barcelona"
             value={formData.geoRegions || ''}
-            onChange={handleChange}
+            onChange={handleChangeEvent}
           />
           <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
             Enter countries, regions, or cities to help tailor the content for local AI search results (e.g., México, LATAM, CDMX, España).

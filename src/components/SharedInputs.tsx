@@ -17,7 +17,7 @@ import { isFieldPopulated, isFieldUserModified, hasPopulatedCompetitorUrls } fro
 
 interface SharedInputsProps {
   formData: FormState;
-  handleChange: (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => void;
+  handleChange: (name: string, value: any) => void;
   handleToggle: (e: React.ChangeEvent<HTMLInputElement>) => void;
   currentUser?: any;
   onGetSuggestion: (fieldType: string) => Promise<void>;
@@ -46,9 +46,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
     onChange: (value) => {
       const newUrls = [...formData.competitorUrls];
       newUrls[0] = value;
-      handleChange({
-        target: { name: 'competitorUrls', value: newUrls }
-      } as unknown as React.ChangeEvent<HTMLInputElement>);
+      handleChange('competitorUrls', newUrls);
     }
   });
   
@@ -57,9 +55,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
     onChange: (value) => {
       const newUrls = [...formData.competitorUrls];
       newUrls[1] = value;
-      handleChange({
-        target: { name: 'competitorUrls', value: newUrls }
-      } as unknown as React.ChangeEvent<HTMLInputElement>);
+      handleChange('competitorUrls', newUrls);
     }
   });
   
@@ -68,123 +64,98 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
     onChange: (value) => {
       const newUrls = [...formData.competitorUrls];
       newUrls[2] = value;
-      handleChange({
-        target: { name: 'competitorUrls', value: newUrls }
-      } as unknown as React.ChangeEvent<HTMLInputElement>);
+      handleChange('competitorUrls', newUrls);
     }
   });
 
   // Use input field hooks for new fields
   const competitorCopyTextField = useInputField({
     value: formData.competitorCopyText || '',
-    onChange: (value) => handleChange({ 
-      target: { name: 'competitorCopyText', value } 
-    } as any)
+    onChange: (value) => handleChange('competitorCopyText', value)
   });
 
   const targetAudiencePainPointsField = useInputField({
     value: formData.targetAudiencePainPoints || '',
-    onChange: (value) => handleChange({ 
-      target: { name: 'targetAudiencePainPoints', value } 
-    } as any)
+    onChange: (value) => handleChange('targetAudiencePainPoints', value)
   });
 
   // Use input field hook for location
   const locationField = useInputField({
     value: formData.location || '',
-    onChange: (value) => handleChange({ 
-      target: { name: 'location', value } 
-    } as any)
+    onChange: (value) => handleChange('location', value)
   });
 
   // Use input field hook for geoRegions
   const geoRegionsField = useInputField({
     value: formData.geoRegions || '',
-    onChange: (value) => handleChange({ 
-      target: { name: 'geoRegions', value } 
-    } as any)
+    onChange: (value) => handleChange('geoRegions', value)
   });
 
   // Moved fields from CreateCopyForm and ImproveCopyForm
   const targetAudienceField = useInputField({
     value: formData.targetAudience || '',
-    onChange: (value) => handleChange({ target: { name: 'targetAudience', value } } as any)
+    onChange: (value) => handleChange('targetAudience', value)
   });
   
   const keyMessageField = useInputField({
     value: formData.keyMessage || '',
-    onChange: (value) => handleChange({ target: { name: 'keyMessage', value } } as any)
+    onChange: (value) => handleChange('keyMessage', value)
   });
   
   const desiredEmotionField = useInputField({
     value: formData.desiredEmotion || '',
-    onChange: (value) => handleChange({ target: { name: 'desiredEmotion', value } } as any)
+    onChange: (value) => handleChange('desiredEmotion', value)
   });
   
   const callToActionField = useInputField({
     value: formData.callToAction || '',
-    onChange: (value) => handleChange({ target: { name: 'callToAction', value } } as any)
+    onChange: (value) => handleChange('callToAction', value)
   });
   
   const brandValuesField = useInputField({
     value: formData.brandValues || '',
-    onChange: (value) => handleChange({ target: { name: 'brandValues', value } } as any)
+    onChange: (value) => handleChange('brandValues', value)
   });
   
   const keywordsField = useInputField({
     value: formData.keywords || '',
-    onChange: (value) => handleChange({ target: { name: 'keywords', value } } as any)
+    onChange: (value) => handleChange('keywords', value)
   });
   
   const contextField = useInputField({
     value: formData.context || '',
-    onChange: (value) => handleChange({ target: { name: 'context', value } } as any)
+    onChange: (value) => handleChange('context', value)
   });
 
   // Use the input field hook for the custom word count field
   const customWordCountField = useInputField({
     value: formData.customWordCount?.toString() || '',
-    onChange: (value) => handleChange({ 
-      target: { 
-        name: 'customWordCount', 
-        value: value ? parseInt(value) : 150 
-      } 
-    } as any)
+    onChange: (value) => handleChange('customWordCount', value ? parseInt(value) : 150)
   });
 
   // Handler for output structure change
   const handleStructureChange = (values: string[]) => {
-    handleChange({
-      target: { name: 'outputStructure', value: values }
-    } as React.ChangeEvent<HTMLSelectElement>);
+    handleChange('outputStructure', values);
   };
 
   // Handle industry niche change
   const handleIndustryNicheChange = (value: string) => {
-    handleChange({
-      target: { name: 'industryNiche', value }
-    } as React.ChangeEvent<HTMLSelectElement>);
+    handleChange('industryNiche', value);
   };
 
   // Handle reader funnel stage change
   const handleReaderFunnelStageChange = (value: string) => {
-    handleChange({
-      target: { name: 'readerFunnelStage', value }
-    } as React.ChangeEvent<HTMLSelectElement>);
+    handleChange('readerFunnelStage', value);
   };
 
   // Handle preferred writing style change
   const handlePreferredWritingStyleChange = (value: string) => {
-    handleChange({
-      target: { name: 'preferredWritingStyle', value }
-    } as React.ChangeEvent<HTMLSelectElement>);
+    handleChange('preferredWritingStyle', value);
   };
 
   // Handle tone level change
   const handleToneLevelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    handleChange({
-      target: { name: 'toneLevel', value: parseInt(e.target.value) }
-    } as React.ChangeEvent<HTMLInputElement>);
+    handleChange('toneLevel', parseInt(e.target.value));
   };
 
   // Handle language style constraints change
@@ -194,9 +165,12 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
       ? constraints.filter(c => c !== constraint)
       : [...constraints, constraint];
     
-    handleChange({
-      target: { name: 'languageStyleConstraints', value: updatedConstraints }
-    } as unknown as React.ChangeEvent<HTMLInputElement>);
+    handleChange('languageStyleConstraints', updatedConstraints);
+  };
+
+  // Wrapper for standard HTML elements that pass event objects
+  const handleChangeEvent = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => {
+    handleChange(e.target.name, e.target.value);
   };
 
   // Calculate the total word count from structure elements
@@ -411,7 +385,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
               name="language"
               className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
               value={formData.language}
-              onChange={handleChange}
+              onChange={handleChangeEvent}
             >
               {LANGUAGES.map((lang) => (
                 <option key={lang} value={lang}>
@@ -431,7 +405,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
               name="tone"
               className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
               value={formData.tone}
-              onChange={handleChange}
+              onChange={handleChangeEvent}
             >
               {TONES.map((tone) => (
                 <option key={tone} value={tone}>
@@ -451,7 +425,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
               name="wordCount"
               className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
               value={formData.wordCount}
-              onChange={handleChange}
+              onChange={handleChangeEvent}
             >
               {WORD_COUNTS.map((count) => (
                 <option key={count} value={count}>
