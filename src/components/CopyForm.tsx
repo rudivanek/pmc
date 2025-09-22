@@ -563,6 +563,7 @@ const CopyForm: React.FC<CopyFormProps> = ({
         activeSuggestionField={activeSuggestionField}
         isSmartMode={isSmartMode}
         setFormState={setFormState}
+        displayMode={displayMode}
       />
 
       {/* Feature Toggles */}
@@ -630,10 +631,7 @@ const CopyForm: React.FC<CopyFormProps> = ({
             {/* Toggle Display Mode */}
             <Tooltip content={displayMode === 'all' ? 'Show only populated fields' : 'Show all fields'}>
               <button
-                onClick={() => {
-                  console.log('🔍 Display mode button clicked. Current mode:', displayMode, 'Will set to:', displayMode === 'all' ? 'populated' : 'all');
-                  setDisplayMode(displayMode === 'all' ? 'populated' : 'all');
-                }}
+                onClick={() => setDisplayMode(displayMode === 'all' ? 'populated' : 'all')}
                 className="w-10 h-10 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
                 title={displayMode === 'all' ? 'Show only populated fields' : 'Show all fields'}
               >

@@ -49,13 +49,9 @@ const ImproveCopyForm: React.FC<ImproveCopyFormProps> = ({
 
   // Check if any field in this form has been modified by the user
   const hasPopulatedFields = () => {
-    const sectionPopulated = isFieldPopulated(formData.section);
-    const originalCopyPopulated = isFieldPopulated(formData.originalCopy);
-    const excludedTermsPopulated = isFieldPopulated(formData.excludedTerms);
-    
-    return sectionPopulated ||
-           originalCopyPopulated ||
-           excludedTermsPopulated;
+    return isFieldPopulated(formData.section) ||
+           isFieldPopulated(formData.originalCopy) ||
+           isFieldPopulated(formData.excludedTerms);
   };
 
   // Don't render anything if display mode is 'populated' and no fields are populated

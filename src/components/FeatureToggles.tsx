@@ -86,7 +86,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
            isFieldUserModified('numOgTitles', formData.numOgTitles) ||
            isFieldUserModified('numOgDescriptions', formData.numOgDescriptions) ||
            isFieldUserModified('wordCountTolerancePercentage', formData.wordCountTolerancePercentage) ||
-           isFieldUserModified('littleWordCountTolerancePercentage', formData.littleWordCountTolerancePercentage) ||
+           isFieldUserModified('littleWordCountTolerancePercentage', formData.littleWordCountTolerancePercentage);
            isFieldPopulated(formData.wordCountTolerancePercentage) ||
            isFieldPopulated(formData.littleWordCountTolerancePercentage);
   };
