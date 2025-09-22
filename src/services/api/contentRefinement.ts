@@ -3,7 +3,6 @@
  */
 import { FormState, Model } from '../../types';
 import { getApiConfig, handleApiResponse, storePrompts, calculateTargetWordCount, extractWordCount, generateErrorMessage } from './utils';
-import { trackTokenUsage } from './tokenTracking';
 
 /**
  * Revise content to more closely match a target word count
@@ -171,17 +170,6 @@ export async function reviseContentForWordCount(
       
       // Extract token usage
       const tokenUsage = data.usage?.total_tokens || 0;
-      
-      // Track token usage
-      await trackTokenUsage(
-        currentUser,
-        tokenUsage,
-        formState.model,
-        'revise_word_count',
-        `Refine word count (target: ${targetWordCount})`,
-        undefined, // Don't pass sessionId to avoid foreign key constraint
-        formState.projectDescription
-      );
       
       // Extract the content from the response
       let revisedContent = data.choices[0]?.message?.content;
@@ -645,17 +633,6 @@ async function performSecondRevision(
       
       // Extract token usage
       const tokenUsage = data.usage?.total_tokens || 0;
-      
-      // Track token usage
-      await trackTokenUsage(
-        currentUser,
-        tokenUsage,
-        formState.model,
-        'revise_word_count_second_attempt',
-        `Second word count revision (target: ${targetWordCount})`,
-        sessionId,
-        formState.projectDescription
-      );
       
       // Extract the content from the response
       let revisedContent = data.choices[0]?.message?.content;

@@ -3,7 +3,6 @@
  */
 import { FormState, User, Model } from '../../types';
 import { getApiConfig, handleApiResponse, storePrompts } from './utils';
-import { trackTokenUsage } from './tokenTracking';
 import { OUTPUT_STRUCTURE_OPTIONS, LANGUAGES, TONES, WORD_COUNTS, INDUSTRY_NICHE_OPTIONS, READER_FUNNEL_STAGES, PREFERRED_WRITING_STYLES, LANGUAGE_STYLE_CONSTRAINTS } from '../../constants';
 
 /**
@@ -194,17 +193,6 @@ CRITICAL REMINDERS:
     
     // Extract token usage
     const tokenUsage = data.usage?.total_tokens || 0;
-    
-    // Track token usage
-    await trackTokenUsage(
-      currentUser,
-      tokenUsage,
-      model,
-      'generate_template_json_suggestion',
-      `Template JSON for: ${instruction.substring(0, 50)}...`,
-      undefined,
-      'Template JSON Generator'
-    );
     
     // Extract the content from the response
     const responseContent = data.choices[0]?.message?.content;
