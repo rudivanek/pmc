@@ -66,7 +66,7 @@ const UrlParamLoader: React.FC<UrlParamLoaderProps> = ({
           }
           if (data) {
             loadFormStateFromSession(data);
-            setDisplayMode('all');
+            setDisplayMode('populated');
             toast.success('Session loaded successfully!');
           }
         } catch (error: any) {
@@ -103,7 +103,7 @@ const UrlParamLoader: React.FC<UrlParamLoaderProps> = ({
             loadFormStateFromTemplate(data);
             setLoadedTemplateId(data.id || null);
             setLoadedTemplateName(data.template_name || '');
-            setDisplayMode('all');
+            setDisplayMode('populated');
             toast.success('Template loaded successfully!');
           }
         } catch (error: any) {
@@ -138,7 +138,7 @@ const UrlParamLoader: React.FC<UrlParamLoaderProps> = ({
           }
           if (data) {
             loadFormStateFromSavedOutput(data);
-            setDisplayMode('all');
+            setDisplayMode('populated');
             toast.success('Saved output loaded successfully!');
           }
         } catch (error: any) {

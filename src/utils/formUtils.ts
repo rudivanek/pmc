@@ -34,10 +34,8 @@ export function isFieldPopulated(value: any): boolean {
       typeof item.value === 'string'
     )) {
       // This looks like a StructuredOutputElement array
-      // Only consider it populated if at least one element has a meaningful wordCount
-      return value.some(item => 
-        typeof item.wordCount === 'number' && item.wordCount > 0
-      );
+      // Consider it populated if it has any elements at all
+      return value.length > 0;
     }
     
     // For regular arrays, check if there are any non-empty string items
