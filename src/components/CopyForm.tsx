@@ -563,7 +563,6 @@ const CopyForm: React.FC<CopyFormProps> = ({
         activeSuggestionField={activeSuggestionField}
         isSmartMode={isSmartMode}
         setFormState={setFormState}
-        displayMode={displayMode}
       />
 
       {/* Feature Toggles */}
