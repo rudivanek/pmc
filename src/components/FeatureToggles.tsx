@@ -7,7 +7,7 @@ import { Label } from './ui/label';
 import { useMemo } from 'react';
 import { useInputField } from '../hooks/useInputField';
 import { toast } from 'react-hot-toast';
-import { isFieldUserModified } from '../utils/formUtils';
+import { isFieldUserModified, isFieldPopulated } from '../utils/formUtils';
 
 interface FeatureTogglesProps {
   formData: FormData;
