@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { BarChart3, FileText, Settings, DollarSign, Users, RefreshCw, Calendar, Zap, Eye, Trash2, Edit, ArrowRight, User, AlertCircle, Filter, Download, List } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import LoadingSpinner from './ui/LoadingSpinner';
@@ -45,6 +45,7 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
   const { currentUser } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const location = useLocation();
   
   // State
   const [copySessions, setCopySessions] = useState<CopySession[]>([]);
@@ -74,7 +75,7 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
   const [editingTemplateName, setEditingTemplateName] = useState<string>('');
 
   // CSV export function for token usage
-  const exportTokenUsageToCSV = () => {
+  const exportTokenUsageToCSV = useCallback(() => { // This function will no longer be used but kept for reference if needed elsewhere
     if (filteredTokenUsage.length === 0) {
       toast.error('No data to export');
       return;
@@ -139,28 +140,14 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
     document.body.removeChild(link);
     
     toast.success('Token usage data exported to CSV!');
-  };
+  }, [allUsers, selectedUserFilter]); // Removed filteredTokenUsage from dependencies as it's removed
 
   // Filter token usage based on selected user
-  const filteredTokenUsage = React.useMemo(() => {
-    if (!isAdmin) return tokenUsage;
-    
-    const dataToFilter = allUsersTokenUsage.length > 0 ? allUsersTokenUsage : tokenUsage;
-    
-    if (selectedUserFilter === 'all') {
-      return dataToFilter;
-    }
-    
-    return dataToFilter.filter(usage => usage.user_email === selectedUserFilter);
-  }, [isAdmin, allUsersTokenUsage, tokenUsage, selectedUserFilter]);
+  // This useMemo is removed as token usage is removed
+  const filteredTokenUsage = []; // Placeholder to avoid errors
 
   // Calculate filtered stats for token usage
-  const filteredStats = React.useMemo(() => {
-    const totalTokensUsed = filteredTokenUsage.reduce((sum, usage) => sum + usage.token_usage, 0);
-    const totalCost = filteredTokenUsage.reduce((sum, usage) => sum + usage.token_cost, 0);
-    
-    return { totalTokensUsed, totalCost };
-  }, [filteredTokenUsage]);
+  const filteredStats = { totalTokensUsed: 0, totalCost: 0 }; // Placeholder
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString();
@@ -176,14 +163,13 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
   };
 
   // Load user data
-  const loadUserData = async () => {
+  const loadUserData = useCallback(async () => { // Removed token usage related data fetching
     setLoading(true);
     
     try {
       if (!SUPABASE_ENABLED) {
         // Use mock data if Supabase is not enabled
         setCopySessions(getMockCopySessions());
-        setTokenUsage(getMockTokenUsage());
         setSavedOutputs(getMockSavedOutputs());
         setSubscriptionData(getMockSubscriptionData());
         setLoading(false);
@@ -194,35 +180,27 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
       const [
         sessionsResult,
         templatesResult,
-        tokenResult,
         savedOutputsResult,
         subscriptionResult
       ] = await Promise.all([
         getUserCopySessions(userId),
         getUserTemplates(userId),
-        getUserTokenUsage(currentUser?.email || ''),
         getUserSavedOutputs(userId),
         getUserSubscriptionData(userId)
       ]);
 
       if (sessionsResult.data) setCopySessions(sessionsResult.data);
       if (templatesResult.data) setTemplates(templatesResult.data);
-      if (tokenResult.data) setTokenUsage(tokenResult.data);
       if (savedOutputsResult.data) setSavedOutputs(savedOutputsResult.data);
       if (subscriptionResult.data) setSubscriptionData(subscriptionResult.data);
 
       // Load admin-specific data if user is admin
       if (isAdmin) {
         try {
-          const [allTokenUsageResult, betaCountResult, usersResult] = await Promise.all([
-            adminGetAllTokenUsage(),
+          const [betaCountResult, usersResult] = await Promise.all([ // Removed allTokenUsageResult
             adminGetBetaRegistrationsCount(),
             adminGetUsers()
           ]);
-          
-          if (allTokenUsageResult.data) {
-            setAllUsersTokenUsage(allTokenUsageResult.data);
-          }
           
           if (betaCountResult.data !== null) {
             setBetaRegistrationsCount(betaCountResult.data);
@@ -241,8 +219,6 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
       }
 
       if (sessionsResult.error) console.error('Error loading sessions:', sessionsResult.error);
-      if (templatesResult.error) console.error('Error loading templates:', templatesResult.error);
-      if (tokenResult.error) console.error('Error loading token usage:', tokenResult.error);
       if (savedOutputsResult.error) console.error('Error loading saved outputs:', savedOutputsResult.error);
       if (subscriptionResult.error) console.error('Error loading subscription data:', subscriptionResult.error);
       
@@ -252,7 +228,7 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId, currentUser?.email, isAdmin]); // Removed token usage related dependencies
 
   // Calculate stats
   useEffect(() => {
@@ -266,7 +242,7 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
       totalCost,
       totalSavedOutputs: savedOutputs.length
     });
-  }, [copySessions, templates, tokenUsage, savedOutputs]);
+  }, [copySessions, templates, savedOutputs]); // Removed tokenUsage from dependencies
 
   // Load data on component mount
   useEffect(() => {
@@ -279,10 +255,10 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
     if (tab && ['sessions', 'templates', 'savedOutputs', 'tokenUsage'].includes(tab)) {
       setActiveTab(tab);
     }
-  }, [searchParams]);
+  }, [searchParams, location.pathname]);
 
   // Handle delete copy session
-  const handleDeleteSession = async (sessionId: string) => {
+  const handleDeleteSession = useCallback(async (sessionId: string) => {
     if (window.confirm('Are you sure you want to delete this session?')) {
       try {
         if (!SUPABASE_ENABLED) {
@@ -298,11 +274,11 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
         console.error('Error deleting session:', error);
         toast.error('Failed to delete session');
       }
-    }
-  };
+    } 
+  }, [SUPABASE_ENABLED, copySessions]);
 
   // Handle delete template
-  const handleDeleteTemplate = async (templateId: string) => {
+  const handleDeleteTemplate = useCallback(async (templateId: string) => {
     if (window.confirm('Are you sure you want to delete this template?')) {
       try {
         if (!SUPABASE_ENABLED) {
@@ -318,11 +294,11 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
         console.error('Error deleting template:', error);
         toast.error('Failed to delete template');
       }
-    }
-  };
+    } 
+  }, [SUPABASE_ENABLED, templates]);
 
   // Handle delete saved output
-  const handleDeleteSavedOutput = async (outputId: string) => {
+  const handleDeleteSavedOutput = useCallback(async (outputId: string) => {
     if (window.confirm('Are you sure you want to delete this saved output?')) {
       try {
         if (!SUPABASE_ENABLED) {
@@ -338,21 +314,21 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
         console.error('Error deleting saved output:', error);
         toast.error('Failed to delete saved output');
       }
-    }
-  };
+    } 
+  }, [SUPABASE_ENABLED, savedOutputs]);
 
   // Handle template rename
-  const handleStartRename = (template: Template) => {
+  const handleStartRename = useCallback((template: Template) => {
     setEditingTemplateId(template.id || '');
     setEditingTemplateName(template.template_name);
-  };
+  }, []);
 
-  const handleCancelRename = () => {
+  const handleCancelRename = useCallback(() => {
     setEditingTemplateId(null);
     setEditingTemplateName('');
-  };
+  }, []);
 
-  const handleSaveRename = async (templateId: string) => {
+  const handleSaveRename = useCallback(async (templateId: string) => {
     if (!editingTemplateName.trim()) {
       toast.error('Template name cannot be empty');
       return;
@@ -385,17 +361,16 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
       console.error('Error renaming template:', error);
       toast.error('Failed to rename template');
     }
-  };
+  }, [SUPABASE_ENABLED, editingTemplateName, templates]);
 
   // Helper function to render tab navigation
   const renderTabNavigation = () => (
     <div className="border-b border-gray-300 dark:border-gray-800 mb-6">
       <nav className="flex space-x-8">
         {[
-          { id: 'sessions', label: 'Copy Sessions', icon: FileText },
           { id: 'templates', label: 'Templates', icon: Settings },
           { id: 'savedOutputs', label: 'Saved Outputs', icon: BarChart3 },
-          { id: 'tokenUsage', label: 'Token Usage', icon: DollarSign }
+          { id: 'sessions', label: 'Copy Sessions', icon: FileText } // Moved sessions to the end
         ].map(({ id, label, icon: Icon }) => (
           <button
             key={id}
@@ -466,18 +441,6 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
                   <List size={16} />
                 </Link>
                 
-                <button
-                  onClick={() => setActiveTab('tokenUsage')}
-                  className={`px-4 py-2 rounded-lg text-sm flex items-center transition-colors shadow-md hover:shadow-lg ${
-                    activeTab === 'tokenUsage' 
-                      ? 'bg-gray-600 text-white' 
-                      : 'bg-gray-700 hover:bg-gray-600 text-white'
-                  }`}
-                  title="User Token Consumption"
-                >
-                  <DollarSign size={16} />
-                </button>
-                
                 {/* Beta Registrations Count */}
                 {betaRegistrationsCount !== null && (
                   <div className="bg-gray-600 text-white px-3 py-2 rounded-lg text-sm flex items-center shadow-md" title={`Beta Registrations: ${betaRegistrationsCount}`}>
@@ -513,7 +476,7 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
                 <div className="text-sm text-gray-600 dark:text-gray-400">Tokens Allowed</div>
                 {stats.totalTokensUsed > 0 && (
                   <div className="text-xs text-gray-500 dark:text-gray-500 mt-1">
-                    Used: {stats.totalTokensUsed.toLocaleString()} ({Math.round((stats.totalTokensUsed / (subscriptionData.tokens_allowed || 1)) * 100)}%)
+                    Used: {stats.totalTokensUsed.toLocaleString()} (N/A%)
                   </div>
                 )}
               </div>
@@ -577,7 +540,7 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
             </div>
             
             {copySessions.length === 0 ? (
-              <div className="p-8 text-center">
+              <div className="p-8 text-center"> {/* Removed token usage related content */}
                 <FileText size={48} className="text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No sessions yet</h3>
                 <p className="text-gray-600 dark:text-gray-400 mb-4">
@@ -592,7 +555,7 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
                 </Link>
               </div>
             ) : (
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto"> {/* Removed token usage related content */}
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                   <thead className="bg-gray-50 dark:bg-gray-800">
                     <tr>
@@ -954,179 +917,7 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
           </div>
         )}
 
-        {activeTab === 'tokenUsage' && (
-          <div className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-800 rounded-lg">
-            <div className="p-6 border-b border-gray-300 dark:border-gray-800">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                    {isAdmin ? 'All Users Token Consumption' : 'Token Usage'}
-                  </h2>
-                  <p className="text-gray-600 dark:text-gray-400 mt-1">
-                    {isAdmin ? 'Token usage across all users' : 'Your API token consumption history'}
-                  </p>
-                </div>
-                {isAdmin && filteredTokenUsage.length > 0 && (
-                  <div className="text-right">
-                    <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                      {formatCurrency(filteredStats.totalCost)}
-                    </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
-                      {selectedUserFilter === 'all' ? 'Total Cost' : `Cost for ${selectedUserFilter}`} ({filteredStats.totalTokensUsed.toLocaleString()} tokens)
-                    </div>
-                  </div>
-                )}
-              </div>
-              
-              {/* User Filter for Admin */}
-              {isAdmin && allUsers.length > 0 && (
-                <div className="mt-4 flex items-center space-x-3">
-                  <Filter size={18} className="text-gray-500" />
-                  <label htmlFor="userFilter" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Filter by user:
-                  </label>
-                  <select
-                    id="userFilter"
-                    value={selectedUserFilter}
-                    onChange={(e) => setSelectedUserFilter(e.target.value)}
-                    className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 px-3 py-1.5"
-                  >
-                    <option value="all">All Users ({allUsersTokenUsage.length} records)</option>
-                    {allUsers.map((user) => {
-                      const userTokenCount = allUsersTokenUsage.filter(usage => usage.user_email === user.email).length;
-                      return (
-                        <option key={user.id} value={user.email}>
-                          {user.name || user.email} ({userTokenCount} records)
-                        </option>
-                      );
-                    })}
-                  </select>
-                  
-                  {selectedUserFilter !== 'all' && (
-                    <button
-                      onClick={() => setSelectedUserFilter('all')}
-                      className="text-gray-600 hover:text-gray-500 text-sm underline"
-                    >
-                      Clear filter
-                    </button>
-                  )}
-                  
-                  {/* Export to CSV Button */}
-                  <button
-                    onClick={exportTokenUsageToCSV}
-                    disabled={filteredTokenUsage.length === 0}
-                    className="bg-gray-600 hover:bg-gray-500 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg text-sm flex items-center transition-colors shadow-md hover:shadow-lg"
-                    title="Export filtered data to CSV"
-                  >
-                    <Download size={16} className="mr-2" />
-                    Export CSV
-                  </button>
-                </div>
-              )}
-            </div>
-            
-            {filteredTokenUsage.length === 0 ? (
-              <div className="p-8 text-center">
-                <DollarSign size={48} className="text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                  {selectedUserFilter === 'all' ? 'No token usage yet' : `No token usage for ${selectedUserFilter}`}
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">
-                  {selectedUserFilter === 'all' 
-                    ? 'Token usage will appear here after you generate copy'
-                    : 'This user has not generated any copy yet'
-                  }
-                </p>
-                {selectedUserFilter === 'all' && (
-                <Link
-                  to="/copy-maker"
-                  className="bg-gray-600 hover:bg-gray-500 text-white px-4 py-2 rounded-lg inline-flex items-center"
-                >
-                  <Zap size={16} className="mr-2" />
-                  Generate Copy
-                </Link>
-                )}
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                  <thead className="bg-gray-50 dark:bg-gray-800">
-                    <tr>
-                      {isAdmin && selectedUserFilter === 'all' && (
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">User</th>
-                      )}
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Description</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Usage Details</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Session ID</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Project Description</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
-                    {filteredTokenUsage.map((usage) => (
-                      <tr key={usage.id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
-                        {isAdmin && selectedUserFilter === 'all' && (
-                          <td className="px-4 py-2 text-sm text-gray-900 dark:text-white">
-                            <div>
-                              <div className="font-medium">{usage.user_email}</div>
-                              {allUsers.find(u => u.email === usage.user_email)?.name && (
-                                <div className="text-xs text-gray-500 dark:text-gray-400">
-                                  {allUsers.find(u => u.email === usage.user_email)?.name}
-                                </div>
-                              )}
-                            </div>
-                          </td>
-                        )}
-                        <td className="px-4 py-2">
-                          <div className="text-sm font-medium text-gray-900 dark:text-white">
-                            {usage.brief_description}
-                          </div>
-                          <div className="text-sm text-gray-500 dark:text-gray-400">
-                            <div><span className="font-medium">Action:</span> {usage.control_executed}</div>
-                            <div><span className="font-medium">Source:</span> {usage.copy_source}</div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400">
-                          <div className="space-y-1">
-                            <div><span className="font-medium">Model:</span> {usage.model}</div>
-                            <div><span className="font-medium">Tokens:</span> {usage.token_usage.toLocaleString()}</div>
-                            <div><span className="font-medium">Cost:</span> {formatCurrency(usage.token_cost)}</div>
-                            <div className="text-xs text-gray-400 dark:text-gray-500">
-                              Cost per 1K: {formatCurrency((usage.token_cost / usage.token_usage) * 1000)}
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400">
-                          <div title={usage.session_id || 'No session'}>
-                            {usage.session_id ? `${usage.session_id.substring(0, 8)}...` : 'No session'}
-                          </div>
-                        </td>
-                        <td className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400">
-                          <div title={usage.project_description || 'No project description'}>
-                            {usage.project_description 
-                              ? usage.project_description.length > 40 
-                                ? `${usage.project_description.substring(0, 40)}...`
-                                : usage.project_description
-                              : 'No project desc'
-                            }
-                          </div>
-                        </td>
-                        <td className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400">
-                          <div>
-                            <div>{formatDate(usage.usage_date || usage.created_at)}</div>
-                            <div className="text-xs text-gray-400 dark:text-gray-500">
-                              {new Date(usage.created_at || usage.usage_date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        )}
+        {/* Removed token usage tab content */}
       </div>
     </div>
   );

@@ -306,20 +306,6 @@ export interface CopySession {
   brief_description?: string; // Added brief description field
 }
 
-export interface TokenUsage {
-  id?: string;
-  user_email: string;
-  token_usage: number;
-  token_cost: number;
-  usage_date?: string; // This will default to current date in the database
-  created_at?: string; // This will be set by the database
-  control_executed: string;
-  brief_description: string; // Changed from optional to required
-  model?: string; // Added model field
-  copy_source?: string; // New field to track the source of the token usage
-  session_id?: string; // New field to track the session ID for grouping token usage
-}
-
 // Template interface
 export interface Template {
   id?: string;
