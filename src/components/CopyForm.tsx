@@ -106,8 +106,7 @@ const CopyForm: React.FC<CopyFormProps> = ({
   }, [currentUser]);
 
   // Handle form input changes
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
+  const handleChange = (name: string, value: any) => {
     
     if (name === 'customerId') {
       const selectedCustomer = customers.find(c => c.id === value);
@@ -122,6 +121,11 @@ const CopyForm: React.FC<CopyFormProps> = ({
         [name]: value
       }));
     }
+  };
+
+  // Wrapper for standard HTML elements that pass event objects
+  const handleChangeEvent = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => {
+    handleChange(e.target.name, e.target.value);
   };
 
   // Handle checkbox toggles
@@ -423,7 +427,7 @@ const CopyForm: React.FC<CopyFormProps> = ({
               name="model"
               className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
               value={formState.model}
-              onChange={handleChange}
+              onChange={handleChangeEvent}
             >
               {MODELS.map((model) => (
                 <option key={model.value} value={model.value}>
@@ -466,7 +470,7 @@ const CopyForm: React.FC<CopyFormProps> = ({
                 name="customerId"
                 className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
                 value={formState.customerId || ''}
-                onChange={handleChange}
+                onChange={handleChangeEvent}
                 disabled={loadingCustomers}
               >
                 <option value="">{loadingCustomers ? 'Loading customers...' : 'Select a customer (optional)'}</option>
