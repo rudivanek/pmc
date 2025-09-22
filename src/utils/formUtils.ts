@@ -21,16 +21,6 @@ export function isFieldPopulated(value: any): boolean {
   }
   
   if (Array.isArray(value)) {
-    // For arrays, check if there are any non-empty string items
-    return value.length > 0 && value.some(item => {
-      if (typeof item === 'string') {
-        return item.trim().length > 0;
-      }
-      return Boolean(item); // For non-string items, check if truthy
-    });
-  }
-  
-  if (Array.isArray(value)) {
     // Special handling for StructuredOutputElement arrays (like outputStructure)
     if (value.length > 0 && value.every(item => 
       typeof item === 'object' && 
