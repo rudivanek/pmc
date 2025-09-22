@@ -8,19 +8,7 @@ import { useMemo } from 'react';
 import { useInputField } from '../hooks/useInputField';
 import { toast } from 'react-hot-toast';
 import { isFieldUserModified } from '../utils/formUtils';
-
-// Helper function to check if a field is populated
-function isFieldPopulated(value: any): boolean {
-  if (value === null || value === undefined) return false;
-  if (typeof value === 'string') return value.trim().length > 0;
-  if (Array.isArray(value)) return value.length > 0 && value.some(item => 
-    typeof item === 'string' ? item.trim().length > 0 : Boolean(item)
-  );
-  if (typeof value === 'boolean') return value === true;
-  if (typeof value === 'number') return value !== 0;
-  if (typeof value === 'object' && value !== null) return Object.keys(value).length > 0;
-  return false;
-}
+import { isFieldPopulated } from '../utils/formUtils';
 
 interface CreateCopyFormProps {
   formData: FormData;
@@ -61,40 +49,16 @@ const CreateCopyForm: React.FC<CreateCopyFormProps> = ({
   });
 
   // Check if any field in this component is populated
-  const hasPopulatedFeatureTogglesFields = () => {
-    return formData.generateSeoMetadata ||
-           formData.generateScores ||
-           formData.generateGeoScore ||
-           formData.prioritizeWordCount ||
-           formData.adhereToLittleWordCount ||
-           formData.forceKeywordIntegration ||
-           formData.forceElaborationsExamples ||
-           formData.enhanceForGEO ||
-           formData.addTldrSummary ||
-           isFieldPopulated(formData.geoRegions) ||
-           (formData.numUrlSlugs && formData.numUrlSlugs !== 3) ||
-           (formData.numMetaDescriptions && formData.numMetaDescriptions !== 3) ||
-           (formData.numH1Variants && formData.numH1Variants !== 3) ||
-           (formData.numH2Variants && formData.numH2Variants !== 3) ||
-           (formData.numH3Variants && formData.numH3Variants !== 3) ||
+  const hasPopulatedFields = () => {
     const pageTypePopulated = isFieldPopulated(formData.pageType);
     const businessDescriptionPopulated = isFieldPopulated(formData.businessDescription);
-    
-    console.log('🔍 CreateCopyForm hasPopulatedFields check:', {
-      pageType: formData.pageType,
-      pageTypePopulated,
-      businessDescription: formData.businessDescription?.substring(0, 50) + '...',
-      businessDescriptionPopulated,
-      displayMode
-    });
     
     return pageTypePopulated ||
            businessDescriptionPopulated;
   };
 
   // Don't render anything if display mode is 'populated' and no fields are populated
-  if (displayMode === 'populated' && !hasPopulatedFeatureTogglesFields()) {
-    console.log('🔍 CreateCopyForm: Hiding entire form section because displayMode is populated and no fields are populated');
+  if (displayMode === 'populated' && !hasPopulatedFields()) {
     return null;
   }
   
