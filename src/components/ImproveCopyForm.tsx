@@ -7,7 +7,6 @@ import { Zap } from 'lucide-react';
 import { evaluateContentQuality } from '../services/apiService';
 import { Tooltip } from './ui/Tooltip';
 import { isFieldUserModified } from '../utils/formUtils';
-import { isFieldPopulated } from '../utils/formUtils';
 
 interface ImproveCopyFormProps {
   formData: FormData;
@@ -54,16 +53,6 @@ const ImproveCopyForm: React.FC<ImproveCopyFormProps> = ({
     const originalCopyPopulated = isFieldPopulated(formData.originalCopy);
     const excludedTermsPopulated = isFieldPopulated(formData.excludedTerms);
     
-    console.log('🔍 ImproveCopyForm hasPopulatedFields check:', {
-      section: formData.section,
-      sectionPopulated,
-      originalCopy: formData.originalCopy?.substring(0, 50) + '...',
-      originalCopyPopulated,
-      excludedTerms: formData.excludedTerms,
-      excludedTermsPopulated,
-      displayMode
-    });
-    
     return sectionPopulated ||
            originalCopyPopulated ||
            excludedTermsPopulated;
@@ -71,7 +60,6 @@ const ImproveCopyForm: React.FC<ImproveCopyFormProps> = ({
 
   // Don't render anything if display mode is 'populated' and no fields are populated
   if (displayMode === 'populated' && !hasPopulatedFields()) {
-    console.log('🔍 ImproveCopyForm: Hiding entire form section because displayMode is populated and no fields are populated');
     return null;
   }
 
