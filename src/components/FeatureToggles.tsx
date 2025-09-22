@@ -68,15 +68,15 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
   
   // Check if any field in the Optional Features section is populated
   const hasPopulatedFeatureTogglesFields = () => {
-    return isFieldPopulated(formData.generateSeoMetadata) ||
-           isFieldPopulated(formData.generateScores) ||
-           isFieldPopulated(formData.generateGeoScore) ||
-           isFieldPopulated(formData.prioritizeWordCount) ||
-           isFieldPopulated(formData.adhereToLittleWordCount) ||
-           isFieldPopulated(formData.forceKeywordIntegration) ||
-           isFieldPopulated(formData.forceElaborationsExamples) ||
-           isFieldPopulated(formData.enhanceForGEO) ||
-           isFieldPopulated(formData.addTldrSummary) ||
+    return formData.generateSeoMetadata ||
+           formData.generateScores ||
+           formData.generateGeoScore ||
+           formData.prioritizeWordCount ||
+           formData.adhereToLittleWordCount ||
+           formData.forceKeywordIntegration ||
+           formData.forceElaborationsExamples ||
+           formData.enhanceForGEO ||
+           formData.addTldrSummary ||
            isFieldPopulated(formData.geoRegions) ||
            isFieldUserModified('numUrlSlugs', formData.numUrlSlugs) ||
            isFieldUserModified('numMetaDescriptions', formData.numMetaDescriptions) ||
@@ -87,8 +87,6 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
            isFieldUserModified('numOgDescriptions', formData.numOgDescriptions) ||
            isFieldUserModified('wordCountTolerancePercentage', formData.wordCountTolerancePercentage) ||
            isFieldUserModified('littleWordCountTolerancePercentage', formData.littleWordCountTolerancePercentage);
-           isFieldPopulated(formData.wordCountTolerancePercentage) ||
-           isFieldPopulated(formData.littleWordCountTolerancePercentage);
   };
 
   // Don't render anything if display mode is 'populated' and no fields are populated

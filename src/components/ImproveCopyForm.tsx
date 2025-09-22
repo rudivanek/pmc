@@ -6,7 +6,7 @@ import ContentQualityIndicator from './ui/ContentQualityIndicator';
 import { Zap } from 'lucide-react';
 import { evaluateContentQuality } from '../services/apiService';
 import { Tooltip } from './ui/Tooltip';
-import { isFieldUserModified } from '../utils/formUtils';
+import { isFieldPopulated } from '../utils/formUtils';
 
 interface ImproveCopyFormProps {
   formData: FormData;
