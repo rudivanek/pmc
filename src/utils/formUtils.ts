@@ -16,7 +16,7 @@ export function isFieldPopulated(value: any): boolean {
   
   if (typeof value === 'string') {
     const isPopulated = value.trim().length > 0;
-    console.log('🔍 String field populated result:', isPopulated, 'for value:', `"${value}"`);
+    console.log('🔍 String field populated result:', isPopulated, 'for value:', `"${value}"`, 'trimmed length:', value.trim().length);
     return isPopulated;
   }
   
