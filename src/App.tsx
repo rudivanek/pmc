@@ -409,13 +409,11 @@ const AppRouter: React.FC = () => {
           path="/dashboard" 
           element={
             currentUser ? (
-            <ErrorBoundary>
             <Dashboard 
               userId={currentUser.id} 
               isDemoMode={isDemoMode}
               isSupabaseEnabled={isSupabaseEnabled}
             />
-            </ErrorBoundary>
             ) : (
               <Navigate to="/login" replace />
             )
@@ -460,9 +458,7 @@ const AppRouter: React.FC = () => {
           path="/manage-users" 
           element={
             currentUser ? (
-            <ErrorBoundary>
               <ManageUsers />
-            </ErrorBoundary>
             ) : (
               <Navigate to="/login" replace />
             )
@@ -472,9 +468,7 @@ const AppRouter: React.FC = () => {
           path="/manage-prefills" 
           element={
             currentUser ? (
-            <ErrorBoundary>
               <ManagePrefills />
-            </ErrorBoundary>
             ) : (
               <Navigate to="/login" replace />
             )
