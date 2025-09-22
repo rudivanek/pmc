@@ -9,6 +9,19 @@ import { useInputField } from '../hooks/useInputField';
 import { toast } from 'react-hot-toast';
 import { isFieldUserModified } from '../utils/formUtils';
 
+// Helper function to check if a field is populated
+function isFieldPopulated(value: any): boolean {
+  if (value === null || value === undefined) return false;
+  if (typeof value === 'string') return value.trim().length > 0;
+  if (Array.isArray(value)) return value.length > 0 && value.some(item => 
+    typeof item === 'string' ? item.trim().length > 0 : Boolean(item)
+  );
+  if (typeof value === 'boolean') return value === true;
+  if (typeof value === 'number') return value !== 0;
+  if (typeof value === 'object' && value !== null) return Object.keys(value).length > 0;
+  return false;
+}
+
 interface FeatureTogglesProps {
   formData: FormData;
   handleToggle: (e: React.ChangeEvent<HTMLInputElement>) => void;
