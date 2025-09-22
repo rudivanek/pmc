@@ -13,7 +13,7 @@ import ContentQualityIndicator from './ui/ContentQualityIndicator';
 import { Tooltip } from './ui/Tooltip';
 import CategoryTagsInput from './ui/CategoryTagsInput';
 import { calculateTargetWordCount } from '../services/api/utils';
-import { isFieldUserModified, hasPopulatedCompetitorUrls } from '../utils/formUtils';
+import { isFieldPopulated, isFieldUserModified, hasPopulatedCompetitorUrls } from '../utils/formUtils';
 
 interface SharedInputsProps {
   formData: FormState;
