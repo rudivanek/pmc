@@ -49,7 +49,7 @@ Deno.serve(async (req) => {
       )
     }
 
-    const { email, password, name, startDate, untilDate, tokensAllowed } = await req.json()
+    const { email, password, name, startDate, untilDate } = await req.json() // Removed tokensAllowed
 
     // Validate required fields
     if (!email || !password) {
@@ -103,7 +103,7 @@ Deno.serve(async (req) => {
           name: name || email.split('@')[0],
           start_date: startDate || null,
           until_date: untilDate || null,
-          tokens_allowed: tokensAllowed || 500000,
+          // Removed tokens_allowed
           created_at: new Date().toISOString()
         }
       ])
