@@ -10,14 +10,20 @@ import { FormState } from '../types';
  * @returns true if the field has meaningful content, false otherwise
  */
 export function isFieldPopulated(value: any): boolean {
-  console.log('🔍 isFieldPopulated called with:', { value, type: typeof value, stringValue: typeof value === 'string' ? `"${value}"` : 'not string' });
-  
   if (value === null || value === undefined) return false;
   
   if (typeof value === 'string') {
-    const isPopulated = value.trim().length > 0;
-    console.log('🔍 String field populated result:', isPopulated, 'for value:', `"${value}"`, 'trimmed length:', value.trim().length);
-    return isPopulated;
+    return value.trim().length > 0;
+  }
+  
+  if (Array.isArray(value)) {
+    // For arrays, check if there are any non-empty string items
+    return value.length > 0 && value.some(item => {
+      if (typeof item === 'string') {
+        return item.trim().length > 0;
+      }
+      return Boolean(item); // For non-string items, check if truthy
+    });
   }
   
   if (Array.isArray(value)) {
@@ -28,8 +34,10 @@ export function isFieldPopulated(value: any): boolean {
       typeof item.value === 'string'
     )) {
       // This looks like a StructuredOutputElement array
-      // Consider it populated if it has any elements at all
-      return value.length > 0;
+      // Only consider it populated if at least one element has a meaningful wordCount
+      return value.some(item => 
+        typeof item.wordCount === 'number' && item.wordCount > 0
+      );
     }
     
     // For regular arrays, check if there are any non-empty string items

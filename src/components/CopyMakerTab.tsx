@@ -123,10 +123,6 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
   const businessDescriptionRef = useRef<HTMLTextAreaElement>(null);
   const originalCopyRef = useRef<HTMLTextAreaElement>(null);
 
-  // Debug logging for displayMode changes
-  React.useEffect(() => {
-    console.log('🔍 CopyMakerTab displayMode changed to:', displayMode);
-  }, [displayMode]);
   // Handle prefill mode from URL parameters
   React.useEffect(() => {
     const prefillMode = searchParams.get('prefillMode') as 'add' | 'edit' | 'clone' | null;
@@ -843,6 +839,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
             isPrefillEditingMode={isPrefillEditingMode}
             displayMode={displayMode}
             setDisplayMode={setDisplayMode}
+            displayMode={displayMode}
           />
           
           {/* Prefill Action Buttons */}

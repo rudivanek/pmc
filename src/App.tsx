@@ -39,6 +39,9 @@ const AppRouter: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   
+  // Display mode state for form field filtering
+  const [displayMode, setDisplayMode] = useState<'all' | 'populated'>('all');
+  
   // Prompt modal state
   const [showPromptModal, setShowPromptModal] = useState(false);
   const [systemPrompt, setSystemPrompt] = useState('');
@@ -53,9 +56,6 @@ const AppRouter: React.FC = () => {
   // Evaluation modal state
   const [showEvaluationModal, setShowEvaluationModal] = useState(false);
   const [evaluationCopied, setEvaluationCopied] = useState(false);
-  
-  // Display mode state for form field filtering
-  const [displayMode, setDisplayMode] = useState<'all' | 'populated'>('all');
 
   // Progress callback
   const addProgressMessage = React.useCallback((message: string) => {
@@ -438,20 +438,6 @@ const AppRouter: React.FC = () => {
           path="/copy-maker" 
           element={
             currentUser ? (
-              <>
-                <UrlParamLoader
-                  currentUser={currentUser}
-                  isInitialized={isInitialized}
-                  formState={formState}
-                  setFormState={setFormState}
-                  loadFormStateFromTemplate={loadFormStateFromTemplate}
-                  loadFormStateFromSession={loadFormStateFromSession}
-                  loadFormStateFromSavedOutput={loadFormStateFromSavedOutput}
-                  addProgressMessage={addProgressMessage}
-                  setLoadedTemplateId={setLoadedTemplateId}
-                  setLoadedTemplateName={setLoadedTemplateName}
-                  setDisplayMode={setDisplayMode}
-                />
               <CopyMakerTab
                 currentUser={currentUser}
                 formState={formState}
@@ -472,7 +458,6 @@ const AppRouter: React.FC = () => {
                 displayMode={displayMode}
                 setDisplayMode={setDisplayMode}
               />
-              </>
             ) : (
               <Navigate to="/login" replace />
             )
