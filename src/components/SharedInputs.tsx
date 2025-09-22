@@ -170,7 +170,8 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
 
   // Wrapper for standard HTML elements that pass event objects
   const handleChangeEvent = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => {
-    handleChange(e.target.name, e.target.value);
+    const { name, value } = e.target;
+    handleChange(name, value);
   };
 
   // Calculate the total word count from structure elements
