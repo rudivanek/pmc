@@ -34,11 +34,7 @@ export function useFormState() {
         projectDescription: template.project_description || undefined,
         competitorUrls: template.competitor_urls || ['', '', ''],
         section: template.section || undefined,
-        outputStructure: template.output_structure 
-          ? typeof template.output_structure === 'string'
-            ? JSON.parse(template.output_structure)
-            : template.output_structure
-          : [],
+        outputStructure: template.output_structure || [],
         
         // New fields
         productServiceName: template.product_service_name || undefined,
@@ -49,24 +45,39 @@ export function useFormState() {
         targetAudiencePainPoints: template.target_audience_pain_points || undefined,
         preferredWritingStyle: template.preferred_writing_style || undefined,
         languageStyleConstraints: template.language_style_constraints || [],
+        excludedTerms: template.excluded_terms || undefined,
         
-        // Generation options - try different field names since there are camelCase and snake_case versions
-        generateHeadlines: template.generateHeadlines || template.generateheadlines || false,
-        generateScores: template.generateScores || template.generatescores || false,
-        // Counts
-        numberOfHeadlines: 
-          template.numberOfHeadlines || 
-          template.numberofheadlines || 
-          3,
-        // New word count control features
-        sectionBreakdown: template.sectionBreakdown || template.section_breakdown,
-        forceElaborationsExamples: template.forceElaborationsExamples || template.force_elaborations_examples || false,
-        forceKeywordIntegration: template.forceKeywordIntegration || template.force_keyword_integration || false,
-        // Add mapping for prioritizeWordCount
-        prioritizeWordCount: template.prioritizeWordCount || template.prioritize_word_count || false,
-        // Add mapping for little word count control
-        adhereToLittleWordCount: template.adhereToLittleWordCount || template.adhere_to_little_word_count || false,
-        littleWordCountTolerancePercentage: template.littleWordCountTolerancePercentage || template.little_word_count_tolerance_percentage || 20,
+        // Generation options
+        generateHeadlines: template.generateHeadlines || false,
+        generateScores: template.generateScores || false,
+        generateSeoMetadata: template.generateSeoMetadata || false,
+        generateGeoScore: template.generateGeoScore || false,
+        selectedPersona: template.selectedPersona || undefined,
+        numberOfHeadlines: template.numberOfHeadlines || 3,
+        
+        // Word count control features
+        sectionBreakdown: template.sectionBreakdown || undefined,
+        forceElaborationsExamples: template.forceElaborationsExamples || false,
+        forceKeywordIntegration: template.forceKeywordIntegration || false,
+        prioritizeWordCount: template.prioritizeWordCount || false,
+        adhereToLittleWordCount: template.adhereToLittleWordCount || false,
+        littleWordCountTolerancePercentage: template.littleWordCountTolerancePercentage || 20,
+        wordCountTolerancePercentage: template.wordCountTolerancePercentage || 2,
+        
+        // GEO optimization features
+        enhanceForGEO: template.enhanceForGEO || false,
+        addTldrSummary: template.addTldrSummary || false,
+        location: template.location || undefined,
+        geoRegions: template.geoRegions || undefined,
+        
+        // SEO metadata counts
+        numUrlSlugs: template.numUrlSlugs || 1,
+        numMetaDescriptions: template.numMetaDescriptions || 1,
+        numH1Variants: template.numH1Variants || 1,
+        numH2Variants: template.numH2Variants || 2,
+        numH3Variants: template.numH3Variants || 2,
+        numOgTitles: template.numOgTitles || 1,
+        numOgDescriptions: template.numOgDescriptions || 1,
         
         // Keep model and other fields from previous state
         model: prevState.model,
@@ -74,7 +85,10 @@ export function useFormState() {
         // Reset loading states
         isLoading: false,
         isEvaluating: false,
-        generationProgress: []
+        generationProgress: [],
+        copyResult: DEFAULT_FORM_STATE.copyResult,
+        promptEvaluation: undefined,
+        sessionId: undefined // Reset session ID when loading template
       };
       
       return newState;

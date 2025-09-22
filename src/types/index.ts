@@ -355,18 +355,23 @@ export interface Template {
   preferred_writing_style?: string;
   language_style_constraints?: string[];
   excluded_terms?: string;
-  generateHumanized?: boolean;
   generateHeadlines?: boolean;
   generateScores?: boolean;
-  selectedPersona?: string;
-  generatehumanized?: boolean;
   generateSeoMetadata?: boolean;
-  generatescores?: boolean;
-  selectedpersona?: string;
+  generateGeoScore?: boolean;
+  selectedPersona?: string;
   prioritizeWordCount?: boolean;
-  adhere_to_little_word_count?: boolean;
-  little_word_count_tolerance_percentage?: number;
-  word_count_tolerance_percentage?: number;
+  adhereToLittleWordCount?: boolean;
+  littleWordCountTolerancePercentage?: number;
+  wordCountTolerancePercentage?: number;
+  forceKeywordIntegration?: boolean;
+  forceElaborationsExamples?: boolean;
+  enhanceForGEO?: boolean;
+  addTldrSummary?: boolean;
+  location?: string;
+  geoRegions?: string;
+  sectionBreakdown?: string;
+  numberOfHeadlines?: number;
   numUrlSlugs?: number;
   numMetaDescriptions?: number;
   numH1Variants?: number;
@@ -378,7 +383,7 @@ export interface Template {
   public_name?: string;
   public_description?: string;
   form_state_snapshot?: any;
-  category: string; // Add this new line
+  category?: string;
 }
 
 // New SavedOutput interface for saved outputs
