@@ -66,7 +66,11 @@ const UrlParamLoader: React.FC<UrlParamLoaderProps> = ({
           }
           if (data) {
             loadFormStateFromSession(data);
-            setDisplayMode('populated');
+            console.log('🔍 UrlParamLoader: Setting displayMode to populated after loading session');
+            setTimeout(() => {
+              setDisplayMode('populated');
+              console.log('🔍 UrlParamLoader: displayMode set to populated (deferred)');
+            }, 0);
             toast.success('Session loaded successfully!');
           }
         } catch (error: any) {
@@ -138,7 +142,11 @@ const UrlParamLoader: React.FC<UrlParamLoaderProps> = ({
           }
           if (data) {
             loadFormStateFromSavedOutput(data);
-            setDisplayMode('populated');
+            console.log('🔍 UrlParamLoader: Setting displayMode to populated after loading saved output');
+            setTimeout(() => {
+              setDisplayMode('populated');
+              console.log('🔍 UrlParamLoader: displayMode set to populated (deferred)');
+            }, 0);
             toast.success('Saved output loaded successfully!');
           }
         } catch (error: any) {

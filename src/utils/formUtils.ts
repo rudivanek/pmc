@@ -10,10 +10,14 @@ import { FormState } from '../types';
  * @returns true if the field has meaningful content, false otherwise
  */
 export function isFieldPopulated(value: any): boolean {
+  console.log('🔍 isFieldPopulated called with:', { value, type: typeof value, stringValue: typeof value === 'string' ? `"${value}"` : 'not string' });
+  
   if (value === null || value === undefined) return false;
   
   if (typeof value === 'string') {
-    return value.trim().length > 0;
+    const isPopulated = value.trim().length > 0;
+    console.log('🔍 String field populated result:', isPopulated, 'for value:', `"${value}"`);
+    return isPopulated;
   }
   
   if (Array.isArray(value)) {
