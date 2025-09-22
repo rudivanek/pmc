@@ -21,6 +21,7 @@ import { Label } from './ui/label';
 import { Tooltip } from './ui/Tooltip';
 import { Download, Upload, User as UserIcon, Plus, Zap, Save, Lightbulb, List, Filter, InfoIcon } from 'lucide-react';
 import { calculateTargetWordCount } from '../services/api/utils';
+import { getPopulatedFieldsMap, shouldShowField, getAutoDisplayMode } from '../utils/formUtils';
 
 interface CopyMakerFormProps {
   currentUser?: User;
@@ -59,19 +60,20 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
   projectDescriptionRef,
   businessDescriptionRef,
   originalCopyRef,
-  onOpenTemplateSuggestion
-}) => {
-  const [isExporting, setIsExporting] = useState(false);
-  const [isImporting, setIsImporting] = useState(false);
-  const [customers, setCustomers] = useState<any[]>([]);
-  const [loadingCustomers, setLoadingCustomers] = useState(false);
-  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
-  const [activeSuggestionField, setActiveSuggestionField] = useState<string | null>(null);
-  const [showSuggestionModal, setShowSuggestionModal] = useState(false);
-  const [currentSuggestions, setCurrentSuggestions] = useState<string[]>([]);
-  const [currentSuggestionField, setCurrentSuggestionField] = useState<string>('');
   const [displayMode, setDisplayMode] = useState<'all' | 'populated'>('all');
   const [isEvaluatingOriginalCopy, setIsEvaluatingOriginalCopy] = useState(false);
+  
+  // Get populated fields map for this form state
+  const populatedFields = React.useMemo(() => getPopulatedFieldsMap(formState), [formState]);
+  
+  // Auto-update display mode when form state changes significantly
+  React.useEffect(() => {
+    const autoDisplayMode = getAutoDisplayMode(formState);
+    if (displayMode !== autoDisplayMode && Object.values(populatedFields).some(Boolean)) {
+      setDisplayMode('populated');
+    }
+  }, [formState, populatedFields]);
+
   // Check if current user is admin
   const isAdmin = currentUser?.email === 'rfv@datago.net';
 
@@ -518,13 +520,6 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
   // Calculate the effective target word count using the shared utility function
   const effectiveTargetWordCount = calculateTargetWordCount(formState);
 
-  // Helper function to check if a field is populated
-  const isFieldPopulated = (value: any): boolean => {
-    if (value === null || value === undefined) return false;
-    if (typeof value === 'string') return value.trim().length > 0;
-    if (Array.isArray(value)) return value.length > 0;
-    return false;
-  };
 
   // Function to count words in a string
   const countWords = (text: string): number => {
@@ -534,17 +529,8 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
   // Get original copy word count
   const originalCopyWordCount = countWords(originalCopyField.inputValue);
 
-  // Helper function to check if we should show floating buttons
-  const shouldShowFloatingButtons = () => {
-    return !!(
-      !isPrefillEditingMode &&
-      (formState.originalCopy?.trim() ||
-       formState.projectDescription?.trim() ||
-       formState.briefDescription?.trim() ||
-       formState.targetAudience?.trim() ||
-       formState.keyMessage?.trim())
-    );
-  };
+  // Check if we should show floating buttons using new logic
+  const shouldShowFloatingButtons = !isPrefillEditingMode && Object.values(populatedFields).some(Boolean);
 
   // Calculate if the current word count target is "little" (below 100 words)
   const isLittleWordCount = React.useMemo(() => {
@@ -560,25 +546,20 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
     return false; // Medium and Long are not considered little
   }, [formState.wordCount, formState.customWordCount]);
 
-  // Check if any field in the Copy Targeting section is populated
-  const hasPopulatedCopyTargetingFields = () => {
-    return isFieldPopulated(formState.industryNiche) ||
-           isFieldPopulated(formState.targetAudience) ||
-           isFieldPopulated(formState.readerFunnelStage) ||
-           isFieldPopulated(formState.competitorUrls?.some(url => url.trim())) ||
-           isFieldPopulated(formState.targetAudiencePainPoints);
-  };
+  // Section visibility checks using new logic
+  const hasCopyTargetingFields = populatedFields.industryNiche ||
+                                 populatedFields.targetAudience ||
+                                 populatedFields.readerFunnelStage ||
+                                 populatedFields.competitorUrls ||
+                                 populatedFields.targetAudiencePainPoints;
 
-  // Check if any field in the Strategic Messaging section is populated
-  const hasPopulatedStrategicMessagingFields = () => {
-    return isFieldPopulated(formState.keyMessage) ||
-           isFieldPopulated(formState.desiredEmotion) ||
-           isFieldPopulated(formState.callToAction) ||
-           isFieldPopulated(formState.brandValues) ||
-           isFieldPopulated(formState.keywords) ||
-           isFieldPopulated(formState.context) ||
-           isFieldPopulated(formState.competitorCopyText);
-  };
+  const hasStrategicMessagingFields = populatedFields.keyMessage ||
+                                     populatedFields.desiredEmotion ||
+                                     populatedFields.callToAction ||
+                                     populatedFields.brandValues ||
+                                     populatedFields.keywords ||
+                                     populatedFields.context ||
+                                     populatedFields.competitorCopyText;
 
   return (
     <div className="bg-white dark:bg-black border border-gray-300 dark:border-gray-800 rounded-lg p-6 mx-24">
@@ -875,7 +856,7 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
       </div>
 
       {/* COPY TARGETING SECTION */}
-      <div className={`space-y-6 mb-8 ${isSmartMode ? 'hidden' : ''} ${displayMode === 'populated' && !hasPopulatedCopyTargetingFields() ? 'hidden' : ''}`}>
+      <div className={`space-y-6 mb-8 ${isSmartMode ? 'hidden' : ''} ${displayMode === 'populated' && !hasCopyTargetingFields ? 'hidden' : ''}`}>
         <div>
           <Tooltip content="Describe your target audience and competitive landscape. The more precise this is, the better your copy will resonate with readers." delayDuration={300}>
             <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-4 pb-2 border-b border-gray-300 dark:border-gray-700 flex items-center">
@@ -885,7 +866,7 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
           </Tooltip>
           
           {/* Industry/Niche */}
-          <div className={`mb-6 ${displayMode === 'populated' && !isFieldPopulated(formState.industryNiche) ? 'hidden' : ''}`}>
+          <div className={`mb-6 ${!shouldShowField('industryNiche', formState, displayMode) ? 'hidden' : ''}`}>
             <div className="flex justify-between items-center mb-1">
               <label htmlFor="industryNiche" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Industry/Niche
@@ -911,7 +892,7 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
           </div>
 
           {/* Target Audience */}
-          <div className={`mb-6 ${displayMode === 'populated' && !isFieldPopulated(formState.targetAudience) ? 'hidden' : ''}`}>
+          <div className={`mb-6 ${!shouldShowField('targetAudience', formState, displayMode) ? 'hidden' : ''}`}>
             <div className="flex justify-between items-center mb-1">
               <label htmlFor="targetAudience" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Target Audience
@@ -937,7 +918,7 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
           </div>
 
           {/* Reader's Stage in Funnel */}
-          <div className={`mb-6 ${displayMode === 'populated' && !isFieldPopulated(formState.readerFunnelStage) ? 'hidden' : ''}`}>
+          <div className={`mb-6 ${!shouldShowField('readerFunnelStage', formState, displayMode) ? 'hidden' : ''}`}>
             <div className="flex justify-between items-center mb-1">
               <label htmlFor="readerFunnelStage" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Reader's Stage in Funnel
@@ -959,7 +940,7 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
           </div>
           
           {/* Competitor URLs */}
-          <div className={`space-y-3 mb-6 ${displayMode === 'populated' && !isFieldPopulated(formState.competitorUrls?.some(url => url.trim())) ? 'hidden' : ''}`}>
+          <div className={`space-y-3 mb-6 ${!shouldShowField('competitorUrls', formState, displayMode) ? 'hidden' : ''}`}>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Competitor URLs (Optional)
             </label>
@@ -990,7 +971,7 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
           </div>
 
           {/* Target Audience Pain Points */}
-          <div className={`mb-6 ${displayMode === 'populated' && !isFieldPopulated(formState.targetAudiencePainPoints) ? 'hidden' : ''}`}>
+          <div className={`mb-6 ${!shouldShowField('targetAudiencePainPoints', formState, displayMode) ? 'hidden' : ''}`}>
             <div className="flex justify-between items-center mb-1">
               <label htmlFor="targetAudiencePainPoints" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Target Audience Pain Points
@@ -1262,7 +1243,7 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
       </div>
 
       {/* STRATEGIC MESSAGING SECTION */}
-      <div className={`space-y-6 mb-8 ${displayMode === 'populated' && !hasPopulatedStrategicMessagingFields() ? 'hidden' : ''}`}>
+      <div className={`space-y-6 mb-8 ${displayMode === 'populated' && !hasStrategicMessagingFields ? 'hidden' : ''}`}>
         <div>
           <Tooltip content="Define the key message, emotions, and SEO keywords to guide your copy's core message and impact." delayDuration={300}>
             <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-4 pb-2 border-b border-gray-300 dark:border-gray-700 flex items-center">
@@ -1272,7 +1253,7 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
           </Tooltip>
           
           {/* Key Message */}
-          <div className={`mb-6 ${displayMode === 'populated' && !isFieldPopulated(formState.keyMessage) ? 'hidden' : ''}`}>
+          <div className={`mb-6 ${!shouldShowField('keyMessage', formState, displayMode) ? 'hidden' : ''}`}>
             <div className="flex justify-between items-center mb-1">
               <label htmlFor="keyMessage" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Key Message
@@ -1299,7 +1280,7 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
           {/* Grid for smaller inputs */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
             {/* Desired Emotion - HIDE in Smart Mode */}
-            {!isSmartMode && (displayMode === 'all' || isFieldPopulated(formState.desiredEmotion)) && (
+            {!isSmartMode && shouldShowField('desiredEmotion', formState, displayMode) && (
               <div>
                 <div className="flex justify-between items-center mb-1">
                   <label htmlFor="desiredEmotion" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -1323,7 +1304,7 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
             )}
 
             {/* Call to Action */}
-            <div className={`${isSmartMode ? 'col-span-full' : ''} ${displayMode === 'populated' && !isFieldPopulated(formState.callToAction) ? 'hidden' : ''}`}>
+            <div className={`${isSmartMode ? 'col-span-full' : ''} ${!shouldShowField('callToAction', formState, displayMode) ? 'hidden' : ''}`}>
               <div className="flex justify-between items-center mb-1">
                 <label htmlFor="callToAction" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Call to Action
@@ -1349,7 +1330,7 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
           </div>
 
           {/* Brand Values - HIDE in Smart Mode */}
-          {!isSmartMode && (displayMode === 'all' || isFieldPopulated(formState.brandValues)) && (
+          {!isSmartMode && shouldShowField('brandValues', formState, displayMode) && (
             <div className="mb-6">
               <div className="flex justify-between items-center mb-1">
                 <label htmlFor="brandValues" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -1373,7 +1354,7 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
           )}
 
           {/* Keywords - HIDE in Smart Mode */}
-          {!isSmartMode && (displayMode === 'all' || isFieldPopulated(formState.keywords)) && (
+          {!isSmartMode && shouldShowField('keywords', formState, displayMode) && (
             <div className="mb-6">
               <div className="flex justify-between items-center mb-1">
                 <label htmlFor="keywords" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -1397,7 +1378,7 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
           )}
 
           {/* Context - HIDE in Smart Mode */}
-          {!isSmartMode && (displayMode === 'all' || isFieldPopulated(formState.context)) && (
+          {!isSmartMode && shouldShowField('context', formState, displayMode) && (
             <div className="mb-6">
               <div className="flex justify-between items-center mb-1">
                 <label htmlFor="context" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -1424,7 +1405,7 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
           )}
 
           {/* Competitor Copy (Text) - HIDE in Smart Mode */}
-          {!isSmartMode && (displayMode === 'all' || isFieldPopulated(formState.competitorCopyText)) && (
+          {!isSmartMode && shouldShowField('competitorCopyText', formState, displayMode) && (
             <div>
               <div className="flex justify-between items-center mb-1">
                 <label htmlFor="competitorCopyText" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -1955,7 +1936,7 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
       )}
 
       {/* Floating Action Buttons for Evaluate and Save Template */}
-      {shouldShowFloatingButtons() && (
+      {shouldShowFloatingButtons && (
         <div className="fixed top-1/2 left-4 transform -translate-y-1/2 z-40">
           <div className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg p-2 space-y-2">
             {/* Evaluate Inputs */}
@@ -1989,7 +1970,7 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
       )}
 
       {/* Display Mode Floating Buttons - Second Group */}
-      {shouldShowFloatingButtons() && (
+      {shouldShowFloatingButtons && (
         <div className="fixed top-1/2 left-4 transform translate-y-16 z-40">
           <div className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg p-2 space-y-2">
             {/* Toggle Display Mode */}
