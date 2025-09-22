@@ -33,8 +33,25 @@ const UrlParamLoader: React.FC<UrlParamLoaderProps> = ({
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
+  // Debug log at component entry
+  console.log('🔍 UrlParamLoader: Component rendered', {
+    currentUser: !!currentUser,
+    isInitialized,
+    searchParams: Object.fromEntries(searchParams.entries())
+  });
+
   // Load session or template from URL params
   useEffect(() => {
+    console.log('🔍 UrlParamLoader useEffect triggered', {
+      currentUser: !!currentUser,
+      userId: currentUser?.id,
+      isInitialized,
+      searchParams: Object.fromEntries(searchParams.entries()),
+      sessionId: searchParams.get('sessionId'),
+      templateId: searchParams.get('templateId'),
+      savedOutputId: searchParams.get('savedOutputId')
+    });
+
     const sessionId = searchParams.get('sessionId');
     const templateId = searchParams.get('templateId');
     const savedOutputId = searchParams.get('savedOutputId');
