@@ -8,6 +8,7 @@ import { toast } from 'react-hot-toast';
 import { Tooltip } from './ui/Tooltip';
 import { useAuth } from '../hooks/useAuth';
 import { getPrefills, Prefill } from '../services/supabaseClient';
+import { getAutoDisplayMode } from '../utils/formUtils';
 
 // Interface for grouped prefills structure
 interface PrefillGroup {
@@ -187,8 +188,9 @@ const PrefillSelector: React.FC<PrefillSelectorProps> = ({ formState, setFormSta
     setFormState(updatedFormState);
     setSelectedPrefillId(prefillId);
     
-    // Switch to populated view when prefill is loaded
-    setDisplayMode('populated');
+    // Auto-determine display mode based on populated fields
+    const autoMode = getAutoDisplayMode(updatedFormState);
+    setDisplayMode(autoMode);
     
     toast.success(`Applied "${selectedPrefill.label}" prefill`);
   };
@@ -208,8 +210,9 @@ const PrefillSelector: React.FC<PrefillSelectorProps> = ({ formState, setFormSta
     setFormState(clearedFormState);
     setSelectedPrefillId('');
     
-    // Switch back to all fields view when cleared
-    setDisplayMode('all');
+    // Auto-determine display mode (should be 'all' for empty form)
+    const autoMode = getAutoDisplayMode(clearedFormState);
+    setDisplayMode(autoMode);
     
     toast.success('All fields cleared');
   };
