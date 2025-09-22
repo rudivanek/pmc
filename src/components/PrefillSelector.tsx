@@ -188,7 +188,11 @@ const PrefillSelector: React.FC<PrefillSelectorProps> = ({ formState, setFormSta
     setSelectedPrefillId(prefillId);
     
     // Switch to populated view when prefill is loaded
-    setDisplayMode('populated');
+    console.log('🔍 PrefillSelector: Setting displayMode to populated after loading prefill');
+    setTimeout(() => {
+      setDisplayMode('populated');
+      console.log('🔍 PrefillSelector: displayMode set to populated (deferred)');
+    }, 0);
     
     toast.success(`Applied "${selectedPrefill.label}" prefill`);
   };

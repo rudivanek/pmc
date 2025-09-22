@@ -33,8 +33,25 @@ const UrlParamLoader: React.FC<UrlParamLoaderProps> = ({
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
+  // Debug log at component entry
+  console.log('🔍 UrlParamLoader: Component rendered', {
+    currentUser: !!currentUser,
+    isInitialized,
+    searchParams: Object.fromEntries(searchParams.entries())
+  });
+
   // Load session or template from URL params
   useEffect(() => {
+    console.log('🔍 UrlParamLoader useEffect triggered', {
+      currentUser: !!currentUser,
+      userId: currentUser?.id,
+      isInitialized,
+      searchParams: Object.fromEntries(searchParams.entries()),
+      sessionId: searchParams.get('sessionId'),
+      templateId: searchParams.get('templateId'),
+      savedOutputId: searchParams.get('savedOutputId')
+    });
+
     const sessionId = searchParams.get('sessionId');
     const templateId = searchParams.get('templateId');
     const savedOutputId = searchParams.get('savedOutputId');
@@ -66,7 +83,11 @@ const UrlParamLoader: React.FC<UrlParamLoaderProps> = ({
           }
           if (data) {
             loadFormStateFromSession(data);
-            setDisplayMode('all');
+            console.log('🔍 UrlParamLoader: Setting displayMode to populated after loading session');
+            setTimeout(() => {
+              setDisplayMode('populated');
+              console.log('🔍 UrlParamLoader: displayMode set to populated (deferred)');
+            }, 0);
             toast.success('Session loaded successfully!');
           }
         } catch (error: any) {
@@ -103,7 +124,7 @@ const UrlParamLoader: React.FC<UrlParamLoaderProps> = ({
             loadFormStateFromTemplate(data);
             setLoadedTemplateId(data.id || null);
             setLoadedTemplateName(data.template_name || '');
-            setDisplayMode('all');
+            setDisplayMode('populated');
             toast.success('Template loaded successfully!');
           }
         } catch (error: any) {
@@ -138,7 +159,11 @@ const UrlParamLoader: React.FC<UrlParamLoaderProps> = ({
           }
           if (data) {
             loadFormStateFromSavedOutput(data);
-            setDisplayMode('all');
+            console.log('🔍 UrlParamLoader: Setting displayMode to populated after loading saved output');
+            setTimeout(() => {
+              setDisplayMode('populated');
+              console.log('🔍 UrlParamLoader: displayMode set to populated (deferred)');
+            }, 0);
             toast.success('Saved output loaded successfully!');
           }
         } catch (error: any) {

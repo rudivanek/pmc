@@ -40,6 +40,8 @@ interface CopyMakerFormProps {
   businessDescriptionRef?: React.RefObject<HTMLTextAreaElement>;
   originalCopyRef?: React.RefObject<HTMLTextAreaElement>;
   onOpenTemplateSuggestion?: () => void;
+  displayMode: 'all' | 'populated';
+  setDisplayMode: (mode: 'all' | 'populated') => void;
 }
 
 const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
@@ -70,6 +72,18 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
   const [showSuggestionModal, setShowSuggestionModal] = useState(false);
   const [currentSuggestions, setCurrentSuggestions] = useState<string[]>([]);
   const [currentSuggestionField, setCurrentSuggestionField] = useState<string>('');
+
+  // Debug effect to log form state changes
+  React.useEffect(() => {
+    console.log('🔍 CopyMakerForm: displayMode or formState changed', {
+      displayMode,
+      tab: formState.tab,
+      originalCopy: formState.originalCopy ? `"${formState.originalCopy.substring(0, 30)}..."` : 'null/empty',
+      businessDescription: formState.businessDescription ? `"${formState.businessDescription.substring(0, 30)}..."` : 'null/empty',
+      section: formState.section,
+      excludedTerms: formState.excludedTerms
+    });
+  }, [displayMode, formState.tab, formState.originalCopy, formState.businessDescription, formState.section, formState.excludedTerms]);
   const [displayMode, setDisplayMode] = useState<'all' | 'populated'>('all');
   const [isEvaluatingOriginalCopy, setIsEvaluatingOriginalCopy] = useState(false);
   // Check if current user is admin
@@ -645,6 +659,7 @@ const CopyMakerForm: React.FC<CopyMakerFormProps> = ({
       <PrefillSelector
         formState={formState}
         setFormState={setFormState}
+        setDisplayMode={setDisplayMode}
         displayMode={displayMode}
       />
 
