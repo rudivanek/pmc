@@ -69,12 +69,24 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
            (formData.numH1Variants && formData.numH1Variants !== 3) ||
            (formData.numH2Variants && formData.numH2Variants !== 3) ||
            (formData.numH3Variants && formData.numH3Variants !== 3) ||
-           (formData.numOgTitles && formData.numOgTitles !== 3) ||
-           (formData.numOgDescriptions && formData.numOgDescriptions !== 3);
+    const pageTypePopulated = isFieldPopulated(formData.pageType);
+    const businessDescriptionPopulated = isFieldPopulated(formData.businessDescription);
+    
+    console.log('🔍 CreateCopyForm hasPopulatedFields check:', {
+      pageType: formData.pageType,
+      pageTypePopulated,
+      businessDescription: formData.businessDescription?.substring(0, 50) + '...',
+      businessDescriptionPopulated,
+      displayMode
+    });
+    
+    return pageTypePopulated ||
+           businessDescriptionPopulated;
   };
 
   // Don't render anything if display mode is 'populated' and no fields are populated
   if (displayMode === 'populated' && !hasPopulatedFeatureTogglesFields()) {
+    console.log('🔍 CreateCopyForm: Hiding entire form section because displayMode is populated and no fields are populated');
     return null;
   }
   
