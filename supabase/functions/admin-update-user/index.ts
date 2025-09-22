@@ -49,7 +49,7 @@ Deno.serve(async (req) => {
       )
     }
 
-    const { userId, password, startDate, untilDate, tokensAllowed } = await req.json()
+    const { userId, password, startDate, untilDate } = await req.json() // Removed tokensAllowed
 
     // Validate required fields
     if (!userId) {
@@ -83,8 +83,7 @@ Deno.serve(async (req) => {
     // Update user record in pmc_users table
     const updateData: any = {}
     if (startDate !== undefined) updateData.start_date = startDate
-    if (untilDate !== undefined) updateData.until_date = untilDate
-    if (tokensAllowed !== undefined) updateData.tokens_allowed = tokensAllowed
+    if (untilDate !== undefined) updateData.until_date = untilDate // Removed tokens_allowed update
 
     if (Object.keys(updateData).length > 0) {
       const { error: userError2 } = await supabaseAdmin

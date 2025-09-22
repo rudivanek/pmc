@@ -151,7 +151,7 @@ Deno.serve(async (req) => {
           name: name,
           start_date: startDate,
           until_date: untilDate,
-          tokens_allowed: 2000000, // Fixed tokens as requested
+          // Removed tokens_allowed
           created_at: new Date().toISOString()
         }
      ], { onConflict: 'id' })
@@ -205,10 +205,10 @@ Deno.serve(async (req) => {
               <p>Hello ${name},</p>
               <p>Welcome to the PimpMyCopy Beta program! We're excited to have you on board.</p>
               <p>Your account has been created. You can log in using the following credentials:</p>
-              <p><strong>Email:</strong> ${email}</p>
+              <p><strong>Email:</strong> ${email}</p> 
               <p><strong>Password:</strong> letmein</p>
               <p>We recommend changing your password after your first login for security reasons.</p>
-              <p>You have been granted 2,000,000 tokens to start generating amazing copy. Your access is valid for 30 days from today.</p>
+              <p>Your access is valid for 30 days from today.</p>
               <p>Get started by logging in here: <a href="https://pimpmycopy.xyz/login">https://pimpmycopy.xyz/login</a></p>
               <p>If you have any questions or feedback, please don't hesitate to reach out.</p>
               <p>Happy copywriting!</p>

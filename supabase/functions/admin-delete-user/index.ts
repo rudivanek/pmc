@@ -108,53 +108,7 @@ Deno.serve(async (req) => {
 
     console.log(`Starting deletion process for user: ${userId}`)
 
-    // First, get the user's email to delete related token usage records
-    console.log(`Getting user email from pmc_users table...`)
-    const { data: userData, error: getUserError } = await supabaseAdmin
-      .from('pmc_users')
-      .select('email')
-      .eq('id', userId)
-      .single()
-
-    if (getUserError) {
-      console.error('Error getting user email:', getUserError)
-      return new Response(
-        JSON.stringify({ 
-          error: `Failed to get user information: ${getUserError.message}`,
-          details: getUserError.details || 'No additional details available'
-        }),
-        { 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 400 
-        }
-      )
-    }
-
-    const userEmail = userData.email
-    console.log(`Found user email: ${userEmail}`)
-
-    // Delete all token usage records for this user
-    console.log(`Deleting token usage records for user: ${userEmail}`)
-    const { error: tokenUsageError } = await supabaseAdmin
-      .from('pmc_user_tokens_usage')
-      .delete()
-      .eq('user_email', userEmail)
-
-    if (tokenUsageError) {
-      console.error('Error deleting token usage records:', tokenUsageError)
-      return new Response(
-        JSON.stringify({ 
-          error: `Failed to delete user token usage records: ${tokenUsageError.message}`,
-          details: tokenUsageError.details || 'No additional details available'
-        }),
-        { 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 400 
-        }
-      )
-    }
-
-    console.log(`Successfully deleted token usage records for user: ${userEmail}`)
+    // Removed token usage deletion logic
 
     // First, delete user from pmc_users table (this will handle cascading deletes)
     console.log(`Deleting user from pmc_users table...`)
