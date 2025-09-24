@@ -133,41 +133,6 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
     onChange: (value) => handleChange('customWordCount', value ? parseInt(value) : 150)
   });
 
-  // Handler for output structure change
-  const handleStructureChange = (values: string[]) => {
-    handleChange('outputStructure', values);
-  };
-
-  // Handle industry niche change
-  const handleIndustryNicheChange = (value: string) => {
-    handleChange('industryNiche', value);
-  };
-
-  // Handle reader funnel stage change
-  const handleReaderFunnelStageChange = (value: string) => {
-    handleChange('readerFunnelStage', value);
-  };
-
-  // Handle preferred writing style change
-  const handlePreferredWritingStyleChange = (value: string) => {
-    handleChange('preferredWritingStyle', value);
-  };
-
-  // Handle tone level change
-  const handleToneLevelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    handleChange('toneLevel', parseInt(e.target.value));
-  };
-
-  // Handle language style constraints change
-  const handleLanguageStyleConstraintChange = (constraint: string) => {
-    const constraints = formData.languageStyleConstraints || [];
-    const updatedConstraints = constraints.includes(constraint)
-      ? constraints.filter(c => c !== constraint)
-      : [...constraints, constraint];
-    
-    handleChange('languageStyleConstraints', updatedConstraints);
-  };
-
   // Wrapper for standard HTML elements that pass event objects
   const handleChangeEvent = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -249,7 +214,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
             name="industryNiche"
             placeholder="Select industry/niche..."
             value={formData.industryNiche || ''}
-            onChange={handleIndustryNicheChange}
+            onChange={(value) => handleChange('industryNiche', value)}
             categories={INDUSTRY_NICHE_CATEGORIES}
           />
           <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
@@ -301,7 +266,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
             name="readerFunnelStage"
             placeholder="e.g., Awareness, Consideration, Decision..."
             value={formData.readerFunnelStage || ''}
-            onChange={handleReaderFunnelStageChange}
+            onChange={(value) => handleChange('readerFunnelStage', value)}
           />
         </div>
         
@@ -523,7 +488,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
               max="100"
               step="1"
               value={formData.toneLevel || 50}
-              onChange={handleToneLevelChange}
+              onChange={(e) => handleChange('toneLevel', parseInt(e.target.value))}
               className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
             />
             <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -552,7 +517,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
               name="preferredWritingStyle"
               placeholder="e.g., Persuasive, Conversational, Informative, Storytelling..."
               value={formData.preferredWritingStyle || ''}
-              onChange={handlePreferredWritingStyleChange}
+              onChange={(value) => handleChange('preferredWritingStyle', value)}
             />
           </div>
         </div>
@@ -569,7 +534,13 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
                   <Checkbox
                     id={`constraint-${constraint}`}
                     checked={(formData.languageStyleConstraints || []).includes(constraint)}
-                    onCheckedChange={() => handleLanguageStyleConstraintChange(constraint)}
+                    onCheckedChange={() => {
+                      const constraints = formData.languageStyleConstraints || [];
+                      const updatedConstraints = constraints.includes(constraint)
+                        ? constraints.filter(c => c !== constraint)
+                        : [...constraints, constraint];
+                      handleChange('languageStyleConstraints', updatedConstraints);
+                    }}
                   />
                   <Label 
                     htmlFor={`constraint-${constraint}`}
@@ -591,7 +562,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
             </label>
             <DraggableStructuredInput
               value={formData.outputStructure || []}
-              onChange={handleStructureChange}
+              onChange={(values) => handleChange('outputStructure', values)}
               options={OUTPUT_STRUCTURE_OPTIONS}
               placeholder="Select one or more format options..."
             />
