@@ -101,7 +101,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
   onSaveOutput,
   onViewPrompts,
   onCancel,
-  loadFormStateFromPrefill,
+  onOpenTemplateSuggestion = () => {},
   loadFormStateFromTemplate,
   addProgressMessage,
 }) => {
