@@ -458,6 +458,7 @@ const AppRouter: React.FC = () => {
                 displayMode={displayMode}
                 setDisplayMode={setDisplayMode}
                 addProgressMessage={addProgressMessage}
+                onOpenTemplateSuggestion={() => setIsTemplateSuggestionModalOpen(true)}
               />
             ) : (
               <Navigate to="/login" replace />
