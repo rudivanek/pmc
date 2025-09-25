@@ -75,6 +75,7 @@ interface CopyMakerTabProps {
   onSaveOutput?: () => void;
   onViewPrompts?: () => void;
   onCancel?: () => void;
+  onOpenTemplateSuggestion?: () => void;
   loadFormStateFromPrefill: any;
   loadFormStateFromTemplate: any;
   displayMode: 'all' | 'populated';
@@ -99,6 +100,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
   onSaveOutput,
   onViewPrompts,
   onCancel,
+  onOpenTemplateSuggestion,
   loadFormStateFromPrefill,
   loadFormStateFromTemplate,
   addProgressMessage,
