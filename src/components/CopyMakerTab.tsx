@@ -101,6 +101,61 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
   loadFormStateFromPrefill,
   loadFormStateFromTemplate,
 }) => {
+  // Add progress message callback
+  const addProgressMessage = React.useCallback((message: string) => {
+    setFormState(prevState => ({
+      ...prevState,
+      generationProgress: [...prevState.generationProgress, typeof message === 'string' ? message : String(message)]
+    }));
+  }, [setFormState]);
+
+  // Add the missing load functions that UrlParamLoader needs
+  const loadFormStateFromSession = React.useCallback((session: any) => {
+    // This function should be passed from parent, but we can implement it here as a fallback
+    if (!session || !session.input_data) {
+      console.error('Invalid session data:', session);
+      return;
+    }
+    
+    setFormState(prevState => {
+      const inputData = session.input_data;
+      return {
+        ...prevState,
+        ...inputData,
+        sessionId: session.id,
+        customerId: session.customer_id || undefined,
+        customerName: session.customer?.name || undefined,
+        copyResult: { generatedVersions: [] }, // Clear any existing results
+        isLoading: false,
+        isEvaluating: false,
+        generationProgress: []
+      };
+    });
+    toast.success('Session loaded successfully!');
+  }, [setFormState]);
+
+  const loadFormStateFromSavedOutput = React.useCallback((savedOutput: any) => {
+    if (!savedOutput || !savedOutput.input_snapshot || !savedOutput.output_content) {
+      console.error('Invalid saved output data:', savedOutput);
+      return;
+    }
+    
+    setFormState(prevState => {
+      const inputSnapshot = savedOutput.input_snapshot;
+      return {
+        ...prevState,
+        ...inputSnapshot,
+        customerId: savedOutput.customer_id || undefined,
+        customerName: savedOutput.customer?.name || undefined,
+        copyResult: savedOutput.output_content, // Load the generated output
+        isLoading: false,
+        isEvaluating: false,
+        generationProgress: []
+      };
+    });
+    toast.success('Saved output loaded successfully!');
+  }, [setFormState]);
+
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const [showJsonLdModal, setShowJsonLdModal] = useState(false);
