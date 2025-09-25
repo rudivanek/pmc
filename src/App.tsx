@@ -532,7 +532,6 @@ const AppRouter: React.FC = () => {
             background: 'var(--toastify-color-light)',
             color: 'var(--toastify-text-color-light)',
           },
-        }}
       />
       
       {/* Evaluation Results Modal */}

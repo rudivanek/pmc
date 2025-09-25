@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useRef } from 'react';
 import { toast } from 'react-hot-toast';
 import { v4 as uuidv4 } from 'uuid';
+import { Lightbulb } from 'lucide-react';
 
 import CopyMakerForm from './CopyMakerForm';
 import CopyForm from './CopyForm';
@@ -100,7 +101,6 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
   onSaveOutput,
   onViewPrompts,
   onCancel,
-  onOpenTemplateSuggestion,
   loadFormStateFromPrefill,
   loadFormStateFromTemplate,
   addProgressMessage,
