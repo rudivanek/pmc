@@ -12,6 +12,7 @@ import FloatingActionBar from './FloatingActionBar';
 import GeneratedCopyCard from './GeneratedCopyCard';
 import SavePrefillModal from './SavePrefillModal';
 import { JsonLdModal } from './JsonLdModal';
+import UrlParamLoader from './UrlParamLoader';
 import { FormState, User, GeneratedContentItem, GeneratedContentItemType, CopyResult, Prefill, Template } from '../types';
 import { generateCopy, generateContentScores, generateSeoMetadata, calculateGeoScore, generateAlternativeCopy, restyleCopyWithPersona } from '../services/apiService';
 import { checkUserAccess, getPrefill, createPrefill, updatePrefill, getUserTemplates, getSupabaseClient } from '../services/supabaseClient';
@@ -730,6 +731,21 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
   };
   return (
     <div className="relative min-h-screen">
+      {/* URL Parameter Loader - processes templateId, sessionId, savedOutputId from URL */}
+      <UrlParamLoader
+        currentUser={currentUser}
+        isInitialized={true}
+        formState={formState}
+        setFormState={setFormState}
+        loadFormStateFromTemplate={loadFormStateFromTemplate}
+        loadFormStateFromSession={loadFormStateFromSession}
+        loadFormStateFromSavedOutput={loadFormStateFromSavedOutput}
+        addProgressMessage={addProgressMessage}
+        setLoadedTemplateId={setLoadedTemplateId}
+        setLoadedTemplateName={setLoadedTemplateName}
+        setDisplayMode={setDisplayMode}
+      />
+
       {/* Main Content Layout */}
       <div className="space-y-8">
         {/* Prefill and Template Loaders */}
