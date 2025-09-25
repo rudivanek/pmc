@@ -14,7 +14,7 @@ export function useFormState() {
     setFormState(prevState => {
       // Create a new state object with the template data
       const newState: FormState = {
-        ...DEFAULT_FORM_STATE,
+        ...prevState,
         tab: template.template_type as 'create' | 'improve',
         language: template.language,
         tone: template.tone,
@@ -79,9 +79,6 @@ export function useFormState() {
         numOgTitles: template.numOgTitles || 1,
         numOgDescriptions: template.numOgDescriptions || 1,
         
-        // Keep model and other fields from previous state
-        model: prevState.model,
-        
         // Reset loading states
         isLoading: false,
         isEvaluating: false,
@@ -109,14 +106,11 @@ export function useFormState() {
       
       // Create a new state object with the session data
       const newState: FormState = {
-        ...DEFAULT_FORM_STATE,
+        ...prevState,
         ...inputData,
         sessionId: session.id,
         customerId: session.customer_id || undefined,
         customerName: session.customer?.name || undefined,
-        
-        // Keep model and other fields from previous state
-        model: inputData.model || prevState.model,
         
         // Explicitly reset copyResult to ensure no outputs are shown
         copyResult: DEFAULT_FORM_STATE.copyResult,
@@ -148,13 +142,10 @@ export function useFormState() {
       
       // Create a new state object with the saved output data
       const newState: FormState = {
-        ...DEFAULT_FORM_STATE,
+        ...prevState,
         ...inputSnapshot,
         customerId: savedOutput.customer_id || undefined,
         customerName: savedOutput.customer?.name || undefined,
-        
-        // Keep model and other fields from previous state if not in snapshot
-        model: inputSnapshot.model || prevState.model,
         
         // Set the copyResult directly from the saved output's output_content
         copyResult: savedOutput.output_content,
