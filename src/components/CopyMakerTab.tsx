@@ -831,7 +831,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
               </div>
               
               {/* Template Dropdown */}
-              <div className="lg:col-span-2">
+             <div className="lg:col-span-1">
                 <select
                   id="templateSelection"
                   name="templateSelection"
@@ -858,11 +858,11 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
                 <button
                   type="button"
                   onClick={onOpenTemplateSuggestion}
-                  className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex items-center justify-center"
+                 className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex items-center justify-center"
                   disabled={!currentUser}
                   title="Generate template JSON from natural language"
                 >
-                  <Lightbulb size={16} className="mr-2" />
+                 <Lightbulb size={14} className="mr-1" />
                   AI Prompt
                 </button>
               </div>
