@@ -457,6 +457,7 @@ const AppRouter: React.FC = () => {
                 loadFormStateFromTemplate={loadFormStateFromTemplate}
                 displayMode={displayMode}
                 setDisplayMode={setDisplayMode}
+                addProgressMessage={addProgressMessage}
               />
             ) : (
               <Navigate to="/login" replace />

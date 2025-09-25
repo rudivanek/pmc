@@ -79,6 +79,7 @@ interface CopyMakerTabProps {
   loadFormStateFromTemplate: any;
   displayMode: 'all' | 'populated';
   setDisplayMode: (mode: 'all' | 'populated') => void;
+  addProgressMessage: (message: string) => void;
 }
 
 const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
@@ -100,15 +101,8 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
   onCancel,
   loadFormStateFromPrefill,
   loadFormStateFromTemplate,
+  addProgressMessage,
 }) => {
-  // Add progress message callback
-  const addProgressMessage = React.useCallback((message: string) => {
-    setFormState(prevState => ({
-      ...prevState,
-      generationProgress: [...prevState.generationProgress, typeof message === 'string' ? message : String(message)]
-    }));
-  }, [setFormState]);
-
   // Add the missing load functions that UrlParamLoader needs
   const loadFormStateFromSession = React.useCallback((session: any) => {
     // This function should be passed from parent, but we can implement it here as a fallback
@@ -775,15 +769,6 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
   };
 
   // Handle cancel operation
-  const handleCancelOperation = () => {
-    setFormState(prev => ({ 
-      ...prev, 
-      isLoading: false, 
-      isEvaluating: false,
-      generationProgress: []
-    }));
-    toast.info('Operation cancelled.');
-  };
   return (
     <div className="relative min-h-screen">
       {/* URL Parameter Loader - processes templateId, sessionId, savedOutputId from URL */}
