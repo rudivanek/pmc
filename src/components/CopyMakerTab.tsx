@@ -835,7 +835,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
                 <select
                   id="templateSelection"
                   name="templateSelection"
-                  className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
+                  className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 px-5"
                   value={selectedTemplateId}
                   onChange={(e) => handleTemplateSelection(e.target.value)}
                   disabled={isLoadingTemplates}
