@@ -508,7 +508,7 @@ export const formatCopyResultAsMarkdown = (
     
    // Add modification instruction if available
    if (item.modificationInstruction) {
-     markdown += `**Modification Instruction:** ${item.modificationInstruction}\n\n`;
+     markdown += `**Modification Applied:** ${item.modificationInstruction}\n\n`;
    }
    
     // Add score if available
@@ -935,6 +935,11 @@ export const formatSingleGeneratedItemAsHTML = (
         html += `<p>${paragraph.trim()}</p>\n`;
       });
     }
+  }
+  
+  // Add modification instruction if available
+  if (item.modificationInstruction) {
+    html += `\n\n<!-- MODIFICATION APPLIED: ${item.modificationInstruction} -->\n`;
   }
   
   // Add score information if available
