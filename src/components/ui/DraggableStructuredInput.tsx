@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { X, Tag, GripVertical, Plus, Check } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { v4 as uuidv4 } from 'uuid';
-import { v4 as uuidv4 } from 'uuid';
 import { StructuredOutputElement } from '../../types';
 import { OUTPUT_STRUCTURE_OPTIONS } from '../../constants';
 
