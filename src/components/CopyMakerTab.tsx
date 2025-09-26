@@ -802,7 +802,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
             addProgressMessage
           );
           newItem.score = score;
-            formTargetWordCount.target,
+          addProgressMessage('Score generated for modified content.');
         } catch (scoreError) {
           console.error('Error generating score for modified content:', scoreError);
           addProgressMessage('Error generating score for modified content, continuing...');
