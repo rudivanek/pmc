@@ -636,7 +636,7 @@ const GeneratedCopyCard: React.FC<GeneratedCopyCardProps> = ({
         <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
           <div className="space-y-4">
             {/* Content Modification Section - Always Available */}
-            <div>
+            <div className="ml-[20%] bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 <Edit size={16} className="inline mr-2" />
                 Modify Content
@@ -652,7 +652,7 @@ const GeneratedCopyCard: React.FC<GeneratedCopyCardProps> = ({
                     }
                   }}
                   placeholder="e.g., make shorter and more friendly, add more benefits, change tone to casual..."
-                  className="flex-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 p-2"
+                  className="flex-1 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 p-4 h-12"
                 />
                 <Button
                   size="sm"
