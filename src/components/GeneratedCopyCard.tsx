@@ -475,7 +475,7 @@ const GeneratedCopyCard: React.FC<GeneratedCopyCardProps> = ({
                 <div key={index} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-900 rounded border border-gray-200 dark:border-gray-700">
                   <div className="flex-1">
                     <div className="flex items-center">
-                      <span className={\`w-2 h-2 rounded-full mr-2 ${
+                      <span className={`w-2 h-2 rounded-full mr-2 ${
                         item.detected ? 'bg-gray-600' : 'bg-gray-400'
                       }`}></span>
                       <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{item.criterion}</span>
@@ -483,7 +483,7 @@ const GeneratedCopyCard: React.FC<GeneratedCopyCardProps> = ({
                     <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 ml-4">{item.explanation}</p>
                   </div>
                   <div className="ml-2">
-                    <span className={\`text-sm font-bold ${
+                    <span className={`text-sm font-bold ${
                       item.score >= 15 ? 'text-gray-600 dark:text-gray-400' :
                       item.score >= 10 ? 'text-gray-500 dark:text-gray-400' :
                       'text-gray-600 dark:text-gray-500'
