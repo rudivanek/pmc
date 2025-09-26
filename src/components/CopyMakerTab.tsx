@@ -813,9 +813,9 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
               </button>
             </div>
             
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-3">
+            <div className="flex flex-col lg:flex-row gap-3">
               {/* Search Input */}
-              <div className="lg:col-span-1">
+              <div className="flex-1 lg:flex-initial lg:w-64">
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <Search size={16} className="text-gray-500" />
@@ -831,7 +831,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
               </div>
               
               {/* Template Dropdown */}
-             <div className="lg:col-span-2">
+             <div className="flex-1">
                 <select
                   id="templateSelection"
                   name="templateSelection"
@@ -854,7 +854,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
               </div>
               
               {/* AI Prompt Button */}
-              <div className="lg:col-span-1">
+              <div className="flex-shrink-0">
                 <button
                   type="button"
                   onClick={onOpenTemplateSuggestion}
