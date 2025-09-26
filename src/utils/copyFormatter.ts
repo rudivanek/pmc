@@ -506,6 +506,11 @@ export const formatCopyResultAsMarkdown = (
       markdown += `${structuredToPlainText(actualContentToProcess)}\n\n`;
     }
     
+   // Add modification instruction if available
+   if (item.modificationInstruction) {
+     markdown += `**Modification Instruction:** ${item.modificationInstruction}\n\n`;
+   }
+   
     // Add score if available
     if (item.score) {
       markdown += formatScoreDataAsMarkdown(item.score, `${sectionTitle} Score`);
@@ -954,11 +959,6 @@ export const formatSingleGeneratedItemAsHTML = (
     html += `\n-->\n`;
   }
   
- // Add modification instruction if available
- if (item.modificationInstruction) {
-   html += `\n\n<!-- MODIFICATION INSTRUCTION: ${item.modificationInstruction} -->\n`;
- }
- 
   // Add FAQ Schema if available
   if (item.faqSchema && Object.keys(item.faqSchema).length > 0) {
     html += `\n\n<!-- FAQ SCHEMA (JSON-LD) -->\n`;
