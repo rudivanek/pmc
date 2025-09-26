@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Copy, Check, Wand2, Sparkles, BookCheck, Globe, Code, MapPin, Edit } from 'lucide-react';
+import { Copy, Check, Wand2, Sparkles, BookCheck, Globe, Code, MapPin, CreditCard as Edit } from 'lucide-react';
 import { GeneratedContentItem, GeneratedContentItemType, FormState, StructuredCopyOutput } from '../types';
 import { stripMarkdown } from '../utils/markdownUtils';
 import { formatSingleGeneratedItemAsHTML } from '../utils/copyFormatter';
