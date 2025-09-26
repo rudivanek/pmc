@@ -643,11 +643,7 @@ const CopyForm: React.FC<CopyFormProps> = ({
                 className="w-10 h-10 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
                 title={displayMode === 'all' ? 'Show only populated fields' : 'Show all fields'}
               >
-                {displayMode === 'all' ? (
-                  <Filter size={16} />
-                ) : (
-                  <List size={16} />
-                )}
+                {displayMode === 'all' ? <Filter size={18} /> : <List size={18} />}
               </button>
             </Tooltip>
           </div>
