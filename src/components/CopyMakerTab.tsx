@@ -1059,6 +1059,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
                     onGenerateScore={() => handleOnDemandGeneration('score', card)}
                     onGenerateFaqSchema={handleGenerateFaqSchema}
                     onModifyContent={(instruction) => handleModifyContent(card, instruction)}
+                    onModifyContent={(instruction) => handleModifyContent(card, instruction)}
                     targetWordCount={calculateTargetWordCount(formState).target}
                   />
                 ))}

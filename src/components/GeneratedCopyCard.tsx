@@ -19,6 +19,7 @@ interface GeneratedCopyCardProps {
   onApplyVoiceStyle: (persona: string) => void;
   onGenerateScore: () => void;
   onGenerateFaqSchema: () => void;
+  onModifyContent: (instruction: string) => void;
   targetWordCount?: number;
 }
 
