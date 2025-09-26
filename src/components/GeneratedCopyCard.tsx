@@ -8,7 +8,9 @@ import { User } from '../types';
 import { Button } from './ui/button';
 import { Tooltip } from './ui/Tooltip';
 import LoadingSpinner from './ui/LoadingSpinner';
-import { CreditCard as Edit } from 'lucide-react'
+import { CreditCard as Edit } from 'lucide-react';
+
+interface GeneratedCopyCardProps {
   card: GeneratedContentItem;
   indentationLevel?: number;
   isLastInThread?: boolean;
