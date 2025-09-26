@@ -41,6 +41,13 @@ const GeneratedCopyCard: React.FC<GeneratedCopyCardProps> = ({
   const [selectedPersona, setSelectedPersona] = useState<string>('');
   const [modificationInstruction, setModificationInstruction] = useState('');
 
+  // Initialize modificationInstruction from card data when component mounts or card changes
+  useEffect(() => {
+    if (card.modificationInstruction) {
+      setModificationInstruction(card.modificationInstruction);
+    }
+  }, [card.modificationInstruction]);
+
   // Process content based on type
   const contentDetails = React.useMemo(() => {
     // Handle empty content
