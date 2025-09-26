@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FormState } from '../types';
 import { LANGUAGES, TONES, WORD_COUNTS, OUTPUT_STRUCTURE_OPTIONS, INDUSTRY_NICHE_CATEGORIES, READER_FUNNEL_STAGES, PREFERRED_WRITING_STYLES, LANGUAGE_STYLE_CONSTRAINTS } from '../constants';
-import { PlusCircle, X, Zap, InfoIcon } from 'lucide-react';
+import { PlusCircle, X, Zap, Info as InfoIcon } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useInputField } from '../hooks/useInputField';
 import DraggableStructuredInput from './ui/DraggableStructuredInput';
