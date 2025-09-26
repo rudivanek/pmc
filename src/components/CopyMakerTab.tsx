@@ -17,7 +17,7 @@ import UrlParamLoader from './UrlParamLoader';
 import { FormState, User, GeneratedContentItem, GeneratedContentItemType, CopyResult, Prefill, Template } from '../types';
 import { generateCopy, generateContentScores, generateSeoMetadata, calculateGeoScore, generateAlternativeCopy, restyleCopyWithPersona } from '../services/apiService';
 import { checkUserAccess, getPrefill, createPrefill, updatePrefill, getUserTemplates, getSupabaseClient } from '../services/supabaseClient';
-import { calculateTargetWordCount } from '../services/api/utils';
+import { calculateTargetWordCount, extractWordCount } from '../services/api/utils';
 import { RefreshCw, Search } from 'lucide-react';
 import PrefillSelector from './PrefillSelector';
 
@@ -517,7 +517,12 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
     addProgressMessage(`Starting ${actionType} generation...`);
 
     try {
-      const targetWordCount = calculateTargetWordCount(formState);
+      // For alternatives and scores, use form target word count
+      const formTargetWordCount = calculateTargetWordCount(formState);
+      
+      // For restyle, use the word count of the source content to preserve its length
+      const restyleTargetWordCount = actionType === 'restyle' ? extractWordCount(sourceItem.content) : formTargetWordCount.target;
+      
       let newItem: GeneratedContentItem | null = null;
 
       if (actionType === 'alternative') {
@@ -594,7 +599,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
           currentUser,
           formState.language,
           formState,
-          targetWordCount.target,
+          restyleTargetWordCount,
           addProgressMessage
         );
 
@@ -793,11 +798,11 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
             formState.model,
             currentUser,
             sourceItem.content,
-            calculateTargetWordCount(formState).target,
+            formTargetWordCount.target,
             addProgressMessage
           );
           newItem.score = score;
-          addProgressMessage('Score generated for modified content.');
+            formTargetWordCount.target,
         } catch (scoreError) {
           console.error('Error generating score for modified content:', scoreError);
           addProgressMessage('Error generating score for modified content, continuing...');
