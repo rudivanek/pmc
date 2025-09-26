@@ -705,7 +705,7 @@ const GeneratedCopyCard: React.FC<GeneratedCopyCardProps> = ({
                     ))}
                   </select>
                   
-                  <Tooltip content={\`Apply ${selectedPersona || 'selected'} voice style to this content`}>
+                  <Tooltip content={`Apply ${selectedPersona || 'selected'} voice style to this content`}>
                     <Button
                       size="sm"
                       variant="outline"
