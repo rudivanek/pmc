@@ -813,7 +813,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
               </button>
             </div>
             
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-3">
               {/* Search Input */}
               <div className="lg:col-span-1">
                 <div className="relative">
@@ -831,7 +831,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
               </div>
               
               {/* Template Dropdown */}
-             <div className="lg:col-span-1">
+             <div className="lg:col-span-2">
                 <select
                   id="templateSelection"
                   name="templateSelection"
