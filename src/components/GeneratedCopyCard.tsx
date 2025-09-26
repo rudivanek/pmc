@@ -216,7 +216,6 @@ const GeneratedCopyCard: React.FC<GeneratedCopyCardProps> = ({
   const handleModifyContent = () => {
     if (modificationInstruction.trim()) {
       onModifyContent(modificationInstruction.trim());
-      setModificationInstruction('');
     }
   };
 

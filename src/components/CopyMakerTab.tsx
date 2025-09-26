@@ -535,7 +535,8 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
           generatedAt: new Date().toISOString(),
           sourceId: sourceItem.id,
           sourceType: sourceItem.type,
-          sourceDisplayName: `Alternative from ${sourceItem.sourceDisplayName || sourceItem.type}`
+         sourceDisplayName: `Modified: ${sourceItem.sourceDisplayName || sourceItem.type}`,
+         modificationInstruction: instruction
         };
         addProgressMessage('Alternative version generated.');
         
