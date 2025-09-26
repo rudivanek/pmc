@@ -17,7 +17,7 @@ import { isFieldPopulated, isFieldUserModified, hasPopulatedCompetitorUrls } fro
 
 interface SharedInputsProps {
   formData: FormState;
-  handleChange: (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => void;
+ handleChange: (name: string, value: any) => void;
   handleToggle: (e: React.ChangeEvent<HTMLInputElement>) => void;
   currentUser?: any;
   onGetSuggestion: (fieldType: string) => Promise<void>;
