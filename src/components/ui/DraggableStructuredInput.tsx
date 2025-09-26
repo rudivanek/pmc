@@ -48,13 +48,16 @@ const DraggableStructuredInput: React.FC<DraggableStructuredInputProps> = ({
   
   // Handle adding an element from dropdown
   const handleAddElement = (option: { value: string, label: string }) => {
+    console.log('🔥 handleAddElement called with:', option);
+    console.log('🔥 Current value array:', value);
+    
     // Don't add if already selected
     if (value.some(el => el.value === option.value)) {
       console.log('Element already exists:', option.value);
       return;
     }
     
-    console.log('Adding new element:', option);
+    console.log('🔥 Adding new element:', option);
     
     const newElement: StructuredOutputElement = {
       id: uuidv4(),
@@ -63,11 +66,16 @@ const DraggableStructuredInput: React.FC<DraggableStructuredInputProps> = ({
       wordCount: null
     };
     
+    console.log('🔥 Created new element:', newElement);
+    
     const newValue = [...value, newElement];
-    console.log('New value array:', newValue);
+    console.log('🔥 New value array:', newValue);
+    console.log('🔥 Calling onChange with:', newValue);
     
     onChange(newValue);
     setIsDropdownOpen(false);
+    
+    console.log('🔥 onChange called, dropdown closed');
   };
   
   // Handle adding a custom element

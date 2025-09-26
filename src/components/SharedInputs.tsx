@@ -154,9 +154,11 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
 
   // Handler for output structure change
   const handleStructureChange = (values: any) => {
+    console.log('🚀 handleStructureChange called with:', values);
     handleChange({
       target: { name: 'outputStructure', value: values }
     } as React.ChangeEvent<HTMLSelectElement>);
+    console.log('🚀 handleChange called with outputStructure');
   };
 
   // Handle industry niche change
