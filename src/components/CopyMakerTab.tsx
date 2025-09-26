@@ -874,6 +874,11 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
   };
 
   // Handle cancel operation
+  const handleCancelOperation = () => {
+    setFormState(prev => ({ ...prev, isLoading: false, isEvaluating: false }));
+    toast.info('Operation cancelled');
+  };
+
   return (
     <div className="relative min-h-screen">
       {/* URL Parameter Loader - processes templateId, sessionId, savedOutputId from URL */}

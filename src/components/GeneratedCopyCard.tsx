@@ -9,9 +9,7 @@ import { Button } from './ui/button';
 import { Tooltip } from './ui/Tooltip';
 import LoadingSpinner from './ui/LoadingSpinner';
 import CharacterCounter from './ui/CharacterCounter';
-import { Edit } from 'lucide-react';
-
-interface GeneratedCopyCardProps {
+import { CreditCard as Edit } from 'lucide-react'
   card: GeneratedContentItem;
   indentationLevel?: number;
   isLastInThread?: boolean;
@@ -21,7 +19,6 @@ interface GeneratedCopyCardProps {
   onApplyVoiceStyle: (persona: string) => void;
   onGenerateScore: () => void;
   onGenerateFaqSchema: () => void;
-  onModifyContent: (instruction: string) => void;
   targetWordCount?: number;
 }
 
@@ -35,13 +32,11 @@ const GeneratedCopyCard: React.FC<GeneratedCopyCardProps> = ({
   onApplyVoiceStyle,
   onGenerateScore,
   onGenerateFaqSchema,
-  onModifyContent,
   targetWordCount
 }) => {
   const [copied, setCopied] = useState(false);
   const [copiedHtml, setCopiedHtml] = useState(false);
   const [selectedPersona, setSelectedPersona] = useState<string>('');
-  const [modificationInstruction, setModificationInstruction] = useState<string>('');
 
   // Process content based on type
   const contentDetails = React.useMemo(() => {
@@ -709,45 +704,6 @@ const GeneratedCopyCard: React.FC<GeneratedCopyCardProps> = ({
                 </div>
               </div>
             )}
-
-            {/* Content Modification Section */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Modify this content
-              </label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={modificationInstruction}
-                  onChange={(e) => setModificationInstruction(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && modificationInstruction.trim()) {
-                      onModifyContent(modificationInstruction);
-                      setModificationInstruction('');
-                    }
-                  }}
-                  className="flex-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 p-2"
-                  placeholder="e.g., make shorter and more friendly, add more technical details..."
-                />
-                
-                <Tooltip content="Modify this content with custom instructions">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => {
-                      if (modificationInstruction.trim()) {
-                        onModifyContent(modificationInstruction);
-                        setModificationInstruction('');
-                      }
-                    }}
-                    disabled={!modificationInstruction.trim()}
-                  >
-                    <Edit size={16} className="mr-1" />
-                    Modify
-                  </Button>
-                </Tooltip>
-              </div>
-            </div>
 
             {/* FAQ Schema Button */}
             {showFaqSchemaButton && (
