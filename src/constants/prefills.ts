@@ -13,7 +13,7 @@ export interface PrefillGroup {
 }
 
 // Helper function to convert string array to StructuredOutputElement array
-function createOutputStructure(structureStrings: string[]): StructuredOutputElement[] {
+export function createOutputStructure(structureStrings: string[]): StructuredOutputElement[] {
   return structureStrings.map(str => {
     // Try to find matching option in OUTPUT_STRUCTURE_OPTIONS
     const option = OUTPUT_STRUCTURE_OPTIONS.find(opt => 
