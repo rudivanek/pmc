@@ -183,6 +183,7 @@ export function useAuth() {
         // Continue without auth listener if it fails
       }
     }
+  }, [isSupabaseEnabled, initError]);
 
   const handleLogin = useCallback(async (user: any) => {
     console.log('User logged in:', user.email);
@@ -227,7 +228,7 @@ export function useAuth() {
       setIsDemoMode(false);
       toast.error('Logged out (with errors)');
     }
-  }, []);
+  }, [isSupabaseEnabled]);
 
   return {
     currentUser,
