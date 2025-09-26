@@ -794,6 +794,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
       if (formState.generateScores) {
         addProgressMessage('Generating score for modified content...');
         try {
+          const formTargetWordCount = calculateTargetWordCount(formState);
           const score = await generateContentScores(
             modifiedContent,
             newItem.sourceDisplayName || newItem.type,
