@@ -8,7 +8,6 @@ import { User } from '../types';
 import { Button } from './ui/button';
 import { Tooltip } from './ui/Tooltip';
 import LoadingSpinner from './ui/LoadingSpinner';
-import CharacterCounter from './ui/CharacterCounter';
 import { CreditCard as Edit } from 'lucide-react'
   card: GeneratedContentItem;
   indentationLevel?: number;
