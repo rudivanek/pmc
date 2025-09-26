@@ -8,6 +8,7 @@ import { User } from '../types';
 import { Button } from './ui/button';
 import { Tooltip } from './ui/Tooltip';
 import LoadingSpinner from './ui/LoadingSpinner';
+import { CharacterCounter } from './ui/CharacterCounter';
 
 interface GeneratedCopyCardProps {
   card: GeneratedContentItem;
