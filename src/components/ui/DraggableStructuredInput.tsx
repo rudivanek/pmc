@@ -325,7 +325,7 @@ const DraggableStructuredInput: React.FC<DraggableStructuredInputProps> = ({
       )}
     </div>
   );
-});
+};
 
 // Add display name for better debugging
 DraggableStructuredInput.displayName = "DraggableStructuredInput";
