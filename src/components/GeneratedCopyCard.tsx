@@ -426,37 +426,6 @@ const GeneratedCopyCard: React.FC<GeneratedCopyCardProps> = ({
                     ? 'border-gray-700 text-gray-700 dark:text-gray-300'
                     : card.score.overall >= 60
                       ? 'border-gray-500 text-gray-500 dark:text-gray-400'
-                      : 'border-gray-600 text-gray-600 dark:text-gray-500'
-              }`}>
-                <span className="text-sm font-bold">{card.score.overall}</span>
-              </div>
-            </div>
-          </div>
-          
-          {card.score.improvementExplanation && (
-            <div className="mb-3 p-3 bg-gray-50 dark:bg-gray-900 rounded border border-gray-200 dark:border-gray-700">
-              <div className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Why it's improved</div>
-              <p className="text-sm text-gray-700 dark:text-gray-300">{card.score.improvementExplanation}</p>
-            </div>
-          )}
-          
-          <div className="grid grid-cols-2 gap-3 text-sm">
-            <div>
-              <span className="font-medium text-gray-700 dark:text-gray-300">Clarity:</span>
-              <p className="text-gray-600 dark:text-gray-400">{card.score.clarity}</p>
-            </div>
-            <div>
-              <span className="font-medium text-gray-700 dark:text-gray-300">Persuasiveness:</span>
-              <p className="text-gray-600 dark:text-gray-400">{card.score.persuasiveness}</p>
-            </div>
-            <div>
-              <span className="font-medium text-gray-700 dark:text-gray-300">Tone Match:</span>
-              <p className="text-gray-600 dark:text-gray-400">{card.score.toneMatch}</p>
-            </div>
-            <div>
-              <span className="font-medium text-gray-700 dark:text-gray-300">Engagement:</span>
-              <p className="text-gray-600 dark:text-gray-400">{card.score.engagement}</p>
-            </div>
           </div>
         </div>
       )}
@@ -648,9 +617,40 @@ const GeneratedCopyCard: React.FC<GeneratedCopyCardProps> = ({
       )}
 
       {/* Action Buttons */}
-      {(showAlternativeButton || showVoiceButton || showFaqSchemaButton) && (
+      {(showAlternativeButton || showVoiceButton || showFaqSchemaButton || true) && (
         <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
           <div className="space-y-4">
+            {/* Content Modification Section - Always Available */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <Edit size={16} className="inline mr-2" />
+                Modify Content
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={modificationInstruction}
+                  onChange={(e) => setModificationInstruction(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && modificationInstruction.trim()) {
+                      handleModifyContent();
+                    }
+                  }}
+                  placeholder="e.g., make shorter and more friendly, add more benefits, change tone to casual..."
+                  className="flex-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 p-2"
+                />
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleModifyContent}
+                  disabled={!modificationInstruction.trim()}
+                >
+                  <Edit size={16} className="mr-1" />
+                  Modify
+                </Button>
+              </div>
+            </div>
+
             {/* Alternative Copy Button */}
             {showAlternativeButton && (
               <div>
