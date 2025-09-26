@@ -20,6 +20,12 @@ const DraggableStructuredInput: React.FC<DraggableStructuredInputProps> = ({
   placeholder = "Select structure elements and assign word counts...",
   className = ""
 }) => {
+  // Ensure all elements have string IDs for react-beautiful-dnd
+  const normalizedValue = value.map(element => ({
+    ...element,
+    id: typeof element.id === 'string' ? element.id : uuidv4()
+  }));
+
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [customTagInput, setCustomTagInput] = useState('');
   const [customWordCount, setCustomWordCount] = useState<string>('');
@@ -41,7 +47,7 @@ const DraggableStructuredInput: React.FC<DraggableStructuredInputProps> = ({
 
   // Handle removing an element
   const handleRemoveElement = (index: number) => {
-    const newElements = [...value];
+    const newElements = [...normalizedValue];
     newElements.splice(index, 1);
     onChange(newElements);
   };
@@ -49,10 +55,10 @@ const DraggableStructuredInput: React.FC<DraggableStructuredInputProps> = ({
   // Handle adding an element from dropdown
   const handleAddElement = (option: { value: string, label: string }) => {
     console.log('🔥 handleAddElement called with:', option);
-    console.log('🔥 Current value array:', value);
+    console.log('🔥 Current value array:', normalizedValue);
     
     // Don't add if already selected
-    if (value.some(el => el.value === option.value)) {
+    if (normalizedValue.some(el => el.value === option.value)) {
       console.log('Element already exists:', option.value);
       return;
     }
@@ -68,7 +74,7 @@ const DraggableStructuredInput: React.FC<DraggableStructuredInputProps> = ({
     
     console.log('🔥 Created new element:', newElement);
     
-    const newValue = [...value, newElement];
+    const newValue = [...normalizedValue, newElement];
     console.log('🔥 New value array:', newValue);
     console.log('🔥 Calling onChange with:', newValue);
     
@@ -86,7 +92,7 @@ const DraggableStructuredInput: React.FC<DraggableStructuredInputProps> = ({
     const wordCount = customWordCount ? parseInt(customWordCount, 10) : null;
     
     // Don't add if already selected
-    if (value.some(el => el.value === customValue)) {
+    if (normalizedValue.some(el => el.value === customValue)) {
       setCustomTagInput('');
       setCustomWordCount('');
       return;
@@ -99,7 +105,7 @@ const DraggableStructuredInput: React.FC<DraggableStructuredInputProps> = ({
       wordCount: isNaN(wordCount as number) ? null : wordCount
     };
     
-    onChange([...value, newElement]);
+    onChange([...normalizedValue, newElement]);
     setCustomTagInput('');
     setCustomWordCount('');
     setShowCustomInput(false);
@@ -108,7 +114,7 @@ const DraggableStructuredInput: React.FC<DraggableStructuredInputProps> = ({
   // Handle word count change
   const handleWordCountChange = (index: number, newWordCount: string) => {
     const parsedCount = parseInt(newWordCount, 10);
-    const newElements = [...value];
+    const newElements = [...normalizedValue];
     newElements[index] = {
       ...newElements[index],
       wordCount: isNaN(parsedCount) ? null : parsedCount
@@ -123,7 +129,7 @@ const DraggableStructuredInput: React.FC<DraggableStructuredInputProps> = ({
       return;
     }
     
-    const items = Array.from(value);
+    const items = Array.from(normalizedValue);
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
     
@@ -132,11 +138,11 @@ const DraggableStructuredInput: React.FC<DraggableStructuredInputProps> = ({
   
   // Filter options that haven't been selected yet
   const availableOptions = options.filter(
-    option => !value.some(el => el.value === option.value)
+    option => !normalizedValue.some(el => el.value === option.value)
   );
 
   // Calculate total word count from elements with word counts
-  const totalWordCount = value.reduce((sum, element) => {
+  const totalWordCount = normalizedValue.reduce((sum, element) => {
     return sum + (element.wordCount || 0);
   }, 0);
 
@@ -150,7 +156,7 @@ const DraggableStructuredInput: React.FC<DraggableStructuredInputProps> = ({
           }
         }}
       >
-        {value.length > 0 ? (
+        {normalizedValue.length > 0 ? (
           <div className="w-full">
             <DragDropContext onDragEnd={onDragEnd}>
               <Droppable droppableId="sections">
@@ -160,8 +166,8 @@ const DraggableStructuredInput: React.FC<DraggableStructuredInputProps> = ({
                     ref={provided.innerRef}
                     {...provided.droppableProps}
                   >
-                    {value.map((element, index) => (
-                      <Draggable key={element.id} draggableId={element.id} index={index}>
+                    {normalizedValue.map((element, index) => (
+                      <Draggable key={element.id} draggableId={String(element.id)} index={index}>
                         {(provided) => (
                           <div
                             ref={provided.innerRef}
