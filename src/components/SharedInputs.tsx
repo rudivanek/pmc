@@ -155,31 +155,23 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
   // Handler for output structure change
   const handleStructureChange = (values: any) => {
     console.log('🚀 handleStructureChange called with:', values);
-    handleChange({
-      target: { name: 'outputStructure', value: values }
-    } as React.ChangeEvent<HTMLSelectElement>);
+   handleChange('outputStructure', values);
     console.log('🚀 handleChange called with outputStructure');
   };
 
   // Handle industry niche change
   const handleIndustryNicheChange = (value: string) => {
-    handleChange({
-      target: { name: 'industryNiche', value }
-    } as React.ChangeEvent<HTMLSelectElement>);
+   handleChange('industryNiche', value);
   };
 
   // Handle reader funnel stage change
   const handleReaderFunnelStageChange = (value: string) => {
-    handleChange({
-      target: { name: 'readerFunnelStage', value }
-    } as React.ChangeEvent<HTMLSelectElement>);
+   handleChange('readerFunnelStage', value);
   };
 
   // Handle preferred writing style change
   const handlePreferredWritingStyleChange = (value: string) => {
-    handleChange({
-      target: { name: 'preferredWritingStyle', value }
-    } as React.ChangeEvent<HTMLSelectElement>);
+   handleChange('preferredWritingStyle', value);
   };
 
   // Handle tone level change
