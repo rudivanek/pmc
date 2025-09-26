@@ -773,7 +773,8 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
         generatedAt: new Date().toISOString(),
         sourceId: sourceItem.id,
         sourceType: sourceItem.type,
-        sourceDisplayName: `Modified: ${sourceItem.sourceDisplayName || sourceItem.type}`
+        sourceDisplayName: `Modified: ${sourceItem.sourceDisplayName || sourceItem.type}`,
+        modificationInstruction: instruction
       };
 
       // Generate SEO metadata if enabled
