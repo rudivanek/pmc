@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { FormState, Template, CopySession, SavedOutput, ContentQualityScore, GeneratedContentItem, GeneratedContentItemType } from '../types';
 import { DEFAULT_FORM_STATE } from '../constants';
+import { createOutputStructure } from '../constants/prefills';
 import { Prefill } from '../services/supabaseClient';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -34,7 +35,9 @@ export function useFormState() {
         projectDescription: template.project_description || undefined,
         competitorUrls: template.competitor_urls || ['', '', ''],
         section: template.section || undefined,
-        outputStructure: template.output_structure || [],
+        outputStructure: template.output_structure 
+          ? createOutputStructure(template.output_structure) 
+          : [],
         
         // New fields
         productServiceName: template.product_service_name || undefined,
