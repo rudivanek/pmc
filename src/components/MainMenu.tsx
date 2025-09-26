@@ -36,7 +36,7 @@ const MainMenu: React.FC<MainMenuProps> = ({ userName, onLogout, onOpenTemplateS
                 to={currentUser ? "/copy-maker" : "/"} 
                 className="text-3xl font-bold text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400 transition-colors duration-200"
               >
-                <h1>PimpMyCopy<span className="text-[10px] font-normal ml-1">Beta 3.16</span></h1>
+                <h1>PimpMyCopy<span className="text-[10px] font-normal ml-1">Beta 3.18</span></h1>
               </Link>
             </div>
             
