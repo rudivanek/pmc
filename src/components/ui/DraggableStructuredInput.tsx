@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { X, Tag, GripVertical, Plus, Check } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { v4 as uuidv4 } from 'uuid';
 import { StructuredOutputElement } from '../../types';
 import { OUTPUT_STRUCTURE_OPTIONS } from '../../constants';
 
@@ -33,7 +34,7 @@ const DraggableStructuredInput = React.memo(({
   useEffect(() => {
     const initialCounts: Record<string, string> = {};
     value.forEach((element, index) => {
-      const key = `${element.value}-${index}`;
+      const key = element.id;
       initialCounts[key] = element.wordCount?.toString() || '';
     });
     setLocalWordCounts(initialCounts);
@@ -67,6 +68,7 @@ const DraggableStructuredInput = React.memo(({
     }
     
     const newElement: StructuredOutputElement = {
+      id: uuidv4(),
       value: option.value,
       label: option.label,
       wordCount: null
@@ -91,6 +93,7 @@ const DraggableStructuredInput = React.memo(({
     }
     
     const newElement: StructuredOutputElement = {
+      id: uuidv4(),
       value: customValue,
       label: customValue,
       wordCount: isNaN(wordCount as number) ? null : wordCount
@@ -103,16 +106,16 @@ const DraggableStructuredInput = React.memo(({
   }, [customTagInput, customWordCount, value, onChange]);
   
   // Handle local input changes to maintain focus - memoized with useCallback
-  const handleLocalWordCountChange = useCallback((elementKey: string, newValue: string) => {
+  const handleLocalWordCountChange = useCallback((elementId: string, newValue: string) => {
     setLocalWordCounts(prev => ({
       ...prev,
-      [elementKey]: newValue
+      [elementId]: newValue
     }));
   }, []);
   
   // Handle updating word count when input loses focus or Enter is pressed - memoized with useCallback
-  const handleWordCountCommit = useCallback((index: number, elementKey: string) => {
-    const wordCount = localWordCounts[elementKey] || '';
+  const handleWordCountCommit = useCallback((index: number, elementId: string) => {
+    const wordCount = localWordCounts[elementId] || '';
     const parsedCount = parseInt(wordCount, 10);
     
     const newElements = [...value];
@@ -125,9 +128,9 @@ const DraggableStructuredInput = React.memo(({
   }, [localWordCounts, value, onChange]);
   
   // Handle key press for word count input - memoized with useCallback
-  const handleWordCountKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>, index: number, elementKey: string) => {
+  const handleWordCountKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>, index: number, elementId: string) => {
     if (e.key === 'Enter') {
-      handleWordCountCommit(index, elementKey);
+      handleWordCountCommit(index, elementId);
       e.currentTarget.blur(); // Blur the input to prevent multiple Enter presses
     }
   }, [handleWordCountCommit]);
@@ -176,9 +179,8 @@ const DraggableStructuredInput = React.memo(({
                   {...provided.droppableProps}
                 >
                   {value.map((element, index) => {
-                    const elementKey = `${element.value}-${index}`;
                     return (
-                      <Draggable key={elementKey} draggableId={elementKey} index={index}>
+                      <Draggable key={element.id} draggableId={element.id} index={index}>
                         {(provided) => (
                           <div
                             ref={provided.innerRef}
@@ -201,10 +203,10 @@ const DraggableStructuredInput = React.memo(({
                                 type="number"
                                 min="0"
                                 placeholder="Words"
-                                value={localWordCounts[elementKey] || ''}
-                                onChange={(e) => handleLocalWordCountChange(elementKey, e.target.value)}
-                                onBlur={() => handleWordCountCommit(index, elementKey)}
-                                onKeyDown={(e) => handleWordCountKeyDown(e, index, elementKey)}
+                                value={localWordCounts[element.id] || ''}
+                                onChange={(e) => handleLocalWordCountChange(element.id, e.target.value)}
+                                onBlur={() => handleWordCountCommit(index, element.id)}
+                                onKeyDown={(e) => handleWordCountKeyDown(e, index, element.id)}
                                 className="w-20 h-7 px-2 py-1 text-xs bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md"
                                 aria-label={`Word count for ${element.label || element.value}`}
                               />

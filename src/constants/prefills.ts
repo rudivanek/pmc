@@ -23,6 +23,7 @@ function createOutputStructure(structureStrings: string[]): StructuredOutputElem
     
     if (option) {
       return {
+        id: `prefill-${option.value}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         value: option.value,
         label: option.label,
         wordCount: null
@@ -31,6 +32,7 @@ function createOutputStructure(structureStrings: string[]): StructuredOutputElem
     
     // If not found, create custom structure element
     return {
+      id: `custom-${str.toLowerCase().replace(/\s+/g, '')}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       value: str.toLowerCase().replace(/\s+/g, ''),
       label: str,
       wordCount: null

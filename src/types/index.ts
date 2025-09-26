@@ -34,6 +34,7 @@ export enum GeneratedContentItemType {
 
 // New interface for structured output elements with word counts
 export interface StructuredOutputElement {
+  id: string; // Unique identifier for stable drag and drop
   value: string; // e.g., 'problem', 'solution', 'header1'
   label?: string; // For display purposes
   wordCount?: number | null; // e.g., 200, 500, or null if no specific count
