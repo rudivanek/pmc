@@ -33,6 +33,7 @@ const GeneratedCopyCard: React.FC<GeneratedCopyCardProps> = ({
   onApplyVoiceStyle,
   onGenerateScore,
   onGenerateFaqSchema,
+  onModifyContent,
   targetWordCount
 }) => {
   const [copied, setCopied] = useState(false);
