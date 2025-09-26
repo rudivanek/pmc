@@ -640,10 +640,20 @@ const CopyForm: React.FC<CopyFormProps> = ({
             <Tooltip content={displayMode === 'all' ? 'Show only populated fields' : 'Show all fields'}>
               <button
                 onClick={() => setDisplayMode(displayMode === 'all' ? 'populated' : 'all')}
-                className="w-10 h-10 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
+                className="flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors px-3 py-2 whitespace-nowrap"
                 title={displayMode === 'all' ? 'Show only populated fields' : 'Show all fields'}
               >
-                {displayMode === 'all' ? <Filter size={18} /> : <List size={18} />}
+                {displayMode === 'all' ? (
+                  <>
+                    <Filter size={16} className="mr-1.5" />
+                    <span className="text-xs">Populated Only</span>
+                  </>
+                ) : (
+                  <>
+                    <List size={16} className="mr-1.5" />
+                    <span className="text-xs">Show All Fields</span>
+                  </>
+                )}
               </button>
             </Tooltip>
           </div>
