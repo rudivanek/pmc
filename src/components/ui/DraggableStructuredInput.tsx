@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { X, Tag, GripVertical, Plus, Check } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { v4 as uuidv4 } from 'uuid';
@@ -13,32 +13,18 @@ interface DraggableStructuredInputProps {
   className?: string;
 }
 
-// Wrap component with React.memo to prevent unnecessary re-renders
-const DraggableStructuredInput = React.memo(({
+const DraggableStructuredInput: React.FC<DraggableStructuredInputProps> = ({
   value = [],
   onChange,
   options = OUTPUT_STRUCTURE_OPTIONS,
   placeholder = "Select structure elements and assign word counts...",
   className = ""
-}: DraggableStructuredInputProps) => {
+}) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [customTagInput, setCustomTagInput] = useState('');
   const [customWordCount, setCustomWordCount] = useState<string>('');
-  const containerRef = useRef<HTMLDivElement>(null);
   const [showCustomInput, setShowCustomInput] = useState(false);
-  
-  // Local state to track input values and maintain focus
-  const [localWordCounts, setLocalWordCounts] = useState<Record<string, string>>({});
-  
-  // Initialize local state from props
-  useEffect(() => {
-    const initialCounts: Record<string, string> = {};
-    value.forEach((element, index) => {
-      const key = element.id;
-      initialCounts[key] = element.wordCount?.toString() || '';
-    });
-    setLocalWordCounts(initialCounts);
-  }, [value]);
+  const containerRef = useRef<HTMLDivElement>(null);
   
   // Handle click outside to close dropdown
   useEffect(() => {
@@ -53,19 +39,22 @@ const DraggableStructuredInput = React.memo(({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Handle removing an element - memoized with useCallback
-  const handleRemoveElement = useCallback((index: number) => {
+  // Handle removing an element
+  const handleRemoveElement = (index: number) => {
     const newElements = [...value];
     newElements.splice(index, 1);
     onChange(newElements);
-  }, [value, onChange]);
+  };
   
-  // Handle adding an element - memoized with useCallback
-  const handleAddElement = useCallback((option: { value: string, label: string }) => {
+  // Handle adding an element from dropdown
+  const handleAddElement = (option: { value: string, label: string }) => {
     // Don't add if already selected
     if (value.some(el => el.value === option.value)) {
+      console.log('Element already exists:', option.value);
       return;
     }
+    
+    console.log('Adding new element:', option);
     
     const newElement: StructuredOutputElement = {
       id: uuidv4(),
@@ -74,12 +63,15 @@ const DraggableStructuredInput = React.memo(({
       wordCount: null
     };
     
-    onChange([...value, newElement]);
+    const newValue = [...value, newElement];
+    console.log('New value array:', newValue);
+    
+    onChange(newValue);
     setIsDropdownOpen(false);
-  }, [value, onChange]);
+  };
   
-  // Handle adding a custom element - memoized with useCallback
-  const handleAddCustomElement = useCallback(() => {
+  // Handle adding a custom element
+  const handleAddCustomElement = () => {
     if (!customTagInput.trim()) return;
     
     const customValue = customTagInput.trim();
@@ -103,40 +95,21 @@ const DraggableStructuredInput = React.memo(({
     setCustomTagInput('');
     setCustomWordCount('');
     setShowCustomInput(false);
-  }, [customTagInput, customWordCount, value, onChange]);
+  };
   
-  // Handle local input changes to maintain focus - memoized with useCallback
-  const handleLocalWordCountChange = useCallback((elementId: string, newValue: string) => {
-    setLocalWordCounts(prev => ({
-      ...prev,
-      [elementId]: newValue
-    }));
-  }, []);
-  
-  // Handle updating word count when input loses focus or Enter is pressed - memoized with useCallback
-  const handleWordCountCommit = useCallback((index: number, elementId: string) => {
-    const wordCount = localWordCounts[elementId] || '';
-    const parsedCount = parseInt(wordCount, 10);
-    
+  // Handle word count change
+  const handleWordCountChange = (index: number, newWordCount: string) => {
+    const parsedCount = parseInt(newWordCount, 10);
     const newElements = [...value];
     newElements[index] = {
       ...newElements[index],
       wordCount: isNaN(parsedCount) ? null : parsedCount
     };
-    
     onChange(newElements);
-  }, [localWordCounts, value, onChange]);
+  };
   
-  // Handle key press for word count input - memoized with useCallback
-  const handleWordCountKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>, index: number, elementId: string) => {
-    if (e.key === 'Enter') {
-      handleWordCountCommit(index, elementId);
-      e.currentTarget.blur(); // Blur the input to prevent multiple Enter presses
-    }
-  }, [handleWordCountCommit]);
-  
-  // Handle drag end - memoized with useCallback
-  const onDragEnd = useCallback((result: any) => {
+  // Handle drag end
+  const onDragEnd = (result: any) => {
     // Dropped outside the list
     if (!result.destination) {
       return;
@@ -147,7 +120,7 @@ const DraggableStructuredInput = React.memo(({
     items.splice(result.destination.index, 0, reorderedItem);
     
     onChange(items);
-  }, [value, onChange]);
+  };
   
   // Filter options that haven't been selected yet
   const availableOptions = options.filter(
@@ -162,7 +135,7 @@ const DraggableStructuredInput = React.memo(({
   return (
     <div ref={containerRef} className="relative">
       <div 
-        className={`flex min-h-9 flex-wrap items-center gap-1.5 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-black px-3 py-2 focus-within:ring-1 focus-within:ring-primary-500 cursor-pointer ${className}`}
+        className={`min-h-[60px] w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-black px-3 py-2 focus-within:ring-1 focus-within:ring-primary-500 cursor-pointer ${className}`}
         onClick={() => {
           if (!showCustomInput) {
             setIsDropdownOpen(!isDropdownOpen);
@@ -170,16 +143,16 @@ const DraggableStructuredInput = React.memo(({
         }}
       >
         {value.length > 0 ? (
-          <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="sections" direction="vertical">
-              {(provided) => (
-                <div 
-                  className="w-full space-y-2"
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                >
-                  {value.map((element, index) => {
-                    return (
+          <div className="w-full">
+            <DragDropContext onDragEnd={onDragEnd}>
+              <Droppable droppableId="sections">
+                {(provided) => (
+                  <div 
+                    className="w-full space-y-2"
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                  >
+                    {value.map((element, index) => (
                       <Draggable key={element.id} draggableId={element.id} index={index}>
                         {(provided) => (
                           <div
@@ -203,10 +176,8 @@ const DraggableStructuredInput = React.memo(({
                                 type="number"
                                 min="0"
                                 placeholder="Words"
-                                value={localWordCounts[element.id] || ''}
-                                onChange={(e) => handleLocalWordCountChange(element.id, e.target.value)}
-                                onBlur={() => handleWordCountCommit(index, element.id)}
-                                onKeyDown={(e) => handleWordCountKeyDown(e, index, element.id)}
+                                value={element.wordCount || ''}
+                                onChange={(e) => handleWordCountChange(index, e.target.value)}
                                 className="w-20 h-7 px-2 py-1 text-xs bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md"
                                 aria-label={`Word count for ${element.label || element.value}`}
                               />
@@ -221,26 +192,96 @@ const DraggableStructuredInput = React.memo(({
                           </div>
                         )}
                       </Draggable>
-                    );
-                  })}
-                  {provided.placeholder}
-                  
-                  {/* Show total word count if any sections have word counts */}
-                  {totalWordCount > 0 && (
-                    <div className="text-xs text-gray-500 dark:text-gray-400 pt-1 border-t border-gray-200 dark:border-gray-700 mt-2">
-                      Total allocated: <span className="font-medium">{totalWordCount}</span> words
-                    </div>
-                  )}
-                </div>
-              )}
-            </Droppable>
-          </DragDropContext>
+                    ))}
+                    {provided.placeholder}
+                    
+                    {/* Show total word count if any sections have word counts */}
+                    {totalWordCount > 0 && (
+                      <div className="text-xs text-gray-500 dark:text-gray-400 pt-1 border-t border-gray-200 dark:border-gray-700 mt-2">
+                        Total allocated: <span className="font-medium">{totalWordCount}</span> words
+                      </div>
+                    )}
+                  </div>
+                )}
+              </Droppable>
+            </DragDropContext>
+          </div>
         ) : (
-          <div className="text-gray-500 text-sm w-full">{placeholder}</div>
+          <div className="text-gray-500 text-sm w-full py-4 text-center">{placeholder}</div>
+        )}
+        
+        {/* Custom input section */}
+        {showCustomInput && (
+          <div className="mt-2 p-3 bg-gray-50 dark:bg-gray-900 rounded-md border border-gray-200 dark:border-gray-800" onClick={(e) => e.stopPropagation()}>
+            <div className="text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+              Add Custom Structure Element
+            </div>
+            
+            <div className="space-y-3">
+              <div>
+                <label htmlFor="customElement" className="text-xs text-gray-600 dark:text-gray-400 mb-1 block">
+                  Element Name
+                </label>
+                <input
+                  id="customElement"
+                  type="text"
+                  value={customTagInput}
+                  onChange={(e) => setCustomTagInput(e.target.value)}
+                  placeholder="e.g., Problem Statement"
+                  className="w-full text-sm bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5"
+                  autoFocus
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="customWordCount" className="text-xs text-gray-600 dark:text-gray-400 mb-1 block">
+                  Word Count (optional)
+                </label>
+                <input
+                  id="customWordCount"
+                  type="number"
+                  min="0"
+                  value={customWordCount}
+                  onChange={(e) => setCustomWordCount(e.target.value)}
+                  placeholder="e.g., 200"
+                  className="w-full text-sm bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5"
+                />
+              </div>
+              
+              <div className="flex justify-end space-x-2 mt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowCustomInput(false);
+                    setCustomTagInput('');
+                    setCustomWordCount('');
+                    setIsDropdownOpen(true);
+                  }}
+                  className="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleAddCustomElement}
+                  disabled={!customTagInput.trim()}
+                  className={`px-3 py-1.5 text-sm rounded-md ${
+                    customTagInput.trim() 
+                      ? 'bg-primary-600 hover:bg-primary-500 text-white' 
+                      : 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                  }`}
+                >
+                  <Check size={14} className="inline mr-1.5" />
+                  Add Element
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
       
-      {isDropdownOpen && (
+      {/* Dropdown */}
+      {isDropdownOpen && !showCustomInput && (
         <div className="absolute z-10 mt-1 w-full max-h-60 overflow-auto bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md shadow-lg custom-scrollbar">
           <div className="p-2 text-xs text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-800">
             Select structure elements
@@ -259,12 +300,17 @@ const DraggableStructuredInput = React.memo(({
             Add custom structure element
           </div>
           
+          {/* Available predefined options */}
           {availableOptions.length > 0 ? (
             availableOptions.map((option) => (
               <div
                 key={option.value}
                 className="px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer text-gray-700 dark:text-gray-300 flex items-center text-sm"
-                onClick={() => handleAddElement(option)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  console.log('Dropdown option clicked:', option);
+                  handleAddElement(option);
+                }}
               >
                 <Tag size={14} className="text-primary-500 mr-2" />
                 {option.label}
@@ -275,73 +321,6 @@ const DraggableStructuredInput = React.memo(({
               All options have been selected
             </div>
           )}
-        </div>
-      )}
-      
-      {showCustomInput && (
-        <div className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md shadow-lg p-3">
-          <div className="text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-            Add Custom Structure Element
-          </div>
-          
-          <div className="space-y-3">
-            <div>
-              <label htmlFor="customElement" className="text-xs text-gray-600 dark:text-gray-400 mb-1 block">
-                Element Name
-              </label>
-              <input
-                id="customElement"
-                type="text"
-                value={customTagInput}
-                onChange={(e) => setCustomTagInput(e.target.value)}
-                placeholder="e.g., Problem Statement"
-                className="w-full text-sm bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5"
-              />
-            </div>
-            
-            <div>
-              <label htmlFor="customWordCount" className="text-xs text-gray-600 dark:text-gray-400 mb-1 block">
-                Word Count (optional)
-              </label>
-              <input
-                id="customWordCount"
-                type="number"
-                min="0"
-                value={customWordCount}
-                onChange={(e) => setCustomWordCount(e.target.value)}
-                placeholder="e.g., 200"
-                className="w-full text-sm bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5"
-              />
-            </div>
-            
-            <div className="flex justify-end space-x-2 mt-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setShowCustomInput(false);
-                  setCustomTagInput('');
-                  setCustomWordCount('');
-                  setIsDropdownOpen(true);
-                }}
-                className="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleAddCustomElement}
-                disabled={!customTagInput.trim()}
-                className={`px-3 py-1.5 text-sm rounded-md ${
-                  customTagInput.trim() 
-                    ? 'bg-primary-600 hover:bg-primary-500 text-white' 
-                    : 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
-                }`}
-              >
-                <Check size={14} className="inline mr-1.5" />
-                Add Element
-              </button>
-            </div>
-          </div>
         </div>
       )}
     </div>
