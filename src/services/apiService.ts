@@ -15,3 +15,4 @@ export * from './api/voiceStyles';
 export * from './api/contentRefinement';
 export * from './api/geoScoring';
 export * from './api/templateSuggestions';
+export * from './api/contentModification';
