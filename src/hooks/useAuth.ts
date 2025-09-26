@@ -139,9 +139,7 @@ export function useAuth() {
         return;
       } finally {
         // Always set isInitialized to true, even if there was an error
-        if (!isInitialized) {
-          setIsInitialized(true);
-        }
+        setIsInitialized(true);
       }
     };
     
@@ -185,7 +183,6 @@ export function useAuth() {
         // Continue without auth listener if it fails
       }
     }
-  }, [isInitialized]);
 
   const handleLogin = useCallback(async (user: any) => {
     console.log('User logged in:', user.email);
