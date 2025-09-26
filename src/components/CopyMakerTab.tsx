@@ -724,6 +724,117 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
     }
   };
 
+  // Handle content modification
+  const handleModifyContent = async (sourceItem: GeneratedContentItem, instruction: string) => {
+    if (!currentUser) {
+      toast.error('Please log in to modify content.');
+      return;
+    }
+
+    // Check user access before modification
+    try {
+      const accessResult = await checkUserAccess(currentUser.id, currentUser.email || '');
+      
+      if (!accessResult.hasAccess) {
+        toast.error(accessResult.message);
+        return;
+      }
+    } catch (error) {
+      console.error('Error checking user access for content modification:', error);
+      toast.error("Unable to verify access. Please try again.");
+      return;
+    }
+
+    setFormState(prev => ({ ...prev, isLoading: true, generationProgress: [] }));
+    addProgressMessage(`Modifying content: "${instruction}"...`);
+
+    try {
+      // Import the modification function
+      const { modifyContent } = await import('../services/apiService');
+      
+      const modifiedContent = await modifyContent(
+        sourceItem.content,
+        instruction,
+        formState,
+        currentUser,
+        addProgressMessage
+      );
+
+      const newItem: GeneratedContentItem = {
+        id: uuidv4(),
+        type: GeneratedContentItemType.Alternative,
+        content: modifiedContent,
+        generatedAt: new Date().toISOString(),
+        sourceId: sourceItem.id,
+        sourceType: sourceItem.type,
+        sourceDisplayName: `Modified: ${sourceItem.sourceDisplayName || sourceItem.type}`
+      };
+
+      // Generate SEO metadata if enabled
+      if (formState.generateSeoMetadata) {
+        addProgressMessage('Generating SEO metadata for modified content...');
+        try {
+          const seoMetadata = await generateSeoMetadata(modifiedContent, formState, currentUser, addProgressMessage);
+          newItem.seoMetadata = seoMetadata;
+          addProgressMessage('SEO metadata generated for modified content.');
+        } catch (seoError) {
+          console.error('Error generating SEO metadata for modified content:', seoError);
+          addProgressMessage('Error generating SEO metadata for modified content, continuing...');
+        }
+      }
+      
+      // Generate content scores if enabled
+      if (formState.generateScores) {
+        addProgressMessage('Generating score for modified content...');
+        try {
+          const score = await generateContentScores(
+            modifiedContent,
+            newItem.sourceDisplayName || newItem.type,
+            formState.model,
+            currentUser,
+            sourceItem.content,
+            calculateTargetWordCount(formState).target,
+            addProgressMessage
+          );
+          newItem.score = score;
+          addProgressMessage('Score generated for modified content.');
+        } catch (scoreError) {
+          console.error('Error generating score for modified content:', scoreError);
+          addProgressMessage('Error generating score for modified content, continuing...');
+        }
+      }
+      
+      // Generate GEO score if enabled
+      if (formState.generateGeoScore) {
+        addProgressMessage('Calculating GEO score for modified content...');
+        try {
+          const geoScore = await calculateGeoScore(modifiedContent, formState, currentUser, addProgressMessage);
+          newItem.geoScore = geoScore;
+          addProgressMessage('GEO score calculated for modified content.');
+        } catch (geoError) {
+          console.error('Error calculating GEO score for modified content:', geoError);
+          addProgressMessage('Error calculating GEO score for modified content, continuing...');
+        }
+      }
+
+      // Add the new item to the generated versions
+      setFormState(prev => ({
+        ...prev,
+        copyResult: {
+          ...prev.copyResult,
+          generatedVersions: [...(prev.copyResult?.generatedVersions || []), newItem]
+        }
+      }));
+      addProgressMessage('Content modification complete.');
+      toast.success('Content modified successfully!');
+    } catch (error: any) {
+      console.error('Error modifying content:', error);
+      toast.error(`Failed to modify content: ${error.message}`);
+    } finally {
+      setFormState(prev => ({ ...prev, isLoading: false }));
+    }
+  };
+
   // Handle FAQ schema generation
   const handleGenerateFaqSchema = async (content: string) => {
     if (!currentUser) {
@@ -942,6 +1053,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
                     onApplyVoiceStyle={(persona) => handleOnDemandGeneration('restyle', card, persona)}
                     onGenerateScore={() => handleOnDemandGeneration('score', card)}
                     onGenerateFaqSchema={handleGenerateFaqSchema}
+                    onModifyContent={(instruction) => handleModifyContent(card, instruction)}
                     targetWordCount={calculateTargetWordCount(formState).target}
                   />
                 ))}
