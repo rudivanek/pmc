@@ -103,6 +103,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
   onCancel,
   onOpenTemplateSuggestion = () => {},
   loadFormStateFromTemplate,
+  loadFormStateFromPrefill,
   addProgressMessage,
 }) => {
   // Add the missing load functions that UrlParamLoader needs
