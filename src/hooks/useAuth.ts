@@ -62,11 +62,9 @@ export function useAuth() {
                 sessionError.name === 'TypeError') {
               console.log('Connection failed, setting init error');
               setInitError('Unable to connect to the authentication service. This may be due to network issues or Supabase configuration problems. Please check your internet connection and verify your Supabase settings.');
-              setIsInitialized(true);
               return;
             }
             setInitError('Failed to connect to authentication service');
-            setIsInitialized(true);
             return;
           }
           
@@ -85,11 +83,9 @@ export function useAuth() {
                     userError.name === 'TypeError') {
                   console.log('User fetch failed, setting init error');
                   setInitError('Unable to connect to the authentication service. This may be due to network issues or Supabase configuration problems. Please check your internet connection and verify your Supabase settings.');
-                  setIsInitialized(true);
                   return;
                 }
                 setInitError('Failed to get user information');
-                setIsInitialized(true);
                 return;
               }
               
@@ -118,7 +114,6 @@ export function useAuth() {
             } catch (userFetchError: any) {
               console.error('Network error fetching user:', userFetchError);
               setInitError('Unable to connect to the authentication service. This may be due to network issues or Supabase configuration problems. Please check your internet connection and verify your Supabase settings.');
-              setIsInitialized(true);
               return;
             }
           } else {
@@ -128,17 +123,16 @@ export function useAuth() {
           console.error('Supabase connection error:', supabaseError);
           // Any error connecting to Supabase should show init error instead of falling back
           setInitError('Unable to connect to the authentication service. This may be due to network issues or Supabase configuration problems. Please check your internet connection and verify your Supabase settings.');
-          setIsInitialized(true);
           return;
         }
       } catch (error: any) {
         console.error('Error in checkSession:', error);
         // Show init error on any unexpected errors
         setInitError('An unexpected error occurred while initializing the application. Please try again or continue in demo mode.');
-        setIsInitialized(true);
         return;
       } finally {
         // Always set isInitialized to true, even if there was an error
+        console.log('Setting isInitialized to true');
         setIsInitialized(true);
       }
     };
@@ -147,8 +141,8 @@ export function useAuth() {
     checkSession();
     
     // Set up auth state change listener only if Supabase is enabled
-    
-    if (isSupabaseEnabled && !initError) {
+    const supabaseEnabled = import.meta.env.VITE_SUPABASE_ENABLED === 'true';
+    if (supabaseEnabled) {
       try {
         const { data: { subscription } } = supabase.auth.onAuthStateChange(
           async (event, session) => {
@@ -183,7 +177,7 @@ export function useAuth() {
         // Continue without auth listener if it fails
       }
     }
-  }, [isSupabaseEnabled, initError]);
+  }, []); // Remove dependencies to prevent re-running
 
   const handleLogin = useCallback(async (user: any) => {
     console.log('User logged in:', user.email);
