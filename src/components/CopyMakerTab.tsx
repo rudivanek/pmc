@@ -955,21 +955,21 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
               </div>
               
               {/* Template Dropdown */}
-             <div className="flex-1">
+             <div className="flex-1 min-w-0">
                 <select
                   id="templateSelection"
                   name="templateSelection"
-                  className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 sm:p-2.5"
+                  className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 sm:p-2.5 truncate"
                   value={selectedTemplateId}
                   onChange={(e) => handleTemplateSelection(e.target.value)}
                   disabled={isLoadingTemplates}
                 >
                   <option value="">{isLoadingTemplates ? '— Loading Templates —' : '— Select a Template —'}</option>
                   {filteredAndGroupedTemplates.map((group) => (
-                    <optgroup key={group.category} label={group.category}>
+                    <optgroup key={group.category} label={group.category.length > 25 ? group.category.substring(0, 25) + '...' : group.category}>
                       {group.templates.map((template) => (
-                        <option key={template.id} value={template.id}>
-                          {template.template_name}
+                        <option key={template.id} value={template.id} title={template.template_name}>
+                          {template.template_name.length > 35 ? template.template_name.substring(0, 35) + '...' : template.template_name}
                         </option>
                       ))}
                     </optgroup>
