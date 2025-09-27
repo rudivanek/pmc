@@ -392,6 +392,7 @@ const CopyForm: React.FC<CopyFormProps> = ({
         data: selectedPrefill.data
       });
     }
+  };
 
   return (
     <div className="space-y-8">
