@@ -470,32 +470,6 @@ const CopyForm: React.FC<CopyFormProps> = ({
         </div>
       </div>
       
-      {/* Quick Start Content Types */}
-      <div className="mb-8 p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg">
-        <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-4">Quick Start Templates</h3>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-          {contentTypes.map((type) => (
-            <button
-              key={type.id}
-              onClick={() => handleContentTypeClick(type.id)}
-              className="flex flex-col items-center p-3 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 rounded-lg transition-colors group"
-              disabled={formState.isLoading}
-            >
-              <div className="text-2xl mb-2">{type.icon}</div>
-              <div className="text-xs font-medium text-gray-900 dark:text-white text-center mb-1">
-                {type.label}
-              </div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 text-center leading-tight">
-                {type.description}
-              </div>
-            </button>
-          ))}
-        </div>
-        <p className="mt-3 text-xs text-gray-500 dark:text-gray-400 text-center">
-          Click any template to auto-fill the form with optimized settings for that content type
-        </p>
-      </div>
-      
       {/* Project Setup Section */}
       <div className="space-y-6 mb-8">
         <div>
@@ -603,6 +577,37 @@ const CopyForm: React.FC<CopyFormProps> = ({
               onBlur={briefDescriptionField.handleBlur}
             />
           </div>
+            
+            {/* Quick Start Templates Dropdown */}
+            <div className="mt-3">
+              <label htmlFor="quickStartTemplate" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Quick Start Templates
+              </label>
+              <select
+                id="quickStartTemplate"
+                name="quickStartTemplate"
+                className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
+                value=""
+                onChange={(e) => {
+                  if (e.target.value) {
+                    handleContentTypeClick(e.target.value);
+                    // Reset the dropdown after selection
+                    e.target.value = '';
+                  }
+                }}
+                disabled={formState.isLoading}
+              >
+                <option value="">— Choose a Content Type —</option>
+                {contentTypes.map((type) => (
+                  <option key={type.id} value={type.id}>
+                    {type.icon} {type.label} - {type.description}
+                  </option>
+                ))}
+              </select>
+              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                Select a content type to auto-fill the form with optimized settings
+              </p>
+            </div>
         </div>
       </div>
 
