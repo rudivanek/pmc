@@ -596,31 +596,33 @@ const CopyForm: React.FC<CopyFormProps> = ({
                   <option key={type.id} value={type.id}>
                     {type.icon} {type.label} - {type.description}
                   </option>
-                ))}
-              </select>
-              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                Select a content type to auto-fill the form with optimized settings
-              </p>
-              onGetSuggestion={onGetSuggestion}
-              isLoadingSuggestions={isLoadingSuggestions}
-              activeSuggestionField={activeSuggestionField}
-              handleScoreChange={(name, score) => setFormState(prev => ({ ...prev, [name]: score }))}
-              displayMode={displayMode}
-              businessDescriptionRef={businessDescriptionRef}
-            />
-          ) : (
-            <ImproveCopyForm
-              formData={formState}
-              handleChange={handleChange}
-              currentUser={currentUser}
-              onGetSuggestion={onGetSuggestion}
-              isLoadingSuggestions={isLoadingSuggestions}
-              activeSuggestionField={activeSuggestionField}
-              handleScoreChange={(name, score) => setFormState(prev => ({ ...prev, [name]: score }))}
-              displayMode={displayMode}
-              originalCopyRef={originalCopyRef}
-            />
-          )}
+          <div>
+            {formState.tab === 'create' ? (
+              <CreateCopyForm
+                formData={formState}
+                handleChange={handleChange}
+                currentUser={currentUser}
+                onGetSuggestion={onGetSuggestion}
+                isLoadingSuggestions={isLoadingSuggestions}
+                activeSuggestionField={activeSuggestionField}
+                handleScoreChange={(name, score) => setFormState(prev => ({ ...prev, [name]: score }))}
+                displayMode={displayMode}
+                businessDescriptionRef={businessDescriptionRef}
+              />
+            ) : (
+              <ImproveCopyForm
+                formData={formState}
+                handleChange={handleChange}
+                currentUser={currentUser}
+                onGetSuggestion={onGetSuggestion}
+                isLoadingSuggestions={isLoadingSuggestions}
+                activeSuggestionField={activeSuggestionField}
+                handleScoreChange={(name, score) => setFormState(prev => ({ ...prev, [name]: score }))}
+                displayMode={displayMode}
+                originalCopyRef={originalCopyRef}
+              />
+            )}
+          </div>
         </div>
       </div>
 
