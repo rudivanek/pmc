@@ -197,21 +197,29 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
       // Load admin-specific data if user is admin
       if (isAdmin) {
         try {
-          const [betaCountResult, usersResult] = await Promise.all([ // Removed allTokenUsageResult
-            adminGetBetaRegistrationsCount(),
-            adminGetUsers()
-          ]);
-          
-          if (betaCountResult.data !== null) {
-            setBetaRegistrationsCount(betaCountResult.data);
+          // Try to load admin data with individual error handling
+          try {
+            const betaCountResult = await adminGetBetaRegistrationsCount();
+            if (betaCountResult.data !== null) {
+              setBetaRegistrationsCount(betaCountResult.data);
+            }
+          } catch (betaError) {
+            console.error('Error loading beta registrations count:', betaError);
+            // Don't fail the entire load process if beta count fails
           }
           
-          if (usersResult.data) {
-            setAllUsers(usersResult.data.map((user: any) => ({
-              id: user.id,
-              email: user.email,
-              name: user.name
-            })));
+          try {
+            const usersResult = await adminGetUsers();
+            if (usersResult.data) {
+              setAllUsers(usersResult.data.map((user: any) => ({
+                id: user.id,
+                email: user.email,
+                name: user.name
+              })));
+            }
+          } catch (usersError) {
+            console.error('Error loading users:', usersError);
+            // Don't fail the entire load process if users load fails
           }
         } catch (adminError) {
           console.error('Error loading admin data:', adminError);
