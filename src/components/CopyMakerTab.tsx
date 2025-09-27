@@ -301,8 +301,109 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
     }
   };
 
+  // State for import/export functionality
+  const [isExporting, setIsExporting] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
 
+  // Handle form export
+  const handleExportForm = async () => {
+    setIsExporting(true);
+    try {
+      // Create export data
+      const exportData = {
+        version: '1.0',
+        exportedAt: new Date().toISOString(),
+        formData: {
+          // Core form fields
+          projectDescription: formState.projectDescription,
+          businessDescription: formState.businessDescription,
+          originalCopy: formState.originalCopy,
+          contentType: formState.contentType,
+          targetAudience: formState.targetAudience,
+          tone: formState.tone,
+          language: formState.language,
+          model: formState.model,
+          
+          // Advanced settings
+          targetWordCount: formState.targetWordCount,
+          customWordCount: formState.customWordCount,
+          keywords: formState.keywords,
+          competitorUrls: formState.competitorUrls,
+          brandGuidelines: formState.brandGuidelines,
+          callToAction: formState.callToAction,
+          additionalInstructions: formState.additionalInstructions,
+          
+          // Feature flags
+          generateScores: formState.generateScores,
+          generateSeoMetadata: formState.generateSeoMetadata,
+          generateGeoScore: formState.generateGeoScore,
+          
+          // Customer info
+          customerId: formState.customerId,
+          customerName: formState.customerName
+        }
+      };
 
+      // Create and download file
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `copy-maker-form-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      toast.success('Form exported successfully!');
+    } catch (error: any) {
+      console.error('Error exporting form:', error);
+      toast.error(`Failed to export form: ${error.message}`);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  // Handle form import
+  const handleImportForm = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+
+      setIsImporting(true);
+      try {
+        const text = await file.text();
+        const importData = JSON.parse(text);
+        
+        // Validate import data structure
+        if (!importData.formData) {
+          throw new Error('Invalid file format: missing formData');
+        }
+        
+        // Apply imported data to form state
+        setFormState(prev => ({
+          ...prev,
+          ...importData.formData,
+          // Clear results and loading states
+          copyResult: { generatedVersions: [] },
+          isLoading: false,
+          isEvaluating: false,
+          generationProgress: []
+        }));
+        
+        toast.success('Form imported successfully!');
+      } catch (error: any) {
+        console.error('Error importing form:', error);
+        toast.error(`Failed to import form: ${error.message}`);
+      } finally {
+        setIsImporting(false);
+      }
+    };
+    input.click();
+  };
 
   // Popular content types for quick access
   const contentTypes = [
