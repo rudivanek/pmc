@@ -473,6 +473,34 @@ const CopyForm: React.FC<CopyFormProps> = ({
       
       
       {/* Project Setup Section */}
+        {/* Quick Start Templates Section */}
+        <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg">
+          <div className="flex items-center justify-between mb-3">
+            <label htmlFor="contentTypeSelection" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Quick Start Templates
+            </label>
+          </div>
+          
+          <div className="space-y-3">
+            <select
+              id="contentTypeSelection"
+              className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
+              defaultValue=""
+              onChange={(e) => e.target.value && handleContentTypeClick(e.target.value)}
+            >
+              <option value="">— Choose a Content Type —</option>
+              {contentTypes.map((type) => (
+                <option key={type.id} value={type.id}>
+                  {type.icon} {type.label} - {type.description}
+                </option>
+              ))}
+            </select>
+            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+              Select a content type to auto-fill the form with optimized settings
+            </p>
+          </div>
+        </div>
+
       <div className="space-y-6 mb-8">
         <div>
           <Tooltip content="Configure your project foundation and organization. These settings help you manage and identify your work.">
