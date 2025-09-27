@@ -4,6 +4,7 @@ import { MODELS } from '../constants';
 import { DEFAULT_FORM_STATE } from '../constants';
 import { GROUPED_PREFILLS } from '../constants/prefills';
 import { toast } from 'react-hot-toast';
+import { getAutoDisplayMode } from '../utils/formUtils';
 import { checkUserAccess, getCustomers } from '../services/supabaseClient';
 import { getSuggestions } from '../services/apiService';
 import { useInputField } from '../hooks/useInputField';
@@ -331,6 +332,10 @@ const CopyForm: React.FC<CopyFormProps> = ({
         setLoadedTemplateId(null);
         setLoadedTemplateName('');
         
+        // Auto-determine display mode based on populated fields
+        const autoMode = getAutoDisplayMode(newFormState);
+        setDisplayMode(autoMode);
+        
         toast.success(`Form imported from ${file.name}! Ready to generate new copy.`);
       } catch (error) {
         console.error('Error importing form:', error);
@@ -398,6 +403,10 @@ const CopyForm: React.FC<CopyFormProps> = ({
         promptEvaluation: undefined
       };
       setFormState(newFormState);
+      
+      // Auto-determine display mode based on populated fields
+      const autoMode = getAutoDisplayMode(newFormState);
+      setDisplayMode(autoMode);
     }
     
     toast.success(`Applied "${selectedPrefill.label}" template`);
