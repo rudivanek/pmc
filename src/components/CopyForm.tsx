@@ -608,25 +608,6 @@ const CopyForm: React.FC<CopyFormProps> = ({
               <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                 Select a content type to auto-fill the form with optimized settings
               </p>
-            </div>
-        </div>
-      </div>
-
-      {/* Core Content Section */}
-      <div className="space-y-6 mb-8">
-        <div>
-          <Tooltip content="Provide the primary content information - either business description for new copy or existing copy to improve.">
-            <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-4 pb-2 border-b border-gray-300 dark:border-gray-700 flex items-center">
-              <div className="w-1 h-5 bg-primary-500 mr-2"></div>
-              Core Content
-            </h3>
-          </Tooltip>
-
-          {formState.tab === 'create' ? (
-            <CreateCopyForm
-              formData={formState}
-              handleChange={handleChange}
-              currentUser={currentUser}
               onGetSuggestion={onGetSuggestion}
               isLoadingSuggestions={isLoadingSuggestions}
               activeSuggestionField={activeSuggestionField}
