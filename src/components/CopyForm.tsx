@@ -600,18 +600,18 @@ const CopyForm: React.FC<CopyFormProps> = ({
 
       {/* Floating Action Buttons for Evaluate and Save Template */}
       {shouldShowFloatingButtons() && (
-        <div className="fixed top-1/2 left-4 transform -translate-y-1/2 z-40">
-          <div className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg p-2 space-y-2">
+        <div className="fixed top-1/2 left-2 sm:left-4 transform -translate-y-1/2 z-40">
+          <div className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg p-1.5 sm:p-2 space-y-1.5 sm:space-y-2">
             {/* Evaluate Inputs */}
             {onEvaluateInputs && (
               <Tooltip content="Evaluate the quality of your input parameters">
                 <button
                   onClick={onEvaluateInputs}
-                  className="w-10 h-10 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
+                  className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
                   title="Evaluate Inputs"
                   disabled={formState.isEvaluating}
                 >
-                  <Zap size={18} />
+                  <Zap size={14} className="sm:w-[18px] sm:h-[18px]" />
                 </button>
               </Tooltip>
             )}
@@ -621,10 +621,10 @@ const CopyForm: React.FC<CopyFormProps> = ({
               <Tooltip content="Save current form configuration as template">
                 <button
                   onClick={onSaveTemplate}
-                  className="w-10 h-10 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
+                  className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
                   title="Save as Template"
                 >
-                  <Save size={18} />
+                  <Save size={14} className="sm:w-[18px] sm:h-[18px]" />
                 </button>
               </Tooltip>
             )}
@@ -634,16 +634,16 @@ const CopyForm: React.FC<CopyFormProps> = ({
 
       {/* Display Mode Floating Buttons - Second Group */}
       {shouldShowFloatingButtons() && (
-        <div className="fixed top-1/2 left-4 transform translate-y-16 z-40">
-          <div className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg p-2 space-y-2">
+        <div className="fixed top-1/2 left-2 sm:left-4 transform translate-y-12 sm:translate-y-16 z-40">
+          <div className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg p-1.5 sm:p-2 space-y-1.5 sm:space-y-2">
             {/* Toggle Display Mode */}
             <Tooltip content={displayMode === 'all' ? 'Show only populated fields' : 'Show all fields'}>
               <button
                 onClick={() => setDisplayMode(displayMode === 'all' ? 'populated' : 'all')}
-                className="w-10 h-10 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
+                className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
                 title={displayMode === 'all' ? 'Show only populated fields' : 'Show all fields'}
               >
-                {displayMode === 'all' ? <Filter size={18} /> : <List size={18} />}
+                {displayMode === 'all' ? <Filter size={14} className="sm:w-[18px] sm:h-[18px]" /> : <List size={14} className="sm:w-[18px] sm:h-[18px]" />}
               </button>
             </Tooltip>
           </div>

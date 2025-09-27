@@ -94,44 +94,44 @@ const FloatingActionBar: React.FC<FloatingActionBarProps> = ({
   }
 
   return (
-    <div className="fixed top-1/2 right-4 transform -translate-y-1/2 z-40">
-      <div className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg p-2 space-y-2">
+    <div className="fixed top-1/2 right-2 sm:right-4 transform -translate-y-1/2 z-40">
+      <div className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg p-1.5 sm:p-2 space-y-1.5 sm:space-y-2">
         {/* Save Output */}
         <button
           onClick={onSaveOutput}
-          className="w-10 h-10 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
+          className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
           title="Save Output"
           disabled={!generatedOutputCards || generatedOutputCards.length === 0}
         >
-          <Save size={18} />
+          <Save size={14} className="sm:w-[18px] sm:h-[18px]" />
         </button>
 
         {/* Copy as Markdown */}
         <button
           onClick={handleCopyAllMarkdown}
-          className="w-10 h-10 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
+          className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
           title="Copy as Markdown"
         >
-          <FileText size={18} />
+          <FileText size={14} className="sm:w-[18px] sm:h-[18px]" />
         </button>
 
         {/* Export to Text */}
         <button
           onClick={handleExportToText}
-          className="w-10 h-10 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
+          className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
           title="Export to Text"
         >
-          <Download size={18} />
+          <Download size={14} className="sm:w-[18px] sm:h-[18px]" />
         </button>
 
         {/* View Prompts */}
         {isAdmin && (
           <button
             onClick={onViewPrompts}
-            className="w-10 h-10 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
+            className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
             title="View Prompts"
           >
-            <Code size={18} />
+            <Code size={14} className="sm:w-[18px] sm:h-[18px]" />
           </button>
         )}
       </div>
