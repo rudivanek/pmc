@@ -3,7 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useRef } from 'react';
 import { toast } from 'react-hot-toast';
 import { v4 as uuidv4 } from 'uuid';
-import { Lightbulb } from 'lucide-react';
+import { Lightbulb, Download, Upload } from 'lucide-react';
 
 import CopyMakerForm from './CopyMakerForm';
 import CopyForm from './CopyForm';
@@ -20,6 +20,7 @@ import { checkUserAccess, getPrefill, createPrefill, updatePrefill, getUserTempl
 import { calculateTargetWordCount, extractWordCount } from '../services/api/utils';
 import { RefreshCw, Search } from 'lucide-react';
 import PrefillSelector from './PrefillSelector';
+import { GROUPED_PREFILLS, getAutoDisplayMode } from '../constants/prefills';
 
 // Helper function to check if content is empty
 function isContentEmpty(content: any): boolean {
@@ -164,6 +165,8 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
     originalLabel?: string;
   } | null>(null);
   const [showSavePrefillModal, setShowSavePrefillModal] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
   
   // State for template loading
   const [fetchedTemplates, setFetchedTemplates] = useState<Template[]>([]);
@@ -301,50 +304,16 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
     }
   };
 
-  // State for import/export functionality
-  const [isExporting, setIsExporting] = useState(false);
-  const [isImporting, setIsImporting] = useState(false);
-
-  // Handle form export
+  // Handle export form
   const handleExportForm = async () => {
     setIsExporting(true);
     try {
-      // Create export data
       const exportData = {
-        version: '1.0',
+        formState: formState,
         exportedAt: new Date().toISOString(),
-        formData: {
-          // Core form fields
-          projectDescription: formState.projectDescription,
-          businessDescription: formState.businessDescription,
-          originalCopy: formState.originalCopy,
-          contentType: formState.contentType,
-          targetAudience: formState.targetAudience,
-          tone: formState.tone,
-          language: formState.language,
-          model: formState.model,
-          
-          // Advanced settings
-          targetWordCount: formState.targetWordCount,
-          customWordCount: formState.customWordCount,
-          keywords: formState.keywords,
-          competitorUrls: formState.competitorUrls,
-          brandGuidelines: formState.brandGuidelines,
-          callToAction: formState.callToAction,
-          additionalInstructions: formState.additionalInstructions,
-          
-          // Feature flags
-          generateScores: formState.generateScores,
-          generateSeoMetadata: formState.generateSeoMetadata,
-          generateGeoScore: formState.generateGeoScore,
-          
-          // Customer info
-          customerId: formState.customerId,
-          customerName: formState.customerName
-        }
+        version: '1.0'
       };
-
-      // Create and download file
+      
       const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -364,7 +333,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
     }
   };
 
-  // Handle form import
+  // Handle import form
   const handleImportForm = () => {
     const input = document.createElement('input');
     input.type = 'file';
@@ -372,29 +341,25 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
     input.onchange = async (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (!file) return;
-
+      
       setIsImporting(true);
       try {
         const text = await file.text();
         const importData = JSON.parse(text);
         
-        // Validate import data structure
-        if (!importData.formData) {
-          throw new Error('Invalid file format: missing formData');
+        if (importData.formState) {
+          setFormState(prev => ({
+            ...prev,
+            ...importData.formState,
+            copyResult: { generatedVersions: [] }, // Clear any existing results
+            isLoading: false,
+            isEvaluating: false,
+            generationProgress: []
+          }));
+          toast.success('Form imported successfully!');
+        } else {
+          throw new Error('Invalid file format');
         }
-        
-        // Apply imported data to form state
-        setFormState(prev => ({
-          ...prev,
-          ...importData.formData,
-          // Clear results and loading states
-          copyResult: { generatedVersions: [] },
-          isLoading: false,
-          isEvaluating: false,
-          generationProgress: []
-        }));
-        
-        toast.success('Form imported successfully!');
       } catch (error: any) {
         console.error('Error importing form:', error);
         toast.error(`Failed to import form: ${error.message}`);
@@ -414,54 +379,6 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
     { id: 'landing-page-lead-gen', label: 'Landing Page', icon: '🎯', description: '400 words for lead generation' },
     { id: 'product-description-ecommerce', label: 'Product Description', icon: '🛍️', description: '300 words for e-commerce' }
   ];
-
-  return (
-    <div className="bg-white dark:bg-black border border-gray-300 dark:border-gray-800 rounded-lg p-3 sm:p-6 mx-2 sm:mx-4 lg:mx-24">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white">Copy Maker</h2>
-        
-        <div className="flex flex-col xs:flex-row items-end xs:items-center space-y-1 xs:space-y-0 xs:space-x-2">
-          <button
-            type="button"
-            onClick={handleExportForm}
-            disabled={isExporting || (!formState.businessDescription?.trim() && !formState.originalCopy?.trim())}
-            className="flex items-center bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 px-2 py-1.5 rounded-md text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            title="Export current form as JSON file"
-          >
-            {isExporting ? (
-              <>
-                <div className="w-4 h-4 border-2 border-gray-500 border-t-transparent rounded-full animate-spin mr-2"></div>
-                <span>Export...</span>
-              </>
-            ) : (
-              <>
-                <Download size={14} className="mr-1.5" />
-                <span>Export</span>
-              </>
-            )}
-          </button>
-          
-          <button
-            type="button"
-            onClick={handleImportForm}
-            disabled={isImporting}
-            className="flex items-center bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 px-2 py-1.5 rounded-md text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            title="Import form from JSON file"
-          >
-            {isImporting ? (
-              <>
-                <div className="w-4 h-4 border-2 border-gray-500 border-t-transparent rounded-full animate-spin mr-2"></div>
-                <span>Import...</span>
-              </>
-            ) : (
-              <>
-                <Upload size={14} className="mr-1.5" />
-                <span>Import</span>
-              </>
-            )}
-          </button>
-        </div>
-      </div>
 
   // Override onClearAll to also clear template selection
   const handleClearAllOverride = () => {
@@ -698,8 +615,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
           generatedAt: new Date().toISOString(),
           sourceId: sourceItem.id,
           sourceType: sourceItem.type,
-         sourceDisplayName: `Modified: ${sourceItem.sourceDisplayName || sourceItem.type}`,
-         modificationInstruction: instruction
+          sourceDisplayName: `Alternative: ${sourceItem.sourceDisplayName || sourceItem.type}`
         };
         addProgressMessage('Alternative version generated.');
         
@@ -820,7 +736,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
               formState.model,
               currentUser,
               sourceItem.content,
-              targetWordCount.target,
+              restyleTargetWordCount,
               addProgressMessage
             );
             newItem.score = score;
@@ -855,7 +771,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
           formState.model,
           currentUser,
           undefined,
-          targetWordCount.target,
+          formTargetWordCount.target,
           addProgressMessage
         );
         // Update the existing item with the score
@@ -1071,6 +987,52 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
       <div className="space-y-8">
         {/* Prefill and Template Loaders */}
         <div className="bg-white dark:bg-black border border-gray-300 dark:border-gray-800 rounded-lg p-3 sm:p-6 mx-2 sm:mx-4 lg:mx-24">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Copy Maker</h2>
+            
+            <div className="flex flex-col xs:flex-row items-end xs:items-center space-y-1 xs:space-y-0 xs:space-x-2">
+              <button
+                type="button"
+                onClick={handleExportForm}
+                disabled={isExporting || (!formState.businessDescription?.trim() && !formState.originalCopy?.trim())}
+                className="flex items-center bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 px-2 py-1.5 rounded-md text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                title="Export current form as JSON file"
+              >
+                {isExporting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-gray-500 border-t-transparent rounded-full animate-spin mr-2"></div>
+                    <span>Export...</span>
+                  </>
+                ) : (
+                  <>
+                    <Download size={14} className="mr-1.5" />
+                    <span>Export</span>
+                  </>
+                )}
+              </button>
+              
+              <button
+                type="button"
+                onClick={handleImportForm}
+                disabled={isImporting}
+                className="flex items-center bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 px-2 py-1.5 rounded-md text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                title="Import form from JSON file"
+              >
+                {isImporting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-gray-500 border-t-transparent rounded-full animate-spin mr-2"></div>
+                    <span>Import...</span>
+                  </>
+                ) : (
+                  <>
+                    <Upload size={14} className="mr-1.5" />
+                    <span>Import</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+
           {/* Prefill Selector */}
           <div className="hidden">
             <PrefillSelector
@@ -1118,7 +1080,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
               </div>
               
               {/* Template Dropdown */}
-             <div className="flex-1 min-w-0">
+              <div className="flex-1 min-w-0">
                 <select
                   id="templateSelection"
                   name="templateSelection"
@@ -1149,7 +1111,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
                   disabled={!currentUser}
                   title="Generate template JSON from natural language"
                 >
-                 <Lightbulb size={12} className="mr-1 sm:w-3.5 sm:h-3.5" />
+                  <Lightbulb size={12} className="mr-1 sm:w-3.5 sm:h-3.5" />
                   <span className="hidden sm:inline">AI Prompt</span>
                   <span className="sm:hidden">AI</span>
                 </button>
