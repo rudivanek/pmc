@@ -216,7 +216,6 @@ const MainMenu: React.FC<MainMenuProps> = ({ userName, onLogout, onOpenTemplateS
             )}
           </div>
         )}
-        )}
         
         {/* Mobile bottom navigation - Copy Maker and Dashboard always visible */}
         {currentUser && (
