@@ -412,8 +412,8 @@ const CopyForm: React.FC<CopyFormProps> = ({
     toast.success(`Applied "${selectedPrefill.label}" template`);
   };
 
-  
-
+  return (
+    <div className="space-y-6">
       
       
       {/* Project Setup Section */}
