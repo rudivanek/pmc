@@ -647,67 +647,6 @@ const CopyForm: React.FC<CopyFormProps> = ({
             />
           )}
         </div>
-        
-        {/* Quick Start Templates Dropdown */}
-        <div className="mt-4">
-          <label htmlFor="quickStartTemplate" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Quick Start Templates
-          </label>
-          <select
-            id="quickStartTemplate"
-            name="quickStartTemplate"
-            className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
-            value=""
-            onChange={(e) => {
-              if (e.target.value) {
-                handleContentTypeClick(e.target.value);
-                // Reset the dropdown after selection
-                e.target.value = '';
-              }
-            }}
-            disabled={formState.isLoading}
-          >
-            <option value="">— Choose a Content Type —</option>
-            {contentTypes.map((type) => (
-              <option key={type.id} value={type.id}>
-                {type.icon} {type.label} - {type.description}
-              </option>
-            ))}
-          </select>
-          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-            Select a content type to auto-fill the form with optimized settings
-          </p>
-        </div>
-        {/* Quick Start Templates Dropdown */}
-        <div className="mt-4">
-          <label htmlFor="quickStartTemplate" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Quick Start Templates
-          </label>
-          <select
-            id="quickStartTemplate"
-            name="quickStartTemplate"
-            className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
-            value=""
-            onChange={(e) => {
-              if (e.target.value) {
-                handleContentTypeClick(e.target.value);
-                // Reset the dropdown after selection
-                e.target.value = '';
-              }
-            }}
-            disabled={formState.isLoading}
-          >
-            <option value="">— Choose a Content Type —</option>
-            {contentTypes.map((type) => (
-              <option key={type.id} value={type.id}>
-                {type.icon} {type.label} - {type.description}
-              </option>
-            ))}
-          </select>
-          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-            Select a content type to auto-fill the form with optimized settings
-          </p>
-        </div>
       </div>
 
       {/* Shared Inputs */}
@@ -782,6 +721,39 @@ const CopyForm: React.FC<CopyFormProps> = ({
           </div>
         </div>
       )}
+
+      {/* Quick Start Templates Section */}
+      <div className="space-y-6 mb-8">
+        <div className="mb-4">
+          <label htmlFor="quickStartTemplate" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Quick Start Templates
+          </label>
+          <select
+            id="quickStartTemplate"
+            name="quickStartTemplate"
+            className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
+            value=""
+            onChange={(e) => {
+              if (e.target.value) {
+                handleContentTypeClick(e.target.value);
+                // Reset the dropdown after selection
+                e.target.value = '';
+              }
+            }}
+            disabled={formState.isLoading}
+          >
+            <option value="">— Choose a Content Type —</option>
+            {contentTypes.map((type) => (
+              <option key={type.id} value={type.id}>
+                {type.icon} {type.label} - {type.description}
+              </option>
+            ))}
+          </select>
+          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+            Select a content type to auto-fill the form with optimized settings
+          </p>
+        </div>
+      </div>
 
       {/* Display Mode Floating Buttons - Second Group */}
       {shouldShowFloatingButtons() && (
