@@ -389,34 +389,6 @@ const CopyForm: React.FC<CopyFormProps> = ({
       loadFormStateFromPrefill({
         id: selectedPrefill.id,
         label: selectedPrefill.label,
-        data: selectedPrefill.data
-      });
-    } else {
-      // Fallback to manual state setting
-      const newFormState: FormState = {
-        ...DEFAULT_FORM_STATE,
-        ...selectedPrefill.data,
-        isLoading: false,
-        isEvaluating: false,
-        generationProgress: [],
-        copyResult: DEFAULT_FORM_STATE.copyResult,
-        promptEvaluation: undefined
-      };
-      setFormState(newFormState);
-      
-      // Auto-determine display mode based on populated fields
-      const autoMode = getAutoDisplayMode(newFormState);
-      setDisplayMode(autoMode);
-    }
-    
-    toast.success(`Applied "${selectedPrefill.label}" template`);
-  };
-
-  return (
-    <div className="space-y-6">
-      
-      
-      {/* Project Setup Section */}
 
       <div className="space-y-6 mb-8">
         <div>
