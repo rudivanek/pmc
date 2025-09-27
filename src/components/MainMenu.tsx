@@ -19,10 +19,15 @@ const MainMenu: React.FC<MainMenuProps> = ({ userName, onLogout, onOpenTemplateS
   const navigate = useNavigate();
   const { currentUser } = useAuth();
   const [isBetaModalOpen, setIsBetaModalOpen] = React.useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
 
   // Check if current user is admin
   const isAdmin = currentUser?.email === 'rfv@datago.net';
 
+  // Close mobile menu when route changes
+  React.useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [currentPath]);
   return (
     <>
     <header className="w-full py-6 px-4 sm:px-6 lg:px-8 border-b border-gray-300 dark:border-gray-800">
@@ -126,8 +131,102 @@ const MainMenu: React.FC<MainMenuProps> = ({ userName, onLogout, onOpenTemplateS
                   <span className="hidden sm:inline">Logout</span>
                 </button>
               )}
+              </div>
             </div>
           </div>
+            
+          {/* Mobile menu dropdown */}
+          {isMobileMenuOpen && (
+            <div className="sm:hidden w-full mt-4 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4 space-y-3">
+              <div className="flex items-center justify-between mb-3">
+                <ThemeToggle />
+                {currentUser && userName && (
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                    {userName}
+                  </span>
+                )}
+              </div>
+              
+              {/* Navigation links */}
+              <div className="grid grid-cols-2 gap-2">
+                <Link
+                  to="/features"
+                  className={`flex items-center justify-center p-3 rounded-md text-sm font-medium transition-colors ${
+                    currentPath === '/features'
+                      ? 'bg-primary-500 text-white'
+                      : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'
+                  }`}
+                >
+                  <LuZap size={16} className="mr-2" />
+                  Features
+                </Link>
+                
+                <Link
+                  to="/documentation"
+                  className={`flex items-center justify-center p-3 rounded-md text-sm font-medium transition-colors ${
+                    currentPath === '/documentation'
+                      ? 'bg-primary-500 text-white'
+                      : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'
+                  }`}
+                >
+                  <BookOpen size={16} className="mr-2" />
+                  Docs
+                </Link>
+                
+                <Link
+                  to="/step-by-step"
+                  className={`flex items-center justify-center p-3 rounded-md text-sm font-medium transition-colors ${
+                    currentPath === '/step-by-step'
+                      ? 'bg-primary-500 text-white'
+                      : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'
+                  }`}
+                >
+                  <List size={16} className="mr-2" />
+                  Guide
+                </Link>
+                
+                <Link
+                  to="/faq"
+                  className={`flex items-center justify-center p-3 rounded-md text-sm font-medium transition-colors ${
+                    currentPath === '/faq'
+                      ? 'bg-primary-500 text-white'
+                      : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'
+                  }`}
+                >
+                  <HelpCircle size={16} className="mr-2" />
+                  FAQ
+                </Link>
+              </div>
+              
+              {/* Auth buttons for mobile */}
+              {!currentUser ? (
+                <div className="space-y-2 pt-3 border-t border-gray-200 dark:border-gray-700">
+                  <button
+                    onClick={() => setIsBetaModalOpen(true)}
+                    className="w-full bg-white dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-900 dark:text-white font-medium py-2 px-4 rounded-lg transition-colors border border-gray-300 dark:border-gray-700 text-sm"
+                  >
+                    Register for Beta
+                  </button>
+                  <Link
+                    to="/login"
+                    className="w-full bg-primary-600 hover:bg-primary-500 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm text-center block"
+                  >
+                    Login to App
+                  </Link>
+                </div>
+              ) : (
+                <div className="pt-3 border-t border-gray-200 dark:border-gray-700">
+                  <button
+                    onClick={onLogout}
+                    className="w-full bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center text-sm border border-gray-200 dark:border-gray-700"
+                  >
+                    <LogOut size={16} className="mr-2" />
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
             
         {/* Bottom row with button-style navigation - only show when user is authenticated */}
         {currentUser && (
@@ -176,3 +275,14 @@ const MainMenu: React.FC<MainMenuProps> = ({ userName, onLogout, onOpenTemplateS
 };
 
 export default MainMenu;
+              {/* Mobile hamburger menu button */}
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="sm:hidden p-2 text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white"
+                aria-label="Toggle menu"
+              >
+                {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+              </button>
+              
+              {/* Desktop navigation - hidden on mobile */}
+              <div className="hidden sm:flex items-center space-x-2">
