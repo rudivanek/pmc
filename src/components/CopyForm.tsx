@@ -389,7 +389,12 @@ const CopyForm: React.FC<CopyFormProps> = ({
       loadFormStateFromPrefill({
         id: selectedPrefill.id,
         label: selectedPrefill.label,
+        data: selectedPrefill.data
+      });
+    }
 
+  return (
+    <div className="space-y-8">
       <div className="space-y-6 mb-8">
         <div>
           <Tooltip content="Configure your project foundation and organization. These settings help you manage and identify your work.">
