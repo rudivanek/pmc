@@ -262,7 +262,6 @@ const MainMenu: React.FC<MainMenuProps> = ({ userName, onLogout, onOpenTemplateS
           </div>
         )}
         </div>
-      </div>
     </header>
     
     {/* Beta Registration Modal */}
