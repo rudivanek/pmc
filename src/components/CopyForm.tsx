@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FormState, User } from '../types';
 import { MODELS } from '../constants';
 import { DEFAULT_FORM_STATE } from '../constants';
+import { GROUPED_PREFILLS } from '../constants/prefills';
 import { toast } from 'react-hot-toast';
 import { checkUserAccess, getCustomers } from '../services/supabaseClient';
 import { getSuggestions } from '../services/apiService';
@@ -32,6 +33,7 @@ interface CopyFormProps {
   onEvaluateInputs?: () => void;
   onSaveTemplate?: () => void;
   isPrefillEditingMode?: boolean;
+  loadFormStateFromPrefill?: (prefill: any) => void;
   projectDescriptionRef?: React.RefObject<HTMLInputElement>;
   businessDescriptionRef?: React.RefObject<HTMLTextAreaElement>;
   originalCopyRef?: React.RefObject<HTMLTextAreaElement>;
@@ -53,6 +55,7 @@ const CopyForm: React.FC<CopyFormProps> = ({
   onEvaluateInputs,
   onSaveTemplate,
   isPrefillEditingMode = false,
+  loadFormStateFromPrefill,
   projectDescriptionRef,
   businessDescriptionRef,
   originalCopyRef,
@@ -362,6 +365,53 @@ const CopyForm: React.FC<CopyFormProps> = ({
       formState.keyMessage?.trim()
     );
   };
+  // Handle content type button click
+  const handleContentTypeClick = (prefillId: string) => {
+    // Find the prefill across all groups
+    let selectedPrefill = null;
+    for (const group of GROUPED_PREFILLS) {
+      const found = group.options.find(prefill => prefill.id === prefillId);
+      if (found) {
+        selectedPrefill = found;
+        break;
+      }
+    }
+    
+    if (!selectedPrefill) return;
+
+    // Use the existing prefill loading function if available
+    if (loadFormStateFromPrefill) {
+      loadFormStateFromPrefill({
+        id: selectedPrefill.id,
+        label: selectedPrefill.label,
+        data: selectedPrefill.data
+      });
+    } else {
+      // Fallback to manual state setting
+      const newFormState: FormState = {
+        ...DEFAULT_FORM_STATE,
+        ...selectedPrefill.data,
+        isLoading: false,
+        isEvaluating: false,
+        generationProgress: [],
+        copyResult: DEFAULT_FORM_STATE.copyResult,
+        promptEvaluation: undefined
+      };
+      setFormState(newFormState);
+    }
+    
+    toast.success(`Applied "${selectedPrefill.label}" template`);
+  };
+
+  // Popular content types for quick access
+  const contentTypes = [
+    { id: 'blog-post', label: 'Blog Post', icon: '📝', description: '1200 words with SEO optimization' },
+    { id: 'homepage-copy', label: 'Homepage', icon: '🏠', description: '600 words with key sections' },
+    { id: 'google-ads-copy', label: 'Ad Copy', icon: '📢', description: '45 words for Google Ads' },
+    { id: 'email-content', label: 'Email', icon: '📧', description: '100-200 words for campaigns' },
+    { id: 'landing-page-lead-gen', label: 'Landing Page', icon: '🎯', description: '400 words for lead generation' },
+    { id: 'product-description-ecommerce', label: 'Product Description', icon: '🛍️', description: '300 words for e-commerce' }
+  ];
 
   return (
     <div className="bg-white dark:bg-black border border-gray-300 dark:border-gray-800 rounded-lg p-3 sm:p-6 mx-2 sm:mx-4 lg:mx-24">
@@ -409,6 +459,32 @@ const CopyForm: React.FC<CopyFormProps> = ({
             )}
           </button>
         </div>
+      </div>
+      
+      {/* Quick Start Content Types */}
+      <div className="mb-8 p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg">
+        <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-4">Quick Start Templates</h3>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          {contentTypes.map((type) => (
+            <button
+              key={type.id}
+              onClick={() => handleContentTypeClick(type.id)}
+              className="flex flex-col items-center p-3 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 rounded-lg transition-colors group"
+              disabled={formState.isLoading}
+            >
+              <div className="text-2xl mb-2">{type.icon}</div>
+              <div className="text-xs font-medium text-gray-900 dark:text-white text-center mb-1">
+                {type.label}
+              </div>
+              <div className="text-xs text-gray-500 dark:text-gray-400 text-center leading-tight">
+                {type.description}
+              </div>
+            </button>
+          ))}
+        </div>
+        <p className="mt-3 text-xs text-gray-500 dark:text-gray-400 text-center">
+          Click any template to auto-fill the form with optimized settings for that content type
+        </p>
       </div>
       
       {/* Project Setup Section */}

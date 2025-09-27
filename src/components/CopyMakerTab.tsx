@@ -1023,6 +1023,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
             isSmartMode={isSmartMode}
             onEvaluateInputs={onEvaluateInputs}
             onSaveTemplate={onSaveTemplate}
+            loadFormStateFromPrefill={loadFormStateFromPrefill}
             projectDescriptionRef={projectDescriptionRef}
             businessDescriptionRef={businessDescriptionRef}
             originalCopyRef={originalCopyRef}
