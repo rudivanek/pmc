@@ -58,8 +58,10 @@ const MainMenu: React.FC<MainMenuProps> = ({ userName, onLogout, onOpenTemplateS
                     : 'text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
                 }`}
                 title="Documentation"
+              >
             <div className="flex items-center">
                 <BookOpen size={18} />
+            </div>
               </Link>
             <div className="flex items-center space-x-2 sm:space-x-4">
               <Link
@@ -222,6 +224,8 @@ const MainMenu: React.FC<MainMenuProps> = ({ userName, onLogout, onOpenTemplateS
                   <LogOut size={20} />
                 </button>
               )}
+            </div>
+            
             {/* Auth buttons */}
             {!currentUser ? (
               <div className="flex items-center space-x-3 pt-3 border-t border-gray-200 dark:border-gray-700">
@@ -243,13 +247,13 @@ const MainMenu: React.FC<MainMenuProps> = ({ userName, onLogout, onOpenTemplateS
                 onClick={onLogout}
                 className="p-3 text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors duration-200 flex items-center hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
                 title="Logout"
-            >
+              >
                 <LogOut size={20} className="mr-2" />
                 Logout
               </button>
             )}
           </div>
-        </div>
+        )}
         
         {/* Desktop bottom navigation - only show when user is authenticated */}
         {currentUser && (
@@ -282,7 +286,6 @@ const MainMenu: React.FC<MainMenuProps> = ({ userName, onLogout, onOpenTemplateS
           </div>
         )}
       </div>
-        </div>
     </header>
     
     {/* Beta Registration Modal */}
