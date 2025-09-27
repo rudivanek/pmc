@@ -364,27 +364,29 @@ const CopyForm: React.FC<CopyFormProps> = ({
   };
 
   return (
-    <div className="bg-white dark:bg-black border border-gray-300 dark:border-gray-800 rounded-lg p-6 mx-24">
+    <div className="bg-white dark:bg-black border border-gray-300 dark:border-gray-800 rounded-lg p-3 sm:p-6 mx-2 sm:mx-4 lg:mx-24">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-bold text-gray-900 dark:text-white">Copy Maker</h2>
         
-        <div className="flex items-center space-x-3">
+        <div className="flex flex-col sm:flex-row items-end sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
           <button
             type="button"
             onClick={handleExportForm}
             disabled={isExporting || (!formState.businessDescription?.trim() && !formState.originalCopy?.trim())}
-            className="flex items-center bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 px-3 py-2 rounded-md text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 px-2 sm:px-3 py-1.5 sm:py-2 rounded-md text-xs sm:text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             title="Export current form as JSON file"
           >
             {isExporting ? (
               <>
                 <div className="w-4 h-4 border-2 border-gray-500 border-t-transparent rounded-full animate-spin mr-2"></div>
-                Exporting...
+                <span className="hidden sm:inline">Exporting...</span>
+                <span className="sm:hidden">Export...</span>
               </>
             ) : (
               <>
-                <Download size={16} className="mr-1.5" />
-                Export JSON
+                <Download size={14} className="mr-1 sm:mr-1.5 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Export JSON</span>
+                <span className="sm:hidden">Export</span>
               </>
             )}
           </button>
@@ -393,18 +395,20 @@ const CopyForm: React.FC<CopyFormProps> = ({
             type="button"
             onClick={handleImportForm}
             disabled={isImporting}
-            className="flex items-center bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 px-3 py-2 rounded-md text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 px-2 sm:px-3 py-1.5 sm:py-2 rounded-md text-xs sm:text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             title="Import form from JSON file"
           >
             {isImporting ? (
               <>
                 <div className="w-4 h-4 border-2 border-gray-500 border-t-transparent rounded-full animate-spin mr-2"></div>
-                Importing...
+                <span className="hidden sm:inline">Importing...</span>
+                <span className="sm:hidden">Import...</span>
               </>
             ) : (
               <>
-                <Upload size={16} className="mr-1.5" />
-                Import JSON
+                <Upload size={14} className="mr-1 sm:mr-1.5 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Import JSON</span>
+                <span className="sm:hidden">Import</span>
               </>
             )}
           </button>

@@ -907,7 +907,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
       {/* Main Content Layout */}
       <div className="space-y-8">
         {/* Prefill and Template Loaders */}
-        <div className="bg-white dark:bg-black border border-gray-300 dark:border-gray-800 rounded-lg p-6 mx-24">
+        <div className="bg-white dark:bg-black border border-gray-300 dark:border-gray-800 rounded-lg p-3 sm:p-6 mx-2 sm:mx-4 lg:mx-24">
           {/* Prefill Selector */}
           <div className="hidden">
             <PrefillSelector
@@ -918,18 +918,18 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
           </div>
 
           {/* Load Template Section */}
-          <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg">
+          <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg">
             <div className="flex items-center justify-between mb-1">
               <label htmlFor="templateSelection" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Load Template (optional)
                 {templateLoadError && (
-                  <span className="ml-2 text-xs text-red-600 dark:text-red-400">{templateLoadError}</span>
+                  <span className="block sm:inline sm:ml-2 text-xs text-red-600 dark:text-red-400">{templateLoadError}</span>
                 )}
               </label>
               <button
                 type="button"
                 onClick={handleClearAllOverride}
-                className="text-xs text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white flex items-center"
+                className="text-xs text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white flex items-center whitespace-nowrap"
                 disabled={isLoadingTemplates}
               >
                 <RefreshCw size={12} className={`mr-1 ${isLoadingTemplates ? 'animate-spin' : ''}`} />
@@ -939,7 +939,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
             
             <div className="flex flex-col lg:flex-row gap-3">
               {/* Search Input */}
-              <div className="flex-1 lg:flex-initial lg:w-64">
+              <div className="flex-1 lg:flex-initial lg:w-48 xl:w-64">
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <Search size={16} className="text-gray-500" />
@@ -949,7 +949,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
                     placeholder="Search templates..."
                     value={templateSearchQuery}
                     onChange={(e) => setTemplateSearchQuery(e.target.value)}
-                    className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 block w-full pl-10 pr-4 py-2.5"
+                    className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 block w-full pl-8 sm:pl-10 pr-2 sm:pr-4 py-2 sm:py-2.5"
                   />
                 </div>
               </div>
@@ -959,7 +959,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
                 <select
                   id="templateSelection"
                   name="templateSelection"
-                  className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
+                  className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 sm:p-2.5"
                   value={selectedTemplateId}
                   onChange={(e) => handleTemplateSelection(e.target.value)}
                   disabled={isLoadingTemplates}
@@ -982,25 +982,26 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
                 <button
                   type="button"
                   onClick={onOpenTemplateSuggestion}
-                  className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 p-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors inline-flex items-center"
+                  className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 p-2 sm:p-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors inline-flex items-center whitespace-nowrap"
                   disabled={!currentUser}
                   title="Generate template JSON from natural language"
                 >
-                 <Lightbulb size={14} className="mr-1" />
-                  AI Prompt
+                 <Lightbulb size={12} className="mr-1 sm:w-3.5 sm:h-3.5" />
+                  <span className="hidden sm:inline">AI Prompt</span>
+                  <span className="sm:hidden">AI</span>
                 </button>
               </div>
             </div>
             
             {isLoadingTemplates && (
-              <div className="flex items-center justify-center mt-3">
+              <div className="flex items-center justify-center mt-2 sm:mt-3">
                 <LoadingSpinner size="sm" />
-                <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">Loading templates...</span>
+                <span className="ml-2 text-xs sm:text-sm text-gray-600 dark:text-gray-400">Loading templates...</span>
               </div>
             )}
             
             {templateSearchQuery && filteredAndGroupedTemplates.length === 0 && !isLoadingTemplates && (
-              <div className="text-xs text-gray-500 dark:text-gray-400 mt-3">
+              <div className="text-xs text-gray-500 dark:text-gray-400 mt-2 sm:mt-3">
                 No matching templates found.
               </div>
             )}

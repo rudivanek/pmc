@@ -36,11 +36,11 @@ const MainMenu: React.FC<MainMenuProps> = ({ userName, onLogout, onOpenTemplateS
                 to={currentUser ? "/copy-maker" : "/"} 
                 className="text-3xl font-bold text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400 transition-colors duration-200"
               >
-                <h1>PimpMyCopy<span className="text-[10px] font-normal ml-1">Beta 3.21</span></h1>
+                <h1 className="text-2xl sm:text-3xl">PimpMyCopy<span className="text-[8px] sm:text-[10px] font-normal ml-1">Beta 3.21</span></h1>
               </Link>
             </div>
             
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               <ThemeToggle />
               
               {currentUser && userName && (
@@ -52,49 +52,49 @@ const MainMenu: React.FC<MainMenuProps> = ({ userName, onLogout, onOpenTemplateS
               {/* Features and Documentation icon buttons */}
               <Link
                 to="/features"
-                className={`p-2 rounded-md transition-colors duration-200 ${
+                className={`p-1.5 sm:p-2 rounded-md transition-colors duration-200 ${
                   currentPath === '/features'
                     ? 'bg-primary-500 text-white'
                     : 'text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
                 }`}
                 title="Features"
               >
-                <LuZap size={18} />
+                <LuZap size={16} className="sm:w-[18px] sm:h-[18px]" />
               </Link>
               
               <Link
                 to="/documentation"
-                className={`p-2 rounded-md transition-colors duration-200 ${
+                className={`p-1.5 sm:p-2 rounded-md transition-colors duration-200 ${
                   currentPath === '/documentation'
                     ? 'bg-primary-500 text-white'
                     : 'text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
                 }`}
                 title="Documentation"
               >
-                <BookOpen size={18} />
+                <BookOpen size={16} className="sm:w-[18px] sm:h-[18px]" />
               </Link>
               {/* This is the new Step-by-Step Guide button */}
 <Link
   to="/step-by-step"
-  className={`p-2 rounded-md transition-colors duration-200 ${
+  className={`p-1.5 sm:p-2 rounded-md transition-colors duration-200 ${
     currentPath === '/step-by-step'
       ? 'bg-primary-500 text-white'
       : 'text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
   }`}
   title="Step-by-Step Guide"
 >
-  <List size={18} />
+  <List size={16} className="sm:w-[18px] sm:h-[18px]" />
 </Link>
               <Link
                 to="/faq"
-                className={`p-2 rounded-md transition-colors duration-200 ${
+                className={`p-1.5 sm:p-2 rounded-md transition-colors duration-200 ${
                   currentPath === '/faq'
                     ? 'bg-primary-500 text-white'
                     : 'text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
                 }`}
                 title="FAQ"
               >
-                <HelpCircle size={18} />
+                <HelpCircle size={16} className="sm:w-[18px] sm:h-[18px]" />
               </Link>
               
               {/* Show Login button when user is not authenticated */}
@@ -102,15 +102,17 @@ const MainMenu: React.FC<MainMenuProps> = ({ userName, onLogout, onOpenTemplateS
                 <>
                   <button
                     onClick={() => setIsBetaModalOpen(true)}
-                    className="bg-white dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-900 dark:text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 transform hover:scale-105 border border-gray-300 dark:border-gray-700"
+                    className="bg-white dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-900 dark:text-white font-medium py-1.5 px-2 sm:py-2 sm:px-4 rounded-lg transition-colors duration-200 transform hover:scale-105 border border-gray-300 dark:border-gray-700 text-xs sm:text-sm"
                   >
-                    Register for Beta
+                    <span className="hidden sm:inline">Register for Beta</span>
+                    <span className="sm:hidden">Beta</span>
                   </button>
                 <Link
                   to="/login"
-                  className="bg-primary-600 hover:bg-primary-500 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 transform hover:scale-105"
+                  className="bg-primary-600 hover:bg-primary-500 text-white font-medium py-1.5 px-2 sm:py-2 sm:px-4 rounded-lg transition-colors duration-200 transform hover:scale-105 text-xs sm:text-sm"
                 >
-                  Login to App
+                  <span className="hidden sm:inline">Login to App</span>
+                  <span className="sm:hidden">Login</span>
                 </Link>
                 </>
               )}
@@ -118,9 +120,9 @@ const MainMenu: React.FC<MainMenuProps> = ({ userName, onLogout, onOpenTemplateS
               {currentUser && onLogout && (
                 <button
                   onClick={onLogout}
-                  className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors duration-200 flex items-center text-sm"
+                  className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors duration-200 flex items-center text-xs sm:text-sm"
                 >
-                  <LogOut size={18} className="mr-1.5" />
+                  <LogOut size={16} className="mr-1 sm:mr-1.5 sm:w-[18px] sm:h-[18px]" />
                   <span className="hidden sm:inline">Logout</span>
                 </button>
               )}
@@ -130,29 +132,31 @@ const MainMenu: React.FC<MainMenuProps> = ({ userName, onLogout, onOpenTemplateS
         {/* Bottom row with button-style navigation - only show when user is authenticated */}
         {currentUser && (
           <div className="w-full">
-            <nav className="flex items-center space-x-2">
+            <nav className="flex items-center space-x-1 sm:space-x-2">
             <Link 
               to="/copy-maker" 
-              className={`flex items-center text-sm font-medium px-4 py-2 rounded-md border transition-colors duration-200 ${
+              className={`flex items-center text-xs sm:text-sm font-medium px-2 sm:px-4 py-1.5 sm:py-2 rounded-md border transition-colors duration-200 ${
                 currentPath === '/copy-maker' 
                   ? 'bg-gray-500 text-white border-gray-500' 
                   : 'bg-white dark:bg-black border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
               }`}
             >
-              <LuZap size={18} className="mr-2" />
-              Copy Maker
+              <LuZap size={16} className="mr-1 sm:mr-2 sm:w-[18px] sm:h-[18px]" />
+              <span className="hidden sm:inline">Copy Maker</span>
+              <span className="sm:hidden">Copy</span>
             </Link>
             
             <Link 
               to="/dashboard" 
-              className={`flex items-center text-sm font-medium px-4 py-2 rounded-md border transition-colors duration-200 ${
+              className={`flex items-center text-xs sm:text-sm font-medium px-2 sm:px-4 py-1.5 sm:py-2 rounded-md border transition-colors duration-200 ${
                 currentPath === '/dashboard' 
                   ? 'bg-gray-500 text-white border-gray-500' 
                   : 'bg-white dark:bg-black border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
               }`}
             >
-              <LayoutDashboard size={18} className="mr-2" />
-              Dashboard
+              <LayoutDashboard size={16} className="mr-1 sm:mr-2 sm:w-[18px] sm:h-[18px]" />
+              <span className="hidden sm:inline">Dashboard</span>
+              <span className="sm:hidden">Dash</span>
             </Link>
             
             </nav>
