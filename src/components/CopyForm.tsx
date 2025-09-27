@@ -532,13 +532,6 @@ const CopyForm: React.FC<CopyFormProps> = ({
           </div>
 
           {/* Project Description */}
-          <div className="mb-6">
-            <label htmlFor="projectDescription" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Project Description <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              id="projectDescription"
               name="projectDescription"
               required
               className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
