@@ -593,26 +593,6 @@ const CopyForm: React.FC<CopyFormProps> = ({
             </div>
           </div>
 
-          {/* Brief Description */}
-          <div className="mb-6">
-            <label htmlFor="briefDescription" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Brief Description
-            </label>
-            <input
-              type="text"
-              id="briefDescription"
-              name="briefDescription"
-              className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
-              placeholder="Brief summary of the project or content"
-              value={briefDescriptionField.inputValue}
-              onChange={briefDescriptionField.handleChange}
-              onBlur={briefDescriptionField.handleBlur}
-            />
-          </div>
-        </div>
-
-        {/* Content Creation Form */}
-        <div>
           <div>
             {formState.tab === 'create' ? (
               <CreateCopyForm
@@ -655,7 +635,6 @@ const CopyForm: React.FC<CopyFormProps> = ({
         activeSuggestionField={activeSuggestionField}
         isSmartMode={isSmartMode}
         setFormState={setFormState}
-        displayMode={displayMode}
       />
 
       {/* Feature Toggles */}
