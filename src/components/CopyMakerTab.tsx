@@ -301,6 +301,67 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
     }
   };
 
+
+
+
+  // Popular content types for quick access
+  const contentTypes = [
+    { id: 'blog-post', label: 'Blog Post', icon: '📝', description: '1200 words with SEO optimization' },
+    { id: 'homepage-copy', label: 'Homepage', icon: '🏠', description: '600 words with key sections' },
+    { id: 'google-ads-copy', label: 'Ad Copy', icon: '📢', description: '45 words for Google Ads' },
+    { id: 'email-content', label: 'Email', icon: '📧', description: '100-200 words for campaigns' },
+    { id: 'landing-page-lead-gen', label: 'Landing Page', icon: '🎯', description: '400 words for lead generation' },
+    { id: 'product-description-ecommerce', label: 'Product Description', icon: '🛍️', description: '300 words for e-commerce' }
+  ];
+
+  return (
+    <div className="bg-white dark:bg-black border border-gray-300 dark:border-gray-800 rounded-lg p-3 sm:p-6 mx-2 sm:mx-4 lg:mx-24">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white">Copy Maker</h2>
+        
+        <div className="flex flex-col xs:flex-row items-end xs:items-center space-y-1 xs:space-y-0 xs:space-x-2">
+          <button
+            type="button"
+            onClick={handleExportForm}
+            disabled={isExporting || (!formState.businessDescription?.trim() && !formState.originalCopy?.trim())}
+            className="flex items-center bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 px-2 py-1.5 rounded-md text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            title="Export current form as JSON file"
+          >
+            {isExporting ? (
+              <>
+                <div className="w-4 h-4 border-2 border-gray-500 border-t-transparent rounded-full animate-spin mr-2"></div>
+                <span>Export...</span>
+              </>
+            ) : (
+              <>
+                <Download size={14} className="mr-1.5" />
+                <span>Export</span>
+              </>
+            )}
+          </button>
+          
+          <button
+            type="button"
+            onClick={handleImportForm}
+            disabled={isImporting}
+            className="flex items-center bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 px-2 py-1.5 rounded-md text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            title="Import form from JSON file"
+          >
+            {isImporting ? (
+              <>
+                <div className="w-4 h-4 border-2 border-gray-500 border-t-transparent rounded-full animate-spin mr-2"></div>
+                <span>Import...</span>
+              </>
+            ) : (
+              <>
+                <Upload size={14} className="mr-1.5" />
+                <span>Import</span>
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+
   // Override onClearAll to also clear template selection
   const handleClearAllOverride = () => {
     onClearAll();
