@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
-import { BarChart3, FileText, Settings, DollarSign, Users, RefreshCw, Calendar, Zap, Eye, Trash2, Edit, ArrowRight, User, AlertCircle, Filter, Download, List } from 'lucide-react';
+import { BarChart3, FileText, Settings, DollarSign, Users, RefreshCw, Calendar, Zap, Eye, Trash2, CreditCard as Edit, ArrowRight, User, AlertCircle, Filter, Download, List } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import LoadingSpinner from './ui/LoadingSpinner';
 import { 
