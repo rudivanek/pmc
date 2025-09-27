@@ -274,14 +274,3 @@ const MainMenu: React.FC<MainMenuProps> = ({ userName, onLogout, onOpenTemplateS
 };
 
 export default MainMenu;
-              {/* Mobile hamburger menu button */}
-              <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="sm:hidden p-2 text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white"
-                aria-label="Toggle menu"
-              >
-                {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-              </button>
-              
-              {/* Desktop navigation - hidden on mobile */}
-              <div className="hidden sm:flex items-center space-x-2">
