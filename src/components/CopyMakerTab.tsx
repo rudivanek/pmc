@@ -1007,7 +1007,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
                 ) : (
                   <>
                     <Download size={14} className="mr-1.5" />
-                    <span>Export</span>
+                    <span>Export JSON</span>
                   </>
                 )}
               </button>
