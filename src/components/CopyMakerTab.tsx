@@ -1033,7 +1033,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
                 )}
               </button>
             </div>
-          </div>
+      
               
               {/* Clear Button */}
               <button
