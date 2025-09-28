@@ -1027,7 +1027,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
                 ) : (
                   <>
                     <Upload size={14} className="mr-1.5" />
-                    <span>Import</span>
+                    <span>Import JSON</span>
                   </>
                 )}
               </button>
