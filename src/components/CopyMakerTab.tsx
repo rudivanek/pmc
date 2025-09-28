@@ -1033,9 +1033,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
                 )}
               </button>
             </div>
-      
-              
-              {/* Clear Button */}
+            {/* Clear Button */}
               <button
                 onClick={() => {
                   onClearAll();
@@ -1047,6 +1045,9 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
                 <RefreshCw size={16} className="mr-2" />
                 Clear All
               </button>
+          </div>
+              
+              
               
               
               
