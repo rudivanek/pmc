@@ -1203,7 +1203,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
         </div>
 
         {/* Form Section */}
-        <div>
+            <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
           <CopyForm
             currentUser={currentUser}
             formState={formState}
