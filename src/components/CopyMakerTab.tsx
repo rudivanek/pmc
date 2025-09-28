@@ -11,6 +11,7 @@ import AppSpinner from './ui/AppSpinner';
 import LoadingSpinner from './ui/LoadingSpinner';
 import FloatingActionBar from './FloatingActionBar';
 import GeneratedCopyCard from './GeneratedCopyCard';
+import { getAutoDisplayMode } from '../utils/formUtils';
 import SavePrefillModal from './SavePrefillModal';
 import { JsonLdModal } from './JsonLdModal';
 import UrlParamLoader from './UrlParamLoader';
@@ -20,7 +21,7 @@ import { checkUserAccess, getPrefill, createPrefill, updatePrefill, getUserTempl
 import { calculateTargetWordCount, extractWordCount } from '../services/api/utils';
 import { RefreshCw, Search } from 'lucide-react';
 import PrefillSelector from './PrefillSelector';
-import { GROUPED_PREFILLS, getAutoDisplayMode } from '../constants/prefills';
+import { GROUPED_PREFILLS } from '../constants/prefills';
 
 // Helper function to check if content is empty
 function isContentEmpty(content: any): boolean {
