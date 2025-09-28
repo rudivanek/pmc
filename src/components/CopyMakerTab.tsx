@@ -1040,7 +1040,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
                   setDisplayMode('all');
                 }}
                 disabled={formState.isLoading}
-                className="w-4 h-4 border-2 border-gray-500 border-t-transparent rounded-full animate-spin mr-2""
+                className="w-4 h-4 border-2 border-gray-500 border-t-transparent rounded-full animate-spin mr-2"
               >
                 <RefreshCw size={16} className="mr-2" />
                 Clear All
