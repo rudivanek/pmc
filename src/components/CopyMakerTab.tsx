@@ -1011,22 +1011,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
                   </>
                 )}
               </button>
-              
-              {/* Clear Button */}
-              <button
-                onClick={() => {
-                  onClearAll();
-                  setDisplayMode('all');
-                }}
-                disabled={formState.isLoading}
-                className="flex items-center justify-center bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 px-4 py-2 rounded-md transition-colors text-sm"
-              >
-                <RefreshCw size={16} className="mr-2" />
-                Clear All
-              </button>
-              
-              
-              
+
               {/* Import JSON Button */}
               <button
                 type="button"
@@ -1049,6 +1034,23 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
               </button>
             </div>
           </div>
+              
+              {/* Clear Button */}
+              <button
+                onClick={() => {
+                  onClearAll();
+                  setDisplayMode('all');
+                }}
+                disabled={formState.isLoading}
+                className="flex items-center justify-center bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 px-4 py-2 rounded-md transition-colors text-sm"
+              >
+                <RefreshCw size={16} className="mr-2" />
+                Clear All
+              </button>
+              
+              
+              
+              
           {/* Prefill Selector */}
           <div className="hidden">
             <PrefillSelector
