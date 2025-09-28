@@ -992,46 +992,47 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
             <h2 className="text-xl font-bold text-gray-900 dark:text-white">Copy Maker</h2>
             
             <div className="flex items-center space-x-2">
-  <button
-    type="button"
-    onClick={handleExportForm}
-    disabled={isExporting || (!formState.businessDescription?.trim() && !formState.originalCopy?.trim())}
-    className="flex items-center bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 px-2 py-1.5 rounded-md text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-    title="Export current form as JSON file"
-  >
-    {isExporting ? (
-      <>
-        <div className="w-4 h-4 border-2 border-gray-500 border-t-transparent rounded-full animate-spin mr-2"></div>
-        <span>Export...</span>
-      </>
-    ) : (
-      <>
-        <Download size={14} className="mr-1.5" />
-        <span>Export JSON</span>
-      </>
-    )}
-  </button>
+              <button
+                type="button"
+                onClick={handleExportForm}
+                disabled={isExporting || (!formState.businessDescription?.trim() && !formState.originalCopy?.trim())}
+                className="flex items-center bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 px-2 py-1.5 rounded-md text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                title="Export current form as JSON file"
+              >
+                {isExporting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-gray-500 border-t-transparent rounded-full animate-spin mr-2"></div>
+                    <span>Export...</span>
+                  </>
+                ) : (
+                  <>
+                    <Download size={14} className="mr-1.5" />
+                    <span>Export JSON</span>
+                  </>
+                )}
+              </button>
 
-  <button
-    type="button"
-    onClick={handleImportForm}
-    disabled={isImporting}
-    className="flex items-center bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 px-2 py-1.5 rounded-md text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-    title="Import form from JSON file"
-  >
-    {isImporting ? (
-      <>
-        <div className="w-4 h-4 border-2 border-gray-500 border-t-transparent rounded-full animate-spin mr-2"></div>
-        <span>Import...</span>
-      </>
-    ) : (
-      <>
-        <Upload size={14} className="mr-1.5" />
-        <span>Import JSON</span>
-      </>
-    )}
-  </button>
-</div>
+              <button
+                type="button"
+                onClick={handleImportForm}
+                disabled={isImporting}
+                className="flex items-center bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 px-2 py-1.5 rounded-md text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                title="Import form from JSON file"
+              >
+                {isImporting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-gray-500 border-t-transparent rounded-full animate-spin mr-2"></div>
+                    <span>Import...</span>
+                  </>
+                ) : (
+                  <>
+                    <Upload size={14} className="mr-1.5" />
+                    <span>Import JSON</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
           {/* Prefill Selector */}
           <div className="hidden">
             <PrefillSelector
@@ -1039,61 +1040,144 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
               setFormState={setFormState}
               setDisplayMode={setDisplayMode}
             />
-               <div className="flex flex-col sm:flex-row gap-3">
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3">
 
-          {/* Load Template Section */}
-          <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg">
-            <div className="flex items-center justify-between mb-1">
-              <label htmlFor="templateSelection" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Load Template (optional)
-                {templateLoadError && (
-                  <span className="block sm:inline sm:ml-2 text-xs text-red-600 dark:text-red-400">{templateLoadError}</span>
-                )}
-              </label>
-              <button
-                type="button"
-                onClick={handleClearAllOverride}
-                className="text-xs text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white flex items-center whitespace-nowrap"
-                disabled={isLoadingTemplates}
-              >
-                <RefreshCw size={12} className={`mr-1 ${isLoadingTemplates ? 'animate-spin' : ''}`} />
-                Clear
-              </button>
-            </div>
-            
-            <div className="flex flex-col lg:flex-row gap-3">
-              {/* Search Input */}
-              <div className="flex-1 lg:flex-initial lg:w-48 xl:w-64">
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Search size={16} className="text-gray-500" />
+            {/* Load Template Section */}
+            <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg">
+              <div className="flex items-center justify-between mb-1">
+                <label htmlFor="templateSelection" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Load Template (optional)
+                  {templateLoadError && (
+                    <span className="block sm:inline sm:ml-2 text-xs text-red-600 dark:text-red-400">{templateLoadError}</span>
+                  )}
+                </label>
+                <button
+                  type="button"
+                  onClick={handleClearAllOverride}
+                  className="text-xs text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white flex items-center whitespace-nowrap"
+                  disabled={isLoadingTemplates}
+                >
+                  <RefreshCw size={12} className={`mr-1 ${isLoadingTemplates ? 'animate-spin' : ''}`} />
+                  Clear
+                </button>
+              </div>
+              
+              <div className="flex flex-col lg:flex-row gap-3">
+                {/* Search Input */}
+                <div className="flex-1 lg:flex-initial lg:w-48 xl:w-64">
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Search size={16} className="text-gray-500" />
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Search templates..."
+                      value={templateSearchQuery}
+                      onChange={(e) => setTemplateSearchQuery(e.target.value)}
+                      className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 block w-full pl-8 sm:pl-10 pr-2 sm:pr-4 py-2 sm:py-2.5"
+                    />
                   </div>
-                  <input
-                    type="text"
-                    placeholder="Search templates..."
-                    value={templateSearchQuery}
-                    onChange={(e) => setTemplateSearchQuery(e.target.value)}
-                    className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 block w-full pl-8 sm:pl-10 pr-2 sm:pr-4 py-2 sm:py-2.5"
-                  />
+                </div>
+                
+                {/* Template Dropdown */}
+                <div className="flex-1 min-w-0">
+                  <select
+                    id="templateSelection"
+                    name="templateSelection"
+                    className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 sm:p-2.5 truncate"
+                    value={selectedTemplateId}
+                    onChange={(e) => handleTemplateSelection(e.target.value)}
+                    disabled={isLoadingTemplates}
+                  >
+                    <option value="">{isLoadingTemplates ? '— Loading Templates —' : '— Select a Template —'}</option>
+                    {filteredAndGroupedTemplates.map((group) => (
+                      <optgroup key={group.category} label={group.category.length > 25 ? group.category.substring(0, 25) + '...' : group.category}>
+                        {group.templates.map((template) => (
+                          <option key={template.id} value={template.id} title={template.template_name}>
+                            {template.template_name.length > 35 ? template.template_name.substring(0, 35) + '...' : template.template_name}
+                          </option>
+                        ))}
+                      </optgroup>
+                    ))}
+                  </select>
+                </div>
+                
+                {/* AI Prompt Button */}
+                <div className="flex-shrink-0">
+                  <button
+                    type="button"
+                    onClick={onOpenTemplateSuggestion}
+                    className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 p-2 sm:p-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors inline-flex items-center whitespace-nowrap"
+                    disabled={!currentUser}
+                    title="Generate template JSON from natural language"
+                  >
+                    <Lightbulb size={12} className="mr-1 sm:w-3.5 sm:h-3.5" />
+                    <span className="hidden sm:inline">AI Prompt</span>
+                    <span className="sm:hidden">AI</span>
+                  </button>
                 </div>
               </div>
               
-              {/* Template Dropdown */}
-              <div className="flex-1 min-w-0">
+              {isLoadingTemplates && (
+                <div className="flex items-center justify-center mt-2 sm:mt-3">
+                  <LoadingSpinner size="sm" />
+                  <span className="ml-2 text-xs sm:text-sm text-gray-600 dark:text-gray-400">Loading templates...</span>
+                </div>
+              )}
+              
+              {templateSearchQuery && filteredAndGroupedTemplates.length === 0 && !isLoadingTemplates && (
+                <div className="text-xs text-gray-500 dark:text-gray-400 mt-2 sm:mt-3">
+                  No matching templates found.
+                </div>
+              )}
+            </div>
+
+            {/* Quick Start Templates Section */}
+            <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg">
+              <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-3">Quick Start Templates</h3>
+              
+              <div className="mb-4">
                 <select
-                  id="templateSelection"
-                  name="templateSelection"
-                  className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 sm:p-2.5 truncate"
-                  value={selectedTemplateId}
-                  onChange={(e) => handleTemplateSelection(e.target.value)}
-                  disabled={isLoadingTemplates}
+                  className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      // Find the prefill across all groups
+                      let selectedPrefill = null;
+                      for (const group of GROUPED_PREFILLS) {
+                        const found = group.options.find(prefill => prefill.id === e.target.value);
+                        if (found) {
+                          selectedPrefill = found;
+                          break;
+                        }
+                      }
+                      
+                      if (selectedPrefill && loadFormStateFromPrefill) {
+                        loadFormStateFromPrefill({
+                          id: selectedPrefill.id,
+                          label: selectedPrefill.label,
+                          data: selectedPrefill.data
+                        });
+                        
+                        // Auto-determine display mode based on populated fields
+                        const autoMode = getAutoDisplayMode({
+                          ...formState,
+                          ...selectedPrefill.data
+                        });
+                        setDisplayMode(autoMode);
+                        
+                        toast.success(`Applied "${selectedPrefill.label}" template`);
+                      }
+                    }
+                  }}
+                  value=""
                 >
-                  <option value="">{isLoadingTemplates ? '— Loading Templates —' : '— Select a Template —'}</option>
-                  {filteredAndGroupedTemplates.map((group) => (
-                    <optgroup key={group.category} label={group.category.length > 25 ? group.category.substring(0, 25) + '...' : group.category}>
-                      {group.templates.map((template) => (
-                        <option key={template.id} value={template.id} title={template.template_name}>
-                          {template.template_name.length > 35 ? template.template_name.substring(0, 35) + '...' : template.template_name}
+                  <option value="">— Choose a Content Type —</option>
+                  {GROUPED_PREFILLS.map((group) => (
+                    <optgroup key={group.category} label={group.category}>
+                      {group.options.map((prefill) => (
+                        <option key={prefill.id} value={prefill.id}>
+                          {prefill.label}
                         </option>
                       ))}
                     </optgroup>
@@ -1101,91 +1185,10 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
                 </select>
               </div>
               
-              {/* AI Prompt Button */}
-              <div className="flex-shrink-0">
-                <button
-                  type="button"
-                  onClick={onOpenTemplateSuggestion}
-                  className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 p-2 sm:p-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors inline-flex items-center whitespace-nowrap"
-                  disabled={!currentUser}
-                  title="Generate template JSON from natural language"
-                >
-                  <Lightbulb size={12} className="mr-1 sm:w-3.5 sm:h-3.5" />
-                  <span className="hidden sm:inline">AI Prompt</span>
-                  <span className="sm:hidden">AI</span>
-                </button>
-              </div>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                Select a content type to auto-fill the form with optimized settings
+              </p>
             </div>
-            
-            {isLoadingTemplates && (
-              <div className="flex items-center justify-center mt-2 sm:mt-3">
-                <LoadingSpinner size="sm" />
-                <span className="ml-2 text-xs sm:text-sm text-gray-600 dark:text-gray-400">Loading templates...</span>
-              </div>
-            )}
-            
-            {templateSearchQuery && filteredAndGroupedTemplates.length === 0 && !isLoadingTemplates && (
-              <div className="text-xs text-gray-500 dark:text-gray-400 mt-2 sm:mt-3">
-                No matching templates found.
-              </div>
-            )}
-          </div>
-
-          {/* Quick Start Templates Section */}
-          <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg">
-            <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-3">Quick Start Templates</h3>
-            
-            <div className="mb-4">
-              <select
-                className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
-                onChange={(e) => {
-                  if (e.target.value) {
-                    // Find the prefill across all groups
-                    let selectedPrefill = null;
-                    for (const group of GROUPED_PREFILLS) {
-                      const found = group.options.find(prefill => prefill.id === e.target.value);
-                      if (found) {
-                        selectedPrefill = found;
-                        break;
-                      }
-                    }
-                    
-                    if (selectedPrefill && loadFormStateFromPrefill) {
-                      loadFormStateFromPrefill({
-                        id: selectedPrefill.id,
-                        label: selectedPrefill.label,
-                        data: selectedPrefill.data
-                      });
-                      
-                      // Auto-determine display mode based on populated fields
-                      const autoMode = getAutoDisplayMode({
-                        ...formState,
-                        ...selectedPrefill.data
-                      });
-                      setDisplayMode(autoMode);
-                      
-                      toast.success(`Applied "${selectedPrefill.label}" template`);
-                    }
-                  }
-                }}
-                value=""
-              >
-                <option value="">— Choose a Content Type —</option>
-                {GROUPED_PREFILLS.map((group) => (
-                  <optgroup key={group.category} label={group.category}>
-                    {group.options.map((prefill) => (
-                      <option key={prefill.id} value={prefill.id}>
-                        {prefill.label}
-                      </option>
-                    ))}
-                  </optgroup>
-                ))}
-              </select>
-            </div>
-            
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              Select a content type to auto-fill the form with optimized settings
-            </p>
           </div>
         </div>
 
