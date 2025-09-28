@@ -996,6 +996,22 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
                 type="button"
                 onClick={handleExportForm}
                 disabled={isExporting || (!formState.businessDescription?.trim() && !formState.originalCopy?.trim())}
+                className="flex items-center bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 px-2 py-1.5 rounded-md text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                title="Export form to JSON file"
+              >
+                {isExporting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-gray-500 border-t-transparent rounded-full animate-spin mr-2"></div>
+                    <span>Export...</span>
+                  </>
+                ) : (
+                  <>
+                    <Download size={14} className="mr-1.5" />
+                    <span>Export JSON</span>
+                  </>
+                )}
+              </button>
+              
               {/* Clear Button */}
               <button
                 onClick={handleClearAllOverride}
@@ -1026,6 +1042,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
               </button>
               
               {/* Import JSON Button */}
+              <button
                 type="button"
                 onClick={handleImportForm}
                 disabled={isImporting}
@@ -1191,6 +1208,14 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
                       {group.options.map((prefill) => (
                         <option key={prefill.id} value={prefill.id}>
                           {prefill.label}
+                        </option>
+                      ))}
+                    </optgroup>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Form Section */}
