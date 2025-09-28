@@ -1149,7 +1149,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
             {/* Quick Start Templates Section */}
             <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg">
               <div className="flex items-center justify-between mb-1">
-              <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-3">Quick Start Templates</h3>
+              Quick Start Templates
               
               <div className="mb-4">
                 <select
