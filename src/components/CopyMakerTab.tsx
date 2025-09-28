@@ -1071,15 +1071,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
                     <span className="block sm:inline sm:ml-2 text-xs text-red-600 dark:text-red-400">{templateLoadError}</span>
                   )}
                 </label>
-                <button
-                  type="button"
-                  onClick={handleClearAllOverride}
-                  className="text-xs text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white flex items-center whitespace-nowrap"
-                  disabled={isLoadingTemplates}
-                >
-                  <RefreshCw size={12} className={`mr-1 ${isLoadingTemplates ? 'animate-spin' : ''}`} />
-                  Clear
-                </button>
+             
               </div>
               
               <div className="flex flex-col lg:flex-row gap-3">
