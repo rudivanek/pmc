@@ -86,6 +86,7 @@ const TemplateLoader: React.FC<TemplateLoaderProps> = ({
           No matching templates found.
         </div>
       )}
+      </div>
     </div>
   );
 };
