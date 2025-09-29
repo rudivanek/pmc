@@ -113,7 +113,7 @@ const TemplateLoader: React.FC<TemplateLoaderProps> = ({
               title="Generate template JSON from natural language"
             >
               <Lightbulb size={16} className="mr-2" />
-              AI Prompt
+              AI Prompt x
             </button>
           </div>
         </div>
