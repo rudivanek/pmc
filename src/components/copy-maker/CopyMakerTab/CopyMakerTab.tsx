@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react';
 import { toast } from 'react-hot-toast';
-import { Lightbulb } from 'lucide-react';
 
 // Component imports
 import CopyForm from '../../CopyForm';
@@ -47,7 +46,7 @@ interface CopyMakerTabProps {
   onSaveOutput?: () => void;
   onViewPrompts?: () => void;
   onCancel?: () => void;
-  onOpenTemplateSuggestion?: () => void;
+  onOpenTemplateSuggestion?: () => void; // passed down to TemplateLoader
   loadFormStateFromPrefill: any;
   loadFormStateFromTemplate: any;
   displayMode: 'all' | 'populated';
@@ -214,46 +213,25 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
             isClearDisabled={isExporting || (!formState.businessDescription?.trim() && !formState.originalCopy?.trim()) || formState.isLoading}
           />
 
-          {/* GRID: Saved Template | Quick Start | AI Prompt */}
-          {/* We force three columns on sm+ screens: 1fr / 1fr / auto */}
-          <div className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto] gap-3 items-stretch">
-            {/* Load Saved Template */}
-            <div className="min-w-0">
-              <TemplateLoader
-                templateLoadError={templateLoadError}
-                isLoadingTemplates={isLoadingTemplates}
-                templateSearchQuery={templateSearchQuery}
-                setTemplateSearchQuery={setTemplateSearchQuery}
-                filteredAndGroupedTemplates={filteredAndGroupedTemplates}
-                selectedTemplateId={selectedTemplateId}
-                onSelectTemplate={handleTemplateSelection}
-              />
-            </div>
+          {/* Row: Template Loader | Quick Start Picker */}
+          <div className="flex flex-col sm:flex-row gap-3 items-stretch">
+            <TemplateLoader
+              templateLoadError={templateLoadError}
+              isLoadingTemplates={isLoadingTemplates}
+              templateSearchQuery={templateSearchQuery}
+              setTemplateSearchQuery={setTemplateSearchQuery}
+              filteredAndGroupedTemplates={filteredAndGroupedTemplates}
+              /* new props required by updated TemplateLoader */
+              selectedTemplateId={selectedTemplateId}
+              onSelectTemplate={handleTemplateSelection}
+              currentUser={currentUser}
+              onOpenTemplateSuggestion={onOpenTemplateSuggestion}
+            />
 
-            {/* Load Quick Start Template */}
-            <div className="min-w-0">
-              <QuickStartPicker
-                formState={formState}
-                onApplyPrefill={handleApplyPrefill}
-              />
-            </div>
-
-            {/* AI Prompt – standalone right-side container */}
-            <div className="sm:w-[12rem] sm:justify-self-end">
-              <div className="h-full p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg flex items-end">
-                <button
-                  type="button"
-                  onClick={onOpenTemplateSuggestion}
-                  className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 w-full p-2 sm:p-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors inline-flex items-center justify-center whitespace-nowrap"
-                  disabled={!currentUser}
-                  title="Generate template JSON from natural language"
-                >
-                  <Lightbulb size={14} className="mr-1" />
-                  <span className="hidden sm:inline">AI Prompt</span>
-                  <span className="sm:hidden">AI</span>
-                </button>
-              </div>
-            </div>
+            <QuickStartPicker
+              formState={formState}
+              onApplyPrefill={handleApplyPrefill}
+            />
           </div>
         </div>
 
