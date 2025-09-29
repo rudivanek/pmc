@@ -228,6 +228,8 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
               templateSearchQuery={templateSearchQuery}
               setTemplateSearchQuery={setTemplateSearchQuery}
               filteredAndGroupedTemplates={filteredAndGroupedTemplates}
+              selectedTemplateId={selectedTemplateId}
+              onSelectTemplate={handleTemplateSelection}
             />
 
             <QuickStartPicker
@@ -235,7 +237,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
               onApplyPrefill={handleApplyPrefill}
             />
 
-            {/* AI Template Generator */}
+            {/* AI Template Generator - Separate third section */}
             <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                 AI Template Generator
@@ -243,12 +245,13 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
               <button
                 type="button"
                 onClick={onOpenTemplateSuggestion}
-                className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 p-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors inline-flex items-center w-full justify-center"
+                className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 p-2 sm:p-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors inline-flex items-center w-full justify-center whitespace-nowrap"
                 disabled={!currentUser}
                 title="Generate template JSON from natural language"
               >
-                <Lightbulb size={16} className="mr-2" />
-                Generate Template from AI Prompt
+                <Lightbulb size={12} className="mr-1 sm:w-3.5 sm:h-3.5" />
+                <span className="hidden sm:inline">Generate Template from AI Prompt</span>
+                <span className="sm:hidden">AI Prompt</span>
               </button>
             </div>
           </div>
