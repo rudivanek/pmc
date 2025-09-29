@@ -1019,7 +1019,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
                 type="button"
                 onClick={handleImportForm}
                 disabled={isImporting}
-                className="flex items-center bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 px-2 py-1.5 rounded-md text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                export json
                 title="Import form from JSON file"
               >
                 {isImporting ? (
