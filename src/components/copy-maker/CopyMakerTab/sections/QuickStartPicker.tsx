@@ -13,8 +13,7 @@ const QuickStartPicker: React.FC<QuickStartPickerProps> = ({
   onApplyPrefill
 }) => {
   return (
-    // Topmost container of QuickStartPicker:
-<div className="h-full p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg">
+    <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg">
       <label htmlFor="quickStartSelection" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
         Load Quick Start Template
       </label>
