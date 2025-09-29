@@ -1151,7 +1151,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
              
               Quick Start Templates
             </div>
-        </h4>
+        </div>
              
               <div className="mb-4">
                 <select
