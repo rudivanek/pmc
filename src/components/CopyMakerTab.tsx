@@ -1042,8 +1042,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
                   setDisplayMode('all');
                 }}
                 disabled={formState.isLoading}
-                className="flex items-center bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 px-2 py-1.5 rounded-md text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                title="Import form from JSON file"
+                className="flex items-center justify-center bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 px-4 py-2 rounded-md transition-colors text-sm"
               >
                 <RefreshCw size={16} className="mr-2" />
                 Clear All
@@ -1066,7 +1065,8 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
           <div className="flex flex-col sm:flex-row gap-3">
 
             {/* Load Template Section */}
-            <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg">
+           <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg max-w-sm">
+
               <div className="flex items-center justify-between mb-1">
                 <label htmlFor="templateSelection" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Load Saved Template
@@ -1076,7 +1076,6 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
                 </label>
              
               </div>
-              
               
               <div className="flex flex-col lg:flex-row gap-3">
                 {/* Search Input */}
