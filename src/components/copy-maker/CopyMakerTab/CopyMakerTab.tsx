@@ -214,10 +214,11 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
             isClearDisabled={isExporting || (!formState.businessDescription?.trim() && !formState.originalCopy?.trim()) || formState.isLoading}
           />
 
-          {/* Row: Saved Template | Quick Start | AI Prompt (right card) */}
-          <div className="flex flex-col sm:flex-row gap-3 items-stretch">
+          {/* GRID: Saved Template | Quick Start | AI Prompt */}
+          {/* We force three columns on sm+ screens: 1fr / 1fr / auto */}
+          <div className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto] gap-3 items-stretch">
             {/* Load Saved Template */}
-            <div className="flex-1 min-w-0">
+            <div className="min-w-0">
               <TemplateLoader
                 templateLoadError={templateLoadError}
                 isLoadingTemplates={isLoadingTemplates}
@@ -230,7 +231,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
             </div>
 
             {/* Load Quick Start Template */}
-            <div className="flex-1 min-w-0">
+            <div className="min-w-0">
               <QuickStartPicker
                 formState={formState}
                 onApplyPrefill={handleApplyPrefill}
@@ -238,7 +239,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
             </div>
 
             {/* AI Prompt – standalone right-side container */}
-            <div className="w-full sm:w-48 shrink-0">
+            <div className="sm:w-[12rem] sm:justify-self-end">
               <div className="h-full p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg flex items-end">
                 <button
                   type="button"
@@ -364,4 +365,3 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
 };
 
 export default CopyMakerTab;
-
