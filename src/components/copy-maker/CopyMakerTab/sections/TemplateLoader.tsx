@@ -9,6 +9,8 @@ interface TemplateLoaderProps {
   templateSearchQuery: string;
   setTemplateSearchQuery: (query: string) => void;
   filteredAndGroupedTemplates: Array<{ category: string; templates: Template[] }>;
+  selectedTemplateId: string;
+  onSelectTemplate: (id: string) => void;
 }
 
 const TemplateLoader: React.FC<TemplateLoaderProps> = ({
@@ -17,9 +19,11 @@ const TemplateLoader: React.FC<TemplateLoaderProps> = ({
   templateSearchQuery,
   setTemplateSearchQuery,
   filteredAndGroupedTemplates,
+  selectedTemplateId,
+  onSelectTemplate,
 }) => {
   return (
-    <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg">
+    <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg flex-1">
       <div className="flex items-center justify-between mb-1">
         <label htmlFor="templateSelection" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
           Load Saved Template
