@@ -250,18 +250,6 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
               </div>
             </div>
 
-            {/* 3) AI Prompt – own right-hand container */}
-            <div className="sm:w-[12rem] sm:justify-self-end">
-              <div className="h-full p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg flex items-end">
-                <button
-                  className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 w-full p-2 sm:p-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors inline-flex items-center justify-center whitespace-nowrap"
-                >
-                  <Lightbulb size={14} className="mr-1" />
-                  <span className="hidden sm:inline">AI Prompt</span>
-                  <span className="sm:hidden">AI</span>
-                </button>
-              </div>
-            </div>
           </div>
 
           <CopyForm
