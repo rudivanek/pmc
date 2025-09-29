@@ -13,6 +13,7 @@ import TemplateLoader from './sections/TemplateLoader';
 import QuickStartPicker from './sections/QuickStartPicker';
 import ResultsPanel from './sections/ResultsPanel';
 import EmptyState from './sections/EmptyState';
+
 // Modal components
 import PrefillSaveDialog from './modals/PrefillSaveDialog';
 import JsonLdViewer from './modals/JsonLdViewer';
@@ -212,7 +213,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
             isClearDisabled={isExporting || (!formState.businessDescription?.trim() && !formState.originalCopy?.trim()) || formState.isLoading}
           />
 
-          {/* Row: Template Loader | Quick Start Picker | AI Prompt */}
+          {/* Row: Template Loader | Quick Start Picker */}
           <div className="flex flex-col sm:flex-row gap-3 items-stretch mb-4">
             <TemplateLoader
               templateLoadError={templateLoadError}
@@ -222,6 +223,9 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
               filteredAndGroupedTemplates={filteredAndGroupedTemplates}
               selectedTemplateId={selectedTemplateId}
               onSelectTemplate={handleTemplateSelection}
+              /* NEW: AI Prompt wiring so the button lives in TemplateLoader (right) */
+              currentUser={currentUser}
+              onOpenTemplateSuggestion={onOpenTemplateSuggestion}
             />
 
             <QuickStartPicker
@@ -229,8 +233,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
               onApplyPrefill={handleApplyPrefill}
             />
           </div>
-          
-         
+        </div>
 
         {/* Form Section */}
         <div>
