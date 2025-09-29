@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { toast } from 'react-hot-toast';
+import { Lightbulb } from 'lucide-react';
 
 // Component imports
 import CopyForm from '../../CopyForm';
@@ -213,8 +214,9 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
             isClearDisabled={isExporting || (!formState.businessDescription?.trim() && !formState.originalCopy?.trim()) || formState.isLoading}
           />
 
-          {/* Row: Template Loader | Quick Start Picker */}
-          <div className="flex flex-col sm:flex-row gap-3 items-stretch mb-4">
+          {/* Top row: Templates | Quick Start | AI Prompt */}
+          <div className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto] gap-3 items-stretch mb-4">
+            {/* 1) Load Saved Template (search + dropdown) */}
             <TemplateLoader
               templateLoadError={templateLoadError}
               isLoadingTemplates={isLoadingTemplates}
@@ -223,24 +225,18 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
               filteredAndGroupedTemplates={filteredAndGroupedTemplates}
               selectedTemplateId={selectedTemplateId}
               onSelectTemplate={handleTemplateSelection}
-              /* NEW: AI Prompt wiring so the button lives in TemplateLoader (right) */
-              currentUser={currentUser}
-              onOpenTemplateSuggestion={onOpenTemplateSuggestion}
             />
 
+            {/* 2) Load Quick Start Template */}
             <QuickStartPicker
               formState={formState}
               onApplyPrefill={handleApplyPrefill}
             />
-          </div>
         </div>
 
-        {/* Form Section */}
-        <div>
-          <CopyForm
-            currentUser={currentUser}
-            formState={formState}
-            setFormState={setFormState}
+            {/* 3) AI Prompt – own right-hand container */}
+            <div className="sm:w-[12rem] sm:justify-self-end">
+              <div className="h-full p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg flex items-end">
             onGenerate={isPrefillEditingMode ? undefined : handleGenerate}
             onClearAll={handleClearAllOverride}
             loadedTemplateId={loadedTemplateId}
@@ -267,13 +263,15 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
                 className="w-full bg-primary-600 hover:bg-primary-500 text-white font-medium text-base px-5 py-3.5 transition-colors flex items-center justify-center"
               >
                 Save Prefill
-              </button>
+                className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 w-full p-2 sm:p-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors inline-flex items-center justify-center whitespace-nowrap"
               <button
                 onClick={handleCancelPrefillEditing}
                 className="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-black text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium text-base px-5 py-3 transition-colors flex items-center justify-center"
-              >
-                Cancel
+                <Lightbulb size={14} className="mr-1" />
+                <span className="hidden sm:inline">AI Prompt</span>
+                <span className="sm:hidden">AI</span>
               </button>
+              </div>
             </div>
           )}
         </div>
