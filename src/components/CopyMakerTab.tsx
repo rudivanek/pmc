@@ -1076,10 +1076,11 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
                 </label>
              
               </div>
+
               
               <div className="flex flex-col lg:flex-row gap-3">
                 {/* Search Input */}
-                <div className="flex-1 lg:flex-initial lg:w-48 xl:w-102"> 
+                <div className="flex-1 lg:flex-initial lg:w-48 xl:w-64"> 
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <Search size={16} className="text-gray-500" />
