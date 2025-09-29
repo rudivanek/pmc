@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { toast } from 'react-hot-toast';
+import { Lightbulb } from 'lucide-react';
 
 // Component imports
 import CopyForm from '../../CopyForm';
@@ -76,28 +77,23 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
   loadFormStateFromPrefill,
   addProgressMessage,
 }) => {
-  // Add the missing load functions that UrlParamLoader needs
+  // Loaders for UrlParamLoader
   const loadFormStateFromSession = React.useCallback((session: any) => {
-    // This function should be passed from parent, but we can implement it here as a fallback
     if (!session || !session.input_data) {
       console.error('Invalid session data:', session);
       return;
     }
-    
-    setFormState(prevState => {
-      const inputData = session.input_data;
-      return {
-        ...prevState,
-        ...inputData,
-        sessionId: session.id,
-        customerId: session.customer_id || undefined,
-        customerName: session.customer?.name || undefined,
-        copyResult: { generatedVersions: [] }, // Clear any existing results
-        isLoading: false,
-        isEvaluating: false,
-        generationProgress: []
-      };
-    });
+    setFormState(prevState => ({
+      ...prevState,
+      ...session.input_data,
+      sessionId: session.id,
+      customerId: session.customer_id || undefined,
+      customerName: session.customer?.name || undefined,
+      copyResult: { generatedVersions: [] },
+      isLoading: false,
+      isEvaluating: false,
+      generationProgress: [],
+    }));
     toast.success('Session loaded successfully!');
   }, [setFormState]);
 
@@ -106,34 +102,30 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
       console.error('Invalid saved output data:', savedOutput);
       return;
     }
-    
-    setFormState(prevState => {
-      const inputSnapshot = savedOutput.input_snapshot;
-      return {
-        ...prevState,
-        ...inputSnapshot,
-        customerId: savedOutput.customer_id || undefined,
-        customerName: savedOutput.customer?.name || undefined,
-        copyResult: savedOutput.output_content, // Load the generated output
-        isLoading: false,
-        isEvaluating: false,
-        generationProgress: []
-      };
-    });
+    setFormState(prevState => ({
+      ...prevState,
+      ...savedOutput.input_snapshot,
+      customerId: savedOutput.customer_id || undefined,
+      customerName: savedOutput.customer?.name || undefined,
+      copyResult: savedOutput.output_content,
+      isLoading: false,
+      isEvaluating: false,
+      generationProgress: [],
+    }));
     toast.success('Saved output loaded successfully!');
   }, [setFormState]);
 
-  // Modal state
+  // Modals
   const [showJsonLdModal, setShowJsonLdModal] = useState(false);
   const [jsonLdContent, setJsonLdContent] = useState('');
   const [showSavePrefillModal, setShowSavePrefillModal] = useState(false);
 
-  // Refs for focusing on required fields
+  // Refs
   const projectDescriptionRef = useRef<HTMLInputElement>(null);
   const businessDescriptionRef = useRef<HTMLTextAreaElement>(null);
   const originalCopyRef = useRef<HTMLTextAreaElement>(null);
 
-  // Custom hooks
+  // Hooks
   const {
     isPrefillEditingMode,
     prefillEditingData,
@@ -167,19 +159,14 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
     handleImportForm
   } = useExports(formState, setFormState);
 
-  // Enhanced FAQ schema handler to show modal
   const handleGenerateFaqSchema = async (content: string) => {
     await baseHandleGenerateFaqSchema(content);
-    // Additional logic to show the modal could be added here
-    // For now, just use the base function
   };
 
-  // Handle applying quick start prefill
   const handleApplyPrefill = (prefill: { id: string; label: string; data: Partial<FormState> }) => {
     mapPrefillToFormState(prefill.data, formState, setFormState, setDisplayMode);
   };
 
-  // Override onClearAll to also clear template selection
   const handleClearAllOverride = () => {
     onClearAll();
     setSelectedTemplateId('');
@@ -190,7 +177,6 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
 
   return (
     <div className="relative min-h-screen">
-      {/* URL Parameter Loader - processes templateId, sessionId, savedOutputId from URL */}
       <UrlParamLoader
         currentUser={currentUser}
         isInitialized={true}
@@ -205,9 +191,8 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
         setDisplayMode={setDisplayMode}
       />
 
-      {/* Main Content Layout */}
       <div className="space-y-8 px-8 md:px-12 lg:px-16">
-        {/* Prefill and Template Loaders */}
+        {/* Top bar */}
         <div className="bg-white dark:bg-black border border-gray-300 dark:border-gray-800 rounded-lg p-3 sm:p-6">
           <HeaderBar
             isExporting={isExporting}
@@ -218,28 +203,50 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
               handleClearAllOverride();
               setDisplayMode('all');
             }}
-            isClearDisabled={isExporting || (!formState.businessDescription?.trim() && !formState.originalCopy?.trim()) || formState.isLoading}
+            isClearDisabled={
+              isExporting ||
+              (!formState.businessDescription?.trim() && !formState.originalCopy?.trim()) ||
+              formState.isLoading
+            }
           />
-              
-          <div className="flex flex-col sm:flex-row gap-3">
-            <TemplateLoader
-              templateLoadError={templateLoadError}
-              isLoadingTemplates={isLoadingTemplates}
-              templateSearchQuery={templateSearchQuery}
-              setTemplateSearchQuery={setTemplateSearchQuery}
-              filteredAndGroupedTemplates={filteredAndGroupedTemplates}
-              selectedTemplateId={selectedTemplateId}
-              onSelectTemplate={handleTemplateSelection}
-              onOpenTemplateSuggestion={onOpenTemplateSuggestion}
-              currentUser={currentUser}
-              /** Change this to: 'right' | 'input-suffix' | 'below-full' as you prefer */
-              aiPromptPlacement="inline-label"
-            />
 
-            <QuickStartPicker
-              formState={formState}
-              onApplyPrefill={handleApplyPrefill}
-            />
+          {/* Row: [TemplateLoader | QuickStartPicker | AI Prompt card] */}
+          <div className="flex flex-col sm:flex-row gap-3 items-stretch">
+            <div className="flex-1 min-w-0">
+              <TemplateLoader
+                templateLoadError={templateLoadError}
+                isLoadingTemplates={isLoadingTemplates}
+                templateSearchQuery={templateSearchQuery}
+                setTemplateSearchQuery={setTemplateSearchQuery}
+                filteredAndGroupedTemplates={filteredAndGroupedTemplates}
+                selectedTemplateId={selectedTemplateId}
+                onSelectTemplate={handleTemplateSelection}
+              />
+            </div>
+
+            <div className="flex-1 min-w-0">
+              <QuickStartPicker
+                formState={formState}
+                onApplyPrefill={handleApplyPrefill}
+              />
+            </div>
+
+            {/* AI Prompt – own right-side card */}
+            <div className="w-full sm:w-44 shrink-0">
+              <div className="h-full p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg flex items-end">
+                <button
+                  type="button"
+                  onClick={onOpenTemplateSuggestion}
+                  className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 w-full p-2 sm:p-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors inline-flex items-center justify-center whitespace-nowrap"
+                  disabled={!currentUser}
+                  title="Generate template JSON from natural language"
+                >
+                  <Lightbulb size={14} className="mr-1" />
+                  <span className="hidden sm:inline">AI Prompt</span>
+                  <span className="sm:hidden">AI</span>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -266,8 +273,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
             displayMode={displayMode}
             setDisplayMode={setDisplayMode}
           />
-          
-          {/* Prefill Action Buttons */}
+
           {isPrefillEditingMode && (
             <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
               <button
@@ -306,7 +312,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
         </div>
       </div>
 
-      {/* Floating Action Bar - Right Side */}
+      {/* Floating Action Bar */}
       {formState.copyResult?.generatedVersions && formState.copyResult.generatedVersions.length > 0 && (
         <FloatingActionBar
           formState={formState}
@@ -321,7 +327,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
       {/* Progress Modal */}
       <AppSpinner
         isLoading={formState.isLoading || formState.isEvaluating}
-        message={formState.isLoading ? "Generating copy..." : "Evaluating inputs..."}
+        message={formState.isLoading ? 'Generating copy...' : 'Evaluating inputs...'}
         progressMessages={formState.generationProgress}
         onCancel={onCancel || handleCancelOperation}
       />
