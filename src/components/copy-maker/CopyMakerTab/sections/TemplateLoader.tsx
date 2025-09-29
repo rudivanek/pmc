@@ -1,5 +1,6 @@
 import React from 'react';
 import { Search, Lightbulb } from 'lucide-react';
+import { Search, Lightbulb } from 'lucide-react';
 import LoadingSpinner from '../../../ui/LoadingSpinner';
 import { Template, User } from '../../../../types';
 
@@ -14,6 +15,9 @@ interface TemplateLoaderProps {
   selectedTemplateId: string;
   onSelectTemplate: (id: string) => void;
 }
+  // AI Prompt props
+  currentUser?: User;
+  onOpenTemplateSuggestion?: () => void;
 
 const TemplateLoader: React.FC<TemplateLoaderProps> = ({
   templateLoadError,
@@ -23,6 +27,8 @@ const TemplateLoader: React.FC<TemplateLoaderProps> = ({
   filteredAndGroupedTemplates,
   selectedTemplateId,
   onSelectTemplate,
+  currentUser,
+  onOpenTemplateSuggestion,
 }) => {
   return (
     <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg">
@@ -40,8 +46,8 @@ const TemplateLoader: React.FC<TemplateLoaderProps> = ({
         </label>
       </div>
 
-      {/* Grid: Search | Dropdown */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-stretch">
+      {/* Grid: Search | Dropdown | AI Prompt */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-stretch">
         {/* Search Input */}
         <div className="min-w-0">
           <div className="relative">
@@ -94,6 +100,22 @@ const TemplateLoader: React.FC<TemplateLoaderProps> = ({
               </optgroup>
             ))}
           </select>
+        </div>
+        
+        {/* AI Prompt Section */}
+        <div className="min-w-0">
+          <div className="h-full p-3 bg-gray-100 dark:bg-gray-900/30 border border-gray-200 dark:border-gray-800 rounded-lg flex items-center justify-center">
+            <button
+              type="button"
+              onClick={onOpenTemplateSuggestion}
+              className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 w-full p-2 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors inline-flex items-center justify-center whitespace-nowrap"
+              disabled={!currentUser}
+              title="Generate template JSON from natural language"
+            >
+              <Lightbulb size={16} className="mr-2" />
+              AI Prompt
+            </button>
+          </div>
         </div>
       </div>
 
