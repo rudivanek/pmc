@@ -987,7 +987,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
       {/* Main Content Layout */}
       <div className="space-y-8 px-8 md:px-12 lg:px-16">
         {/* Prefill and Template Loaders */}
-        <div className="bg-white dark:bg-black border border-gray-300 dark:border-gray-800 rounded-lg">
+        <div className="bg-white dark:bg-black border border-gray-300 dark:border-gray-800 rounded-lg p-3 sm:p-6 mx-2 sm:mx-4 lg:mx-24">
 
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white">Copy Maker</h2>
