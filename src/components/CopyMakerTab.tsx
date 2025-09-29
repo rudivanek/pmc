@@ -1059,7 +1059,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
               setDisplayMode={setDisplayMode}
             />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto] gap-3 items-stretch mb-4">
+          <div className="flex flex-col sm:flex-row gap-3">
 
             {/* Load Template Section */}
             <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg">
@@ -1200,22 +1200,6 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
                 </select>
               </div>
             </div>
-
-            {/* 3) AI Prompt – own right-hand container */}
-            <div className="sm:w-[12rem] sm:justify-self-end">
-              <div className="h-full p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg flex items-center justify-center">
-                <button
-                  type="button"
-                  onClick={onOpenTemplateSuggestion}
-                  className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 w-full p-2 sm:p-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors inline-flex items-center justify-center whitespace-nowrap"
-                  disabled={!currentUser}
-                  title="Generate template JSON from natural language"
-                >
-                  <Lightbulb size={16} className="mr-2" />
-                  AI Prompt
-                </button>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -1262,79 +1246,79 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
           )}
         </div>
 
-        {/* Generated Content Section */}
-        {formState.copyResult?.generatedVersions && formState.copyResult.generatedVersions.length > 0 && (
-          <div className="space-y-6">
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white">Generated Content</h3>
-            {formState.copyResult.generatedVersions.map((item) => (
-              <GeneratedCopyCard
-                key={item.id}
-                item={item}
-                formState={formState}
-                currentUser={currentUser}
-                onGenerateAlternative={() => handleOnDemandGeneration('alternative', item)}
-                onGenerateScore={() => handleOnDemandGeneration('score', item)}
-                onRestyleWithPersona={(persona) => handleOnDemandGeneration('restyle', item, persona)}
-                onModifyContent={(instruction) => handleModifyContent(item, instruction)}
-                onGenerateFaqSchema={() => handleGenerateFaqSchema(item.content)}
-                isLoading={formState.isLoading}
-              />
-            ))}
-          </div>
-        )}
-
-        {/* Loading State */}
-        {formState.isLoading && (
-          <div className="flex items-center justify-center py-8">
-            <AppSpinner />
-            <span className="ml-3 text-gray-600 dark:text-gray-400">Generating content...</span>
-          </div>
-        )}
-
-        {/* Progress Messages */}
-        {formState.generationProgress && formState.generationProgress.length > 0 && (
-          <div className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-            <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-2">Progress</h4>
-            <div className="space-y-1">
-              {formState.generationProgress.map((message, index) => (
-                <div key={index} className="text-xs text-gray-600 dark:text-gray-400">
-                  {message}
-                </div>
-              ))}
+        {/* Results Section */}
+        <div>
+          {formState.copyResult?.generatedVersions && formState.copyResult.generatedVersions.length > 0 ? (
+            <div className="bg-white dark:bg-black border border-gray-300 dark:border-gray-800 rounded-lg p-3 sm:p-6 mx-2 sm:mx-4 lg:mx-24">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Generated Copies</h2>
+              
+              <div className="space-y-6">
+                {formState.copyResult.generatedVersions.map((card, index) => (
+                  <GeneratedCopyCard
+                    key={card.id}
+                    card={card}
+                    formState={formState}
+                    currentUser={currentUser}
+                    onCreateAlternative={() => handleOnDemandGeneration('alternative', card)}
+                    onApplyVoiceStyle={(persona) => handleOnDemandGeneration('restyle', card, persona)}
+                    onGenerateScore={() => handleOnDemandGeneration('score', card)}
+                    onGenerateFaqSchema={handleGenerateFaqSchema}
+                    onModifyContent={(instruction) => handleModifyContent(card, instruction)}
+                    targetWordCount={calculateTargetWordCount(formState).target}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-        )}
-
-        {/* Floating Action Bar */}
-        {(formState.isLoading || formState.isEvaluating) && (
-          <FloatingActionBar
-            onCancel={handleCancelOperation}
-            isLoading={formState.isLoading}
-            isEvaluating={formState.isEvaluating}
-            generationProgress={formState.generationProgress || []}
-          />
-        )}
-
-        {/* Save Prefill Modal */}
-        {showSavePrefillModal && (
-          <SavePrefillModal
-            isOpen={showSavePrefillModal}
-            onClose={() => setShowSavePrefillModal(false)}
-            onSave={handleSavePrefill}
-            initialLabel={prefillEditingData?.originalLabel || ''}
-            mode={prefillEditingData?.mode || 'add'}
-          />
-        )}
-
-        {/* JSON-LD Modal */}
-        {showJsonLdModal && (
-          <JsonLdModal
-            isOpen={showJsonLdModal}
-            onClose={() => setShowJsonLdModal(false)}
-            content={jsonLdContent}
-          />
-        )}
+          ) : (
+            <div className="bg-white dark:bg-black border border-gray-300 dark:border-gray-800 rounded-lg p-3 sm:p-6 mx-2 sm:mx-4 lg:mx-24 text-center text-gray-500 dark:text-gray-400">
+              <div className="text-lg font-medium mb-2">No content generated yet</div>
+              <p className="text-sm">Fill out the form and click "Make Copy" to get started</p>
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* Floating Action Bar - Right Side */}
+      {formState.copyResult?.generatedVersions && formState.copyResult.generatedVersions.length > 0 && (
+        <FloatingActionBar
+          formState={formState}
+          generatedOutputCards={formState.copyResult.generatedVersions}
+          currentUser={currentUser}
+          onSaveOutput={onSaveOutput || (() => toast.info('Save output not available'))}
+          onViewPrompts={onViewPrompts || (() => toast.info('View prompts not available'))}
+          onGenerateFaqSchema={handleGenerateFaqSchema}
+        />
+      )}
+
+      {/* Progress Modal */}
+      <AppSpinner
+        isLoading={formState.isLoading || formState.isEvaluating}
+        message={formState.isLoading ? "Generating copy..." : "Evaluating inputs..."
+        }
+        progressMessages={formState.generationProgress}
+        onCancel={onCancel || handleCancelOperation}
+      />
+
+      {/* Save Prefill Modal */}
+      {showSavePrefillModal && prefillEditingData && (
+        <SavePrefillModal
+          isOpen={showSavePrefillModal}
+          onClose={() => setShowSavePrefillModal(false)}
+          onSave={handleSavePrefill}
+          mode={prefillEditingData.mode}
+          initialLabel={prefillEditingData.originalLabel || ''}
+          currentUser={currentUser}
+        />
+      )}
+
+      {/* JSON-LD Modal */}
+      {showJsonLdModal && (
+        <JsonLdModal
+          isOpen={showJsonLdModal}
+          onClose={() => setShowJsonLdModal(false)}
+          jsonLd={jsonLdContent}
+        />
+      )}
     </div>
   );
 };
