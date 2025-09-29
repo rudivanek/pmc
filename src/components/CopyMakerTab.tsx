@@ -1309,14 +1309,9 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
         {(formState.isLoading || formState.isEvaluating) && (
           <FloatingActionBar
             onCancel={handleCancelOperation}
-            onEvaluateInputs={onEvaluateInputs}
-            onSaveTemplate={onSaveTemplate}
-            onSaveOutput={onSaveOutput}
-            onViewPrompts={onViewPrompts}
             isLoading={formState.isLoading}
             isEvaluating={formState.isEvaluating}
-            currentUser={currentUser}
-            formState={formState}
+            generationProgress={formState.generationProgress || []}
           />
         )}
 
