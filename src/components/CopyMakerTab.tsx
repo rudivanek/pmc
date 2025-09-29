@@ -987,9 +987,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
       {/* Main Content Layout */}
       <div className="space-y-8 px-8 md:px-12 lg:px-16">
         {/* Prefill and Template Loaders */}
-      <div className="bg-white dark:bg-black border border-gray-300 dark:border-gray-800 rounded-lg p-3 sm:p-6 mx-0">
-
-
+        <div className="bg-white dark:bg-black border border-gray-300 dark:border-gray-800 rounded-lg p-3 sm:p-6 mx-2 sm:mx-4 lg:mx-24">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white">Copy Maker</h2>
             
@@ -1042,7 +1040,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
                   setDisplayMode('all');
                 }}
                 disabled={formState.isLoading}
-               className="flex items-center bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 px-2 py-1.5 rounded-md text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center justify-center bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 px-4 py-2 rounded-md transition-colors text-sm"
               >
                 <RefreshCw size={16} className="mr-2" />
                 Clear All
@@ -1121,7 +1119,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
                   <button
                     type="button"
                     onClick={onOpenTemplateSuggestion}
-                    className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 py-4 sm:p-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors inline-flex items-center whitespace-nowrap"
+                    className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 p-2 sm:p-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors inline-flex items-center whitespace-nowrap"
                     disabled={!currentUser}
                     title="Generate template JSON from natural language"
                   >
@@ -1148,9 +1146,8 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
 
             {/* Quick Start Templates Section */}
             <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg">
-             
-              Quick Start Templates
-             
+              <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-3">Quick Start Templates</h3>
+              
               <div className="mb-4">
                 <select
                   className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
@@ -1203,7 +1200,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
         </div>
 
         {/* Form Section */}
-            <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+        <div>
           <CopyForm
             currentUser={currentUser}
             formState={formState}
