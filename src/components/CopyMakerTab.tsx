@@ -1254,4 +1254,95 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
               </button>
               <button
                 onClick={handleCancelPrefillEditing}
-                className="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-black text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium text-base px-5 py-3 transition-colors flex items-center justify
+                className="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-black text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium text-base px-5 py-3 transition-colors flex items-center justify-center"
+              >
+                Cancel
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Generated Content Section */}
+        {formState.copyResult?.generatedVersions && formState.copyResult.generatedVersions.length > 0 && (
+          <div className="space-y-6">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white">Generated Content</h3>
+            {formState.copyResult.generatedVersions.map((item) => (
+              <GeneratedCopyCard
+                key={item.id}
+                item={item}
+                formState={formState}
+                currentUser={currentUser}
+                onGenerateAlternative={() => handleOnDemandGeneration('alternative', item)}
+                onGenerateScore={() => handleOnDemandGeneration('score', item)}
+                onRestyleWithPersona={(persona) => handleOnDemandGeneration('restyle', item, persona)}
+                onModifyContent={(instruction) => handleModifyContent(item, instruction)}
+                onGenerateFaqSchema={() => handleGenerateFaqSchema(item.content)}
+                isLoading={formState.isLoading}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Loading State */}
+        {formState.isLoading && (
+          <div className="flex items-center justify-center py-8">
+            <AppSpinner />
+            <span className="ml-3 text-gray-600 dark:text-gray-400">Generating content...</span>
+          </div>
+        )}
+
+        {/* Progress Messages */}
+        {formState.generationProgress && formState.generationProgress.length > 0 && (
+          <div className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+            <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-2">Progress</h4>
+            <div className="space-y-1">
+              {formState.generationProgress.map((message, index) => (
+                <div key={index} className="text-xs text-gray-600 dark:text-gray-400">
+                  {message}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Floating Action Bar */}
+        {(formState.isLoading || formState.isEvaluating) && (
+          <FloatingActionBar
+            onCancel={handleCancelOperation}
+            onEvaluateInputs={onEvaluateInputs}
+            onSaveTemplate={onSaveTemplate}
+            onSaveOutput={onSaveOutput}
+            onViewPrompts={onViewPrompts}
+            isLoading={formState.isLoading}
+            isEvaluating={formState.isEvaluating}
+            currentUser={currentUser}
+            formState={formState}
+            generationProgress={formState.generationProgress || []}
+          />
+        )}
+
+        {/* Save Prefill Modal */}
+        {showSavePrefillModal && (
+          <SavePrefillModal
+            isOpen={showSavePrefillModal}
+            onClose={() => setShowSavePrefillModal(false)}
+            onSave={handleSavePrefill}
+            initialLabel={prefillEditingData?.originalLabel || ''}
+            mode={prefillEditingData?.mode || 'add'}
+          />
+        )}
+
+        {/* JSON-LD Modal */}
+        {showJsonLdModal && (
+          <JsonLdModal
+            isOpen={showJsonLdModal}
+            onClose={() => setShowJsonLdModal(false)}
+            content={jsonLdContent}
+          />
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default CopyMakerTab;
