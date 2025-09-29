@@ -11,7 +11,7 @@ import Dashboard from './components/Dashboard';
 import Features from './components/Features';
 import Documentation from './components/Documentation';
 import Privacy from './components/Privacy';
-import CopyMakerTab from './components/CopyMakerTab';
+import CopyMakerTab from './components/copy-maker/CopyMakerTab/CopyMakerTab';
 import ManageUsers from './components/ManageUsers';
 import PromptDisplay from './components/PromptDisplay';
 import UrlParamLoader from './components/UrlParamLoader';

@@ -1317,7 +1317,6 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
             isEvaluating={formState.isEvaluating}
             currentUser={currentUser}
             formState={formState}
-            generationProgress={formState.generationProgress || []}
           />
         )}
 
