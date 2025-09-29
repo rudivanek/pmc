@@ -13,7 +13,6 @@ import TemplateLoader from './sections/TemplateLoader';
 import QuickStartPicker from './sections/QuickStartPicker';
 import ResultsPanel from './sections/ResultsPanel';
 import EmptyState from './sections/EmptyState';
-
 // Modal components
 import PrefillSaveDialog from './modals/PrefillSaveDialog';
 import JsonLdViewer from './modals/JsonLdViewer';
