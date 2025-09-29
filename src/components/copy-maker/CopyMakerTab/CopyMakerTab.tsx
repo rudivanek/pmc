@@ -232,6 +232,8 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
               onSelectTemplate={handleTemplateSelection}
               onOpenTemplateSuggestion={onOpenTemplateSuggestion}
               currentUser={currentUser}
+              /** Change this to: 'right' | 'input-suffix' | 'below-full' as you prefer */
+              aiPromptPlacement="inline-label"
             />
 
             <QuickStartPicker
