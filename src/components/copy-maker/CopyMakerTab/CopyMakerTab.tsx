@@ -295,21 +295,23 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
 Wait, I'm looking at the wrong file! The user said to check the complete code. Let me look at what's currently in the CopyMakerTab.tsx file that's being used. But actually, I need to check if there are multiple CopyMakerTab files or if there's some other issue.
 
 Looking at the file list, I see there are multiple files:
-- `src/components/CopyMakerTab.tsx` 
-- `src/components/copy-maker/CopyMakerTab/CopyMakerTab.tsx`
+- \`src/components/CopyMakerTab.tsx` 
+- \`src/components/copy-maker/CopyMakerTab/CopyMakerTab.tsx`
 
-The issue might be that I'm editing the wrong file! The app might be using `src/components/CopyMakerTab.tsx` instead of the nested one.
+The issue might be that I'm editing the wrong file! The app might be using \`src/components/CopyMakerTab.tsx` instead of the nested one.
 
 Let me check which one is being imported in App.tsx:
-```tsx
+``\`tsx
 import CopyMakerTab from './components/CopyMakerTab';
 ```
 
 Yes! The app is importing from `./components/CopyMakerTab`, not from the nested directory. That's why my changes aren't showing up!
 
-I need to edit the correct file: `src/components/CopyMakerTab.tsx`
+I need to edit the correct file: \`src/components/CopyMakerTab.tsx`
 </thinking>
 
-I found the problem! There are TWO CopyMakerTab files and I was editing the wrong one! The app is using `src/components/CopyMakerTab.tsx`, not the nested one. Let me fix the correct file:
+I found the problem! There are TWO CopyMakerTab files and I was editing the wrong one! The app is using \`src/components/CopyMakerTab.tsx`, not the nested one. Let me fix the correct file:
 
 <boltArtifact id="fix-correct-copymaker-file" title="Fix the correct CopyMakerTab.tsx file">
+  )
+}
