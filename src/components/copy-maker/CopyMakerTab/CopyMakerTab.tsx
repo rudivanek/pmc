@@ -11,6 +11,7 @@ import UrlParamLoader from '../../UrlParamLoader';
 import HeaderBar from './sections/HeaderBar';
 import TemplateLoader from './sections/TemplateLoader';
 import QuickStartPicker from './sections/QuickStartPicker';
+import AiPromptSection from './sections/AiPromptSection';
 import ResultsPanel from './sections/ResultsPanel';
 import EmptyState from './sections/EmptyState';
 
