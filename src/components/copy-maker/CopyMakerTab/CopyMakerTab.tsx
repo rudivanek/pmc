@@ -11,7 +11,6 @@ import UrlParamLoader from '../../UrlParamLoader';
 import HeaderBar from './sections/HeaderBar';
 import TemplateLoader from './sections/TemplateLoader';
 import QuickStartPicker from './sections/QuickStartPicker';
-import AiPromptSection from './sections/AiPromptSection';
 import ResultsPanel from './sections/ResultsPanel';
 import EmptyState from './sections/EmptyState';
 
@@ -214,7 +213,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
             isClearDisabled={isExporting || (!formState.businessDescription?.trim() && !formState.originalCopy?.trim()) || formState.isLoading}
           />
 
-          {/* Row: Template Loader | Quick Start Picker */}
+          {/* Row: Template Loader | Quick Start Picker | AI Prompt */}
           <div className="flex flex-col sm:flex-row gap-3 items-stretch">
             <TemplateLoader
               templateLoadError={templateLoadError}
@@ -225,13 +224,16 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
               /* new props required by updated TemplateLoader */
               selectedTemplateId={selectedTemplateId}
               onSelectTemplate={handleTemplateSelection}
-              currentUser={currentUser}
-              onOpenTemplateSuggestion={onOpenTemplateSuggestion}
             />
 
             <QuickStartPicker
               formState={formState}
               onApplyPrefill={handleApplyPrefill}
+            />
+            
+            <AiPromptSection
+              currentUser={currentUser}
+              onOpenTemplateSuggestion={onOpenTemplateSuggestion}
             />
           </div>
         </div>
