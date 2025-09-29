@@ -1,6 +1,6 @@
 import React from 'react';
 import { TemplateLoader } from './sections/TemplateLoader';
-import { QuickStartPicker } from './sections/QuickStartPicker';
+import QuickStartPicker from './sections/QuickStartPicker';
 
 // Types (these should match what's used in App.tsx)
 interface FormState {
