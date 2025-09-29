@@ -47,7 +47,7 @@ interface CopyMakerTabProps {
   onSaveOutput?: () => void;
   onViewPrompts?: () => void;
   onCancel?: () => void;
-  onOpenTemplateSuggestion?: () => void; // passed down to TemplateLoader
+  onOpenTemplateSuggestion?: () => void;
   loadFormStateFromPrefill: any;
   loadFormStateFromTemplate: any;
   displayMode: 'all' | 'populated';
@@ -216,7 +216,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
 
           {/* Top row: Templates | Quick Start | AI Prompt */}
           <div className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto] gap-3 items-stretch mb-4">
-            {/* 1) Load Saved Template (search + dropdown) */}
+            {/* 1) Load Saved Template */}
             <TemplateLoader
               templateLoadError={templateLoadError}
               isLoadingTemplates={isLoadingTemplates}
@@ -235,21 +235,19 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
 
             {/* 3) AI Prompt – own right-hand container */}
             <div className="sm:w-[12rem] sm:justify-self-end">
-              <div className="h-full p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg flex items-end">
+              <div className="h-full p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg flex items-center justify-center">
                 <button
                   type="button"
                   onClick={onOpenTemplateSuggestion}
-                  className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 w-full p-2 sm:p-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors inline-flex items-center justify-center whitespace-nowrap"
+                  className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 w-full p-2 sm:p-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors inline-flex items-center justify-center whitespace-nowrap"
                   disabled={!currentUser}
                   title="Generate template JSON from natural language"
                 >
-                  <Lightbulb size={14} className="mr-1" />
-                  <span className="hidden sm:inline">AI Prompt</span>
-                  <span className="sm:hidden">AI</span>
+                  <Lightbulb size={16} className="mr-2" />
+                  AI Prompt
                 </button>
               </div>
             </div>
-
           </div>
 
           <CopyForm
@@ -292,69 +290,26 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
             </div>
           )}
         </div>
+```
 
-        {/* Results Section */}
-        <div>
-          {formState.copyResult?.generatedVersions && formState.copyResult.generatedVersions.length > 0 ? (
-            <ResultsPanel
-              generatedVersions={formState.copyResult.generatedVersions}
-              formState={formState}
-              currentUser={currentUser}
-              onAlternative={(item) => handleOnDemandGeneration('alternative', item)}
-              onRestyle={(item, persona) => handleOnDemandGeneration('restyle', item, persona)}
-              onScore={(item) => handleOnDemandGeneration('score', item)}
-              onGenerateFaqSchema={handleGenerateFaqSchema}
-              onModify={handleModifyContent}
-              targetWordCount={calculateTargetWordCount(formState).target}
-            />
-          ) : (
-            <EmptyState />
-          )}
-        </div>
-      </div>
+Wait, I'm looking at the wrong file! The user said to check the complete code. Let me look at what's currently in the CopyMakerTab.tsx file that's being used. But actually, I need to check if there are multiple CopyMakerTab files or if there's some other issue.
 
-      {/* Floating Action Bar */}
-      {formState.copyResult?.generatedVersions && formState.copyResult.generatedVersions.length > 0 && (
-        <FloatingActionBar
-          formState={formState}
-          generatedOutputCards={formState.copyResult.generatedVersions}
-          currentUser={currentUser}
-          onSaveOutput={onSaveOutput || (() => toast.info('Save output not available'))}
-          onViewPrompts={onViewPrompts || (() => toast.info('View prompts not available'))}
-          onGenerateFaqSchema={handleGenerateFaqSchema}
-        />
-      )}
+Looking at the file list, I see there are multiple files:
+- `src/components/CopyMakerTab.tsx` 
+- `src/components/copy-maker/CopyMakerTab/CopyMakerTab.tsx`
 
-      {/* Progress Modal */}
-      <AppSpinner
-        isLoading={formState.isLoading || formState.isEvaluating}
-        message={formState.isLoading ? 'Generating copy...' : 'Evaluating inputs...'}
-        progressMessages={formState.generationProgress}
-        onCancel={onCancel || handleCancelOperation}
-      />
+The issue might be that I'm editing the wrong file! The app might be using `src/components/CopyMakerTab.tsx` instead of the nested one.
 
-      {/* Save Prefill Modal */}
-      {showSavePrefillModal && prefillEditingData && (
-        <PrefillSaveDialog
-          isOpen={showSavePrefillModal}
-          onClose={() => setShowSavePrefillModal(false)}
-          onSave={handleSavePrefill}
-          mode={prefillEditingData.mode}
-          initialLabel={prefillEditingData.originalLabel || ''}
-          currentUser={currentUser}
-        />
-      )}
+Let me check which one is being imported in App.tsx:
+```tsx
+import CopyMakerTab from './components/CopyMakerTab';
+```
 
-      {/* JSON-LD Modal */}
-      {showJsonLdModal && (
-        <JsonLdViewer
-          isOpen={showJsonLdModal}
-          onClose={() => setShowJsonLdModal(false)}
-          jsonLd={jsonLdContent}
-        />
-      )}
-    </div>
-  );
-};
+Yes! The app is importing from `./components/CopyMakerTab`, not from the nested directory. That's why my changes aren't showing up!
 
-export default CopyMakerTab;
+I need to edit the correct file: `src/components/CopyMakerTab.tsx`
+</thinking>
+
+I found the problem! There are TWO CopyMakerTab files and I was editing the wrong one! The app is using `src/components/CopyMakerTab.tsx`, not the nested one. Let me fix the correct file:
+
+<boltArtifact id="fix-correct-copymaker-file" title="Fix the correct CopyMakerTab.tsx file">
