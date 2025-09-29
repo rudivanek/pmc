@@ -341,3 +341,4 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
     </div>
   );
 };
+export default CopyMakerTab;
