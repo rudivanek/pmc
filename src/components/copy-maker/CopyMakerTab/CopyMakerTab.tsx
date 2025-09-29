@@ -287,10 +287,3 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
               >
                 Cancel
               </button>
-            </div>
-          )}
-        </div>
-```
-
-  )
-}
