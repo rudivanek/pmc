@@ -221,19 +221,15 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
               templateSearchQuery={templateSearchQuery}
               setTemplateSearchQuery={setTemplateSearchQuery}
               filteredAndGroupedTemplates={filteredAndGroupedTemplates}
-              /* new props required by updated TemplateLoader */
               selectedTemplateId={selectedTemplateId}
               onSelectTemplate={handleTemplateSelection}
+              currentUser={currentUser}
+              onOpenTemplateSuggestion={onOpenTemplateSuggestion}
             />
 
             <QuickStartPicker
               formState={formState}
               onApplyPrefill={handleApplyPrefill}
-            />
-            
-            <AiPromptSection
-              currentUser={currentUser}
-              onOpenTemplateSuggestion={onOpenTemplateSuggestion}
             />
           </div>
         </div>
