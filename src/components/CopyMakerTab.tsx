@@ -1074,12 +1074,13 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
                     <span className="block sm:inline sm:ml-2 text-xs text-red-600 dark:text-red-400">{templateLoadError}</span>
                   )}
                 </label>
-             
+
+                
               </div>
               
               <div className="flex flex-col lg:flex-row gap-3">
                 {/* Search Input */}
-                <div className="flex-1 lg:flex-initial lg:w-48 xl:w-44">
+                <div className="flex-1 lg:flex-initial lg:w-48 xl:w-48">
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <Search size={16} className="text-gray-500" />
