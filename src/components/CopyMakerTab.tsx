@@ -1149,7 +1149,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
             {/* Quick Start Templates Section */}
             <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg">
               <label htmlFor="templateSelection" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Load Saved Template
+                  Load Quick Start Template
                   {templateLoadError && (
                     <span className="block sm:inline sm:ml-2 text-xs text-red-600 dark:text-red-400">{templateLoadError}</span>
                   )}
