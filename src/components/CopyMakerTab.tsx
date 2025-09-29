@@ -1064,7 +1064,6 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
           </div>
           <div className="flex flex-col sm:flex-row gap-3">
 
-            
             {/* Load Template Section */}
             <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg">
               <div className="flex items-center justify-between mb-1">
@@ -1076,11 +1075,10 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
                 </label>
              
               </div>
-
               
               <div className="flex flex-col lg:flex-row gap-3">
                 {/* Search Input */}
-                <div className="flex-1 lg:flex-initial lg:w-48 xl:w-44"> 
+                <div className="flex-1 lg:flex-initial lg:w-48 xl:w-64">
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <Search size={16} className="text-gray-500" />
@@ -1150,7 +1148,12 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
 
             {/* Quick Start Templates Section */}
             <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg">
-              <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-3">Quick Start Templates</h3>
+              <label htmlFor="templateSelection" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Load Quick Start Template
+                  {templateLoadError && (
+                    <span className="block sm:inline sm:ml-2 text-xs text-red-600 dark:text-red-400">{templateLoadError}</span>
+                  )}
+                </label>
               
               <div className="mb-4">
                 <select
@@ -1323,3 +1326,21 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
 };
 
 export default CopyMakerTab;
+
+
+
+
+
+
+{/* Load Template Section */}
+            <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg">
+              <div className="flex items-center justify-between mb-1">
+                <label htmlFor="templateSelection" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Load Saved Template
+                  {templateLoadError && (
+                    <span className="block sm:inline sm:ml-2 text-xs text-red-600 dark:text-red-400">{templateLoadError}</span>
+                  )}
+                </label>
+             
+              </div>
+
