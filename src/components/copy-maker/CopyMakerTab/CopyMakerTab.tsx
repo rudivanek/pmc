@@ -287,7 +287,57 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
               >
                 Cancel
               </button>
-          )
-          }
-  )
-}
+            </div>
+          )}
+        </div>
+
+        {/* Results Panel */}
+        {!isPrefillEditingMode && (
+          <ResultsPanel
+            formState={formState}
+            isContentEmpty={() => {
+              const hasBusinessDescription = formState.businessDescription?.trim();
+              const hasOriginalCopy = formState.originalCopy?.trim();
+              const hasCopyResult = formState.copyResult?.generatedVersions?.length > 0;
+              return !hasBusinessDescription && !hasOriginalCopy && !hasCopyResult;
+            }}
+            onGenerateFaqSchema={handleGenerateFaqSchema}
+            onShowJsonLd={(content: string) => {
+              setJsonLdContent(content);
+              setShowJsonLdModal(true);
+            }}
+            onOnDemandGeneration={handleOnDemandGeneration}
+            onModifyContent={handleModifyContent}
+            onCancelOperation={handleCancelOperation}
+          />
+        )}
+      </div>
+
+      {/* Floating Action Bar */}
+      {!isPrefillEditingMode && (
+        <FloatingActionBar
+          formState={formState}
+          onSaveTemplate={onSaveTemplate}
+          onSaveOutput={onSaveOutput}
+          onViewPrompts={onViewPrompts}
+          onCancel={onCancel}
+        />
+      )}
+
+      {/* Modals */}
+      <PrefillSaveDialog
+        isOpen={showSavePrefillModal}
+        onClose={() => setShowSavePrefillModal(false)}
+        onSave={handleSavePrefill}
+        prefillData={prefillEditingData}
+        currentUser={currentUser}
+      />
+
+      <JsonLdViewer
+        isOpen={showJsonLdModal}
+        onClose={() => setShowJsonLdModal(false)}
+        content={jsonLdContent}
+      />
+    </div>
+  );
+};
