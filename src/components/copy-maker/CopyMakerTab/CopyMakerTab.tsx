@@ -221,6 +221,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
               setDisplayMode('all');
             }}
             isClearDisabled={isExporting || (!formState.businessDescription?.trim() && !formState.originalCopy?.trim()) || formState.isLoading}
+            isClearDisabled={isExporting || !hasAnyPopulatedFields(formState) || formState.isLoading}
           />
               
           <div className="flex flex-col sm:flex-row gap-3">
