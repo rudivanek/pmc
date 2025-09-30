@@ -1,5 +1,6 @@
 import React from 'react';
-import { Lightbulb } from 'lucide-react';
+import { Lightbulb, Info as InfoIcon } from 'lucide-react';
+import { Tooltip } from '../../../ui/Tooltip';
 import { User } from '../../../../types';
 
 interface AiPromptSectionProps {
@@ -16,9 +17,16 @@ const AiPromptSection: React.FC<AiPromptSectionProps> = ({
   border border-gray-200 dark:border-gray-800 rounded-lg 
   max-w-xl">
 
-      <label htmlFor="aiPromptButton" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"> 
-        AI Prompts
-      </label>
+      <div className="flex items-center mb-1">
+        <label htmlFor="aiPromptButton" className="block text-sm font-medium text-gray-700 dark:text-gray-300"> 
+          AI Prompts
+        </label>
+        <Tooltip content="Use natural language to generate complete form configurations. Describe what you want (e.g., 'a blog post for Twitter marketing, 400 words, target social media managers') and AI will automatically populate all relevant form fields with appropriate settings, saving time and ensuring optimal configurations for your content type.">
+          <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+            <InfoIcon size={14} />
+          </button>
+        </Tooltip>
+      </div>
       
       <button
         type="button"

@@ -1,5 +1,7 @@
 import React from 'react';
 import { toast } from 'react-hot-toast';
+import { Info as InfoIcon } from 'lucide-react';
+import { Tooltip } from '../../../ui/Tooltip';
 import { FormState } from '../../../../types';
 import { GROUPED_PREFILLS } from '../../../../constants/prefills';
 
@@ -15,9 +17,16 @@ const QuickStartPicker: React.FC<QuickStartPickerProps> = ({
   return (
     <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg max-w-md">
       <div className="flex items-center justify-between mb-1">
-      <label htmlFor="quickStartSelection"  className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-        Load Quick Start Template
-      </label>
+        <div className="flex items-center">
+          <label htmlFor="quickStartSelection" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Load Quick Start Template
+          </label>
+          <Tooltip content="Choose from pre-configured templates for common content types like blog posts, ad copy, email content, landing pages, and more. Each template includes optimized settings for tone, word count, output structure, and targeting that work best for that specific content type. Perfect for getting started quickly with proven configurations.">
+            <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+              <InfoIcon size={14} />
+            </button>
+          </Tooltip>
+        </div>
       </div>
       
       <div className="mb-4">
