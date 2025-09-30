@@ -191,20 +191,17 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
       const [
         sessionsResult,
         templatesResult,
-        tokenUsageResult,
         savedOutputsResult,
         subscriptionResult
       ] = await Promise.all([
         getUserCopySessions(userId),
         getUserTemplates(userId),
-        getUserTokenUsage(userId),
         getUserSavedOutputs(userId),
         getUserSubscriptionData(userId)
       ]);
 
       if (sessionsResult.data) setCopySessions(sessionsResult.data);
       if (templatesResult.data) setTemplates(templatesResult.data);
-      if (tokenUsageResult.data) setTokenUsage(tokenUsageResult.data);
       if (savedOutputsResult.data) setSavedOutputs(savedOutputsResult.data);
       if (subscriptionResult.data) setSubscriptionData(subscriptionResult.data);
 
@@ -249,12 +246,33 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
         } catch (adminError) {
           console.error('Error loading admin data:', adminError);
         }
+      } else {
+        // Load user-specific token usage for non-admin users
+        try {
+          const tokenUsageResult = await getUserTokenUsage(currentUser?.email || '');
+          if (tokenUsageResult.data) {
+            // Transform the data to match the expected format for non-admin users
+            const transformedTokenUsage = tokenUsageResult.data.map((usage: any) => ({
+              id: usage.id,
+              user_id: userId,
+              user_email: currentUser?.email || '',
+              user_name: currentUser?.user_metadata?.name || currentUser?.email?.split('@')[0] || '',
+              operation_type: usage.control_executed || 'unknown',
+              model: usage.model,
+              tokens_used: usage.token_usage,
+              cost_usd: usage.token_cost,
+              created_at: usage.created_at
+            }));
+            setTokenUsage(transformedTokenUsage);
+          }
+        } catch (tokenError) {
+          console.error('Error loading user token usage:', tokenError);
+        }
       }
 
       if (sessionsResult.error) console.error('Error loading sessions:', sessionsResult.error);
       if (savedOutputsResult.error) console.error('Error loading saved outputs:', savedOutputsResult.error);
       if (subscriptionResult.error) console.error('Error loading subscription data:', subscriptionResult.error);
-      if (tokenUsageResult.error) console.error('Error loading token usage:', tokenUsageResult.error);
       
     } catch (error) {
       console.error('Error loading dashboard data:', error);
@@ -414,7 +432,7 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
           { id: 'sessions', label: 'Copy Sessions', icon: FileText },
           { id: 'templates', label: 'Templates', icon: Settings },
           { id: 'savedOutputs', label: 'Saved Outputs', icon: BarChart3 },
-          ...(isAdmin ? [{ id: 'tokenUsage', label: 'Token Usage', icon: DollarSign }] : [])
+          { id: 'tokenUsage', label: 'Token Usage', icon: DollarSign }
         ].map(({ id, label, icon: Icon }) => (
           <button
             key={id}
@@ -966,8 +984,12 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
             <div className="p-6 border-b border-gray-300 dark:border-gray-800">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Token Usage Analytics</h2>
-                  <p className="text-gray-600 dark:text-gray-400 mt-1">Monitor API token consumption across all users</p>
+                  <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                    Token Usage {isAdmin ? 'Analytics' : ''}
+                  </h2>
+                  <p className="text-gray-600 dark:text-gray-400 mt-1">
+                    {isAdmin ? 'Monitor API token consumption across all users' : 'Monitor your API token consumption'}
+                  </p>
                 </div>
                 <div className="flex items-center space-x-3">
                   <button
@@ -982,7 +1004,8 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
                 </div>
               </div>
               
-              {/* User Filter and Stats */}
+              {/* User Filter and Stats - Only show for admin */}
+              {isAdmin && (
               <div className="mt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-3 sm:space-y-0">
                 <div className="flex items-center space-x-3">
                   <div className="flex items-center">
@@ -1027,6 +1050,30 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
                   </div>
                 </div>
               </div>
+              )}
+              
+              {/* Stats for non-admin users */}
+              {!isAdmin && tokenUsage.length > 0 && (
+                <div className="mt-4">
+                  <div className="flex items-center space-x-4 text-sm">
+                    <div className="bg-gray-100 dark:bg-gray-800 px-3 py-2 rounded-lg">
+                      <span className="font-medium text-gray-700 dark:text-gray-300">
+                        Total Records: {tokenUsage.length}
+                      </span>
+                    </div>
+                    <div className="bg-gray-100 dark:bg-gray-800 px-3 py-2 rounded-lg">
+                      <span className="font-medium text-gray-700 dark:text-gray-300">
+                        Total Tokens: {stats.totalTokensUsed.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="bg-gray-100 dark:bg-gray-800 px-3 py-2 rounded-lg">
+                      <span className="font-medium text-gray-700 dark:text-gray-300">
+                        Total Cost: {formatCurrency(stats.totalCost)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
             
             {tokenUsage.length === 0 ? (
@@ -1034,10 +1081,10 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
                 <DollarSign size={48} className="text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No token usage data</h3>
                 <p className="text-gray-600 dark:text-gray-400">
-                  Token usage will appear here as users generate content
+                  {isAdmin ? 'Token usage will appear here as users generate content' : 'Your token usage will appear here as you generate content'}
                 </p>
               </div>
-            ) : filteredTokenUsage.length === 0 ? (
+            ) : isAdmin && filteredTokenUsage.length === 0 ? (
               <div className="p-8 text-center">
                 <Filter size={48} className="text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No data for selected user</h3>
@@ -1050,7 +1097,9 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                   <thead className="bg-gray-50 dark:bg-gray-800">
                     <tr>
+                      {isAdmin && (
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">User</th>
+                      )}
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Operation</th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Model</th>
                       <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Tokens</th>
@@ -1059,8 +1108,9 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
                     </tr>
                   </thead>
                   <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
-                    {filteredTokenUsage.map((usage) => (
+                    {(isAdmin ? filteredTokenUsage : tokenUsage).map((usage) => (
                       <tr key={usage.id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
+                        {isAdmin && (
                         <td className="px-4 py-3">
                           <div className="text-sm font-medium text-gray-900 dark:text-white">
                             {usage.user_name}
@@ -1069,6 +1119,7 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
                             {usage.user_email}
                           </div>
                         </td>
+                        )}
                         <td className="px-4 py-3">
                           <div className="text-sm text-gray-900 dark:text-white capitalize">
                             {usage.operation_type.replace(/_/g, ' ')}
