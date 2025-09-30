@@ -1128,8 +1128,7 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Operation</th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Model</th>
                       <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Tokens</th>
-                      <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Cost</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date</th>
+                )}
                     </tr>
                   </thead>
                   <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
@@ -1158,8 +1157,7 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
                         </td>
                         <td className="px-4 py-3 text-right">
                           <div className="text-sm font-medium text-gray-900 dark:text-white">
-                            {usage.tokens_used.toLocaleString()}
-                          </div>
+                          )}
                         </td>
                         <td className="px-4 py-3 text-right">
                           <div className="text-sm font-medium text-gray-900 dark:text-white">
@@ -1170,8 +1168,7 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
                           </div>
                         </td>
                         <td className="px-4 py-3">
-                          <div className="text-sm text-gray-500 dark:text-gray-400">
-                            {formatDate(usage.created_at)}
+                        )}
                           </div>
                           <div className="text-xs text-gray-400 dark:text-gray-500">
                             {new Date(usage.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
