@@ -1,6 +1,7 @@
 import React from 'react';
-import { Search } from 'lucide-react';
+import { Search, Info as InfoIcon } from 'lucide-react';
 import LoadingSpinner from '../../../ui/LoadingSpinner';
+import { Tooltip } from '../../../ui/Tooltip';
 import { Template, User } from '../../../../types';
 
 interface TemplateLoaderProps {
@@ -29,12 +30,19 @@ const TemplateLoader: React.FC<TemplateLoaderProps> = ({
   return (
     <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg">
       <div className="flex items-center justify-between mb-1">
-        <label htmlFor="templateSelection" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-          Load Saved Template
+        <div className="flex items-center">
+          <label htmlFor="templateSelection" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Load Saved Template
+          </label>
+          <Tooltip content="Load a previously saved template configuration that contains all your form settings like tone, word count, target audience, keywords, and other parameters. Templates help maintain consistent brand messaging across similar projects and save time by avoiding repetitive form filling.">
+            <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+              <InfoIcon size={14} />
+            </button>
+          </Tooltip>
           {templateLoadError && (
             <span className="block sm:inline sm:ml-2 text-xs text-red-600 dark:text-red-400">{templateLoadError}</span>
           )}
-        </label>
+        </div>
       </div>
       
       <div className="flex flex-col lg:flex-row gap-3">
