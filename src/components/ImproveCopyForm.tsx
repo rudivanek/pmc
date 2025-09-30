@@ -101,14 +101,16 @@ const ImproveCopyForm: React.FC<ImproveCopyFormProps> = ({
       {/* Section Dropdown */}
       <div className={displayMode === 'populated' && !isFieldPopulated(formData.section) ? 'hidden' : ''}>
         <div>
-          <label htmlFor="section" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Section
-          </label>
-          <Tooltip content="The specific section within a page type for focused guidance. Examples: Hero Section for attention-grabbing openings, Benefits for value propositions, Features for capabilities, FAQ for addressing objections.">
-            <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-              <InfoIcon size={14} />
-            </button>
-          </Tooltip>
+          <div className="flex items-center mb-1">
+            <label htmlFor="section" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Section
+            </label>
+            <Tooltip content="The specific section within a page type for focused guidance. Examples: Hero Section for attention-grabbing openings, Benefits for value propositions, Features for capabilities, FAQ for addressing objections.">
+              <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                <InfoIcon size={14} />
+              </button>
+            </Tooltip>
+          </div>
           <input
             type="text"
             id="section"
@@ -124,7 +126,7 @@ const ImproveCopyForm: React.FC<ImproveCopyFormProps> = ({
       {/* Original Copy */}
       <div className={displayMode === 'populated' && !isFieldPopulated(formData.originalCopy) ? 'hidden' : ''}>
         <div>
-          <div className="mb-1">
+          <div className="flex items-center mb-1">
             <label htmlFor="originalCopy" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Original Copy or Describe what you want to achieve <span className="text-red-500">*</span>
             </label>

@@ -435,9 +435,16 @@ const CopyForm: React.FC<CopyFormProps> = ({
 
           {/* Project Description */}
           <div className="mb-6">
-            <label htmlFor="projectDescription" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Project Description
-            </label>
+            <div className="flex items-center mb-1">
+              <label htmlFor="projectDescription" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Project Description
+              </label>
+              <Tooltip content="Internal field for your organization - not sent to AI. Helps you identify and manage projects in your dashboard. Use descriptive names like 'Homepage redesign Q1 2025' or 'Product launch email sequence' to easily find your work later.">
+                <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                  <InfoIcon size={14} />
+                </button>
+              </Tooltip>
+            </div>
             <input
               type="text"
               id="projectDescription"
@@ -458,14 +465,16 @@ const CopyForm: React.FC<CopyFormProps> = ({
           {/* Customer Selection */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
             <div>
-              <label htmlFor="customerId" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Customer
-              </label>
-              <Tooltip content="Select existing customer profile or create new one to organize your work by client. This helps filter and manage projects in your dashboard and maintains context across different copy projects for the same customer.">
-                <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                  <InfoIcon size={14} />
-                </button>
-              </Tooltip>
+              <div className="flex items-center mb-1">
+                <label htmlFor="customerId" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Customer
+                </label>
+                <Tooltip content="Select existing customer profile or create new one to organize your work by client. This helps filter and manage projects in your dashboard and maintains context across different copy projects for the same customer.">
+                  <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                    <InfoIcon size={14} />
+                  </button>
+                </Tooltip>
+              </div>
               <select
                 id="customerId"
                 name="customerId"
@@ -484,14 +493,16 @@ const CopyForm: React.FC<CopyFormProps> = ({
             </div>
 
             <div>
-              <label htmlFor="productServiceName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Product/Service Name
-              </label>
-              <Tooltip content="Specify the exact name of what you're promoting to ensure accurate, branded content. This helps the AI reference your product/service correctly throughout the copy and maintain consistent branding and messaging.">
-                <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                  <InfoIcon size={14} />
-                </button>
-              </Tooltip>
+              <div className="flex items-center mb-1">
+                <label htmlFor="productServiceName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Product/Service Name
+                </label>
+                <Tooltip content="Specify the exact name of what you're promoting to ensure accurate, branded content. This helps the AI reference your product/service correctly throughout the copy and maintain consistent branding and messaging.">
+                  <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                    <InfoIcon size={14} />
+                  </button>
+                </Tooltip>
+              </div>
               <input
                 type="text"
                 id="productServiceName"
