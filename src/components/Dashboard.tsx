@@ -1157,6 +1157,7 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
                         </td>
                         <td className="px-4 py-3 text-right">
                           <div className="text-sm font-medium text-gray-900 dark:text-white">
+                          </div>
                           )}
                         </td>
                         <td className="px-4 py-3 text-right">
