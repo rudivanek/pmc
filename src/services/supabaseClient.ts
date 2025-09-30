@@ -1632,7 +1632,7 @@ export const checkUserAccess = async (userId: string, userEmail: string): Promis
           isSubscriptionValid: false,
           isWithinTokenLimit: true,
           tokensUsed: 0,
-          tokensAllowed: userData.tokens_allowed || 0,
+          tokensAllowed: tokensAllowed,
           untilDate: userData.until_date
         }
       };
@@ -1640,7 +1640,23 @@ export const checkUserAccess = async (userId: string, userEmail: string): Promis
     
     // 2. Check token usage limits
     let tokensUsed = 0;
+    
+    console.log('📊 Token usage data:', { tokensUsed, tokensAllowed: userData.tokens_allowed });
+    
+    // Calculate token limit (default to high limit if not set)
+    const tokensAllowed = userData.tokens_allowed || 999999;
     let isWithinTokenLimit = true;
+    
+    // Check token usage if we have token data
+    if (tokensUsed > 0) {
+      isWithinTokenLimit = tokensUsed <= tokensAllowed;
+      console.log('🎯 Token limit check:', { 
+        tokensUsed, 
+        tokensAllowed,
+        isWithinTokenLimit,
+        percentage: (tokensUsed / tokensAllowed * 100).toFixed(1) + '%'
+      });
+    }
     
     // Get total token usage for the user within subscription period
     try {
@@ -1673,7 +1689,6 @@ export const checkUserAccess = async (userId: string, userEmail: string): Promis
         tokensUsed = tokenData.reduce((sum, record) => sum + (record.tokens_used || 0), 0);
         
         // Check if within token limit
-        const tokensAllowed = userData.tokens_allowed || 999999; // Default to high limit if not set
         isWithinTokenLimit = tokensUsed <= tokensAllowed;
         
         console.log('🪙 Token usage check:', { 
@@ -1692,7 +1707,7 @@ export const checkUserAccess = async (userId: string, userEmail: string): Promis
               isSubscriptionValid: true,
               isWithinTokenLimit: false,
               tokensUsed,
-              tokensAllowed,
+              tokensAllowed: tokensAllowed,
               untilDate: userData.until_date
             }
           };
@@ -1735,8 +1750,6 @@ export const checkUserAccess = async (userId: string, userEmail: string): Promis
         console.log('🔢 Total tokens used in period:', tokensUsed);
         console.log('🎫 Tokens allowed:', userData.tokens_allowed);
         
-            tokensAllowed: tokensAllowed,
-        const tokensAllowed = userData.tokens_allowed || 999999; // Default to high limit if not set
         isWithinTokenLimit = tokensUsed <= tokensAllowed;
         
         console.log('🚦 Token limit check:', { 
@@ -1761,21 +1774,20 @@ export const checkUserAccess = async (userId: string, userEmail: string): Promis
           isSubscriptionValid: true,
           isWithinTokenLimit: false,
           tokensUsed,
-          tokensAllowed: userData.tokens_allowed || 0,
+          tokensAllowed: tokensAllowed,
           untilDate: userData.until_date
         }
       };
     }
     
-      const tokenLimit = tokensAllowed;
     return {
       hasAccess: true,
       message: "Access granted.",
       details: {
         isSubscriptionValid: true,
-            tokensAllowed: tokensAllowed,
+        isWithinTokenLimit: true,
         tokensUsed,
-        tokensAllowed: userData.tokens_allowed || 999999,
+        tokensAllowed: tokensAllowed,
         untilDate: userData.until_date
       }
     };
@@ -1788,4 +1800,3 @@ export const checkUserAccess = async (userId: string, userEmail: string): Promis
     };
   }
 };
-        tokensAllowed: tokensAllowed,
