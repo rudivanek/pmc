@@ -104,6 +104,11 @@ const ImproveCopyForm: React.FC<ImproveCopyFormProps> = ({
           <label htmlFor="section" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Section
           </label>
+          <Tooltip content="The specific section within a page type for focused guidance. Examples: Hero Section for attention-grabbing openings, Benefits for value propositions, Features for capabilities, FAQ for addressing objections.">
+            <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+              <InfoIcon size={14} />
+            </button>
+          </Tooltip>
           <input
             type="text"
             id="section"
@@ -123,6 +128,11 @@ const ImproveCopyForm: React.FC<ImproveCopyFormProps> = ({
             <label htmlFor="originalCopy" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Original Copy or Describe what you want to achieve <span className="text-red-500">*</span>
             </label>
+            <Tooltip content="Primary input for improving existing copy. Paste your current marketing copy that needs enhancement, or describe what you want to achieve. The AI will analyze this content and improve clarity, persuasiveness, engagement, and strategic alignment while preserving your core message.">
+              <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                <InfoIcon size={14} />
+              </button>
+            </Tooltip>
           </div>
           <textarea
             id="originalCopy"

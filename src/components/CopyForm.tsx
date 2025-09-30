@@ -461,6 +461,11 @@ const CopyForm: React.FC<CopyFormProps> = ({
               <label htmlFor="customerId" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Customer
               </label>
+              <Tooltip content="Select existing customer profile or create new one to organize your work by client. This helps filter and manage projects in your dashboard and maintains context across different copy projects for the same customer.">
+                <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                  <InfoIcon size={14} />
+                </button>
+              </Tooltip>
               <select
                 id="customerId"
                 name="customerId"
@@ -482,6 +487,11 @@ const CopyForm: React.FC<CopyFormProps> = ({
               <label htmlFor="productServiceName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Product/Service Name
               </label>
+              <Tooltip content="Specify the exact name of what you're promoting to ensure accurate, branded content. This helps the AI reference your product/service correctly throughout the copy and maintain consistent branding and messaging.">
+                <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                  <InfoIcon size={14} />
+                </button>
+              </Tooltip>
               <input
                 type="text"
                 id="productServiceName"
