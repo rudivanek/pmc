@@ -1,7 +1,7 @@
 import React from 'react';
 import { FormData } from '../types';
 import { Tooltip } from './ui/Tooltip';
-import { InfoIcon } from 'lucide-react';
+import { Info as InfoIcon } from 'lucide-react';
 import { Checkbox } from './ui/checkbox';
 import { Label } from './ui/label';
 import { useMemo } from 'react';
@@ -222,9 +222,16 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
       {formData.prioritizeWordCount && (displayMode === 'all' || formData.prioritizeWordCount) && (
         <div className="ml-6 mt-2">
           <div className="flex items-center space-x-2">
-            <label htmlFor="wordCountTolerancePercentage" className="text-xs text-gray-600 dark:text-gray-400">
-              Tolerance (% below target):
-            </label>
+            <div className="flex items-center">
+              <label htmlFor="businessDescription" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Business Description <span className="text-red-500">*</span>
+              </label>
+              <Tooltip content="Detailed information about your business, product, or service used to create entirely new copy from scratch. The more comprehensive and specific this description, the better the AI can understand your value proposition and generate targeted, effective marketing copy.">
+                <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                  <InfoIcon size={14} />
+                </button>
+              </Tooltip>
+            </div>
             <input
               id="wordCountTolerancePercentage"
               name="wordCountTolerancePercentage"
@@ -468,16 +475,9 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
       {/* Target Countries or Regions - Only show when GEO is enabled */}
       {formData.enhanceForGEO && (displayMode === 'all' || isFieldPopulated(formData.geoRegions)) && (
         <div className="ml-6 mt-2">
-          <div className="flex items-center mb-1">
-            <label htmlFor="pageType" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Page Type
-            </label>
-            <Tooltip content="Specifies the type of page or content format you're creating, which influences the AI's approach to structure and messaging. Different page types have different conventions and reader expectations.">
-              <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                <InfoIcon size={14} />
-              </button>
-            </Tooltip>
-          </div>
+          <label htmlFor="geoRegions" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Target Countries or Regions
+          </label>
           <input
             type="text"
             id="geoRegions"
