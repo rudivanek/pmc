@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Lightbulb } from 'lucide-react';
+import { Search } from 'lucide-react';
 import LoadingSpinner from '../../../ui/LoadingSpinner';
 import { Template, User } from '../../../../types';
 
@@ -75,21 +75,6 @@ const TemplateLoader: React.FC<TemplateLoaderProps> = ({
               </optgroup>
             ))}
           </select>
-        </div>
-        
-        {/* AI Prompt Button */}
-        <div className="flex-shrink-0">
-          <button
-            type="button"
-            onClick={onOpenTemplateSuggestion}
-            className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 p-2 sm:p-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors inline-flex items-center whitespace-nowrap"
-            disabled={!currentUser}
-            title="Generate template JSON from natural language"
-          >
-            <Lightbulb size={12} className="mr-1 sm:w-3.5 sm:h-3.5" />
-            <span className="hidden sm:inline">AI Prompt</span>
-            <span className="sm:hidden">AI</span>
-          </button>
         </div>
       </div>
       
