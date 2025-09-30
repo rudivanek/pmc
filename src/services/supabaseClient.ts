@@ -1088,6 +1088,33 @@ export async function adminGetBetaRegistrationsCount() {
   }
 }
 
+/**
+ * Admin function to get all users
+ * Only accessible by admin users
+ */
+export async function adminGetUsers() {
+  try {
+    const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-get-users`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${await getSessionToken()}`,
+        'Content-Type': 'application/json',
+      }
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || 'Failed to fetch users')
+    }
+
+    const result = await response.json()
+    return { data: result.users, error: null }
+  } catch (error: any) {
+    console.error('Error fetching users:', error)
+    return { data: null, error }
+  }
+}
+
 // Get prefills from database
 export async function getPrefills(userId: string): Promise<{ data: Prefill[] | null; error: any }> {
   const supabase = getSupabaseClient();
