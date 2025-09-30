@@ -3,6 +3,7 @@
  */
 import { FormState, Model, GeoScoreData } from '../../types';
 import { getApiConfig, handleApiResponse, storePrompts } from './utils';
+import { trackTokenUsage } from './tokenTracking';
 
 /**
  * Calculate GEO score for content based on AI assistant optimization and geographical visibility
@@ -188,6 +189,16 @@ IMPORTANT:
     
     // Extract token usage
     const tokenUsage = data.usage?.total_tokens || 0;
+    
+    // MANDATORY TOKEN TRACKING - API call fails if tracking fails
+    if (currentUser && tokenUsage > 0) {
+      await trackTokenUsage(
+        currentUser,
+        tokenUsage,
+        formState.model,
+        'calculate_geo_score'
+      );
+    }
     
     // Extract the content from the response
     const responseContent = data.choices[0]?.message?.content;

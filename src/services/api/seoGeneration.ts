@@ -3,6 +3,7 @@
  */
 import { FormState, Model, SeoMetadata } from '../../types';
 import { getApiConfig, handleApiResponse, storePrompts } from './utils';
+import { trackTokenUsage } from './tokenTracking';
 
 /**
  * Generate SEO metadata and structural elements for content
@@ -122,6 +123,16 @@ Respond only in JSON using the format and limits provided. Do not include any ex
     
     // Extract token usage
     const tokenUsage = data.usage?.total_tokens || 0;
+    
+    // MANDATORY TOKEN TRACKING - API call fails if tracking fails
+    if (currentUser && tokenUsage > 0) {
+      await trackTokenUsage(
+        currentUser,
+        tokenUsage,
+        formState.model,
+        'generate_seo_metadata'
+      );
+    }
     
     // Extract the content from the response
     const responseContent = data.choices[0]?.message?.content;
@@ -284,6 +295,16 @@ MANDATORY REQUIREMENTS:
     
     // Extract token usage
     const tokenUsage = data.usage?.total_tokens || 0;
+    
+    // MANDATORY TOKEN TRACKING - API call fails if tracking fails
+    if (currentUser && tokenUsage > 0) {
+      await trackTokenUsage(
+        currentUser,
+        tokenUsage,
+        formState.model,
+        'generate_faq_schema'
+      );
+    }
     
     // Extract the content from the response
     const responseContent = data.choices[0]?.message?.content;
