@@ -106,13 +106,18 @@ const MainMenu: React.FC<MainMenuProps> = ({ userName, onLogout, onOpenTemplateS
                 </Link>
               </div>
             ) : (
-              <button
-                onClick={onLogout}
-                className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors duration-200 flex items-center text-sm"
-              >
-                <LogOut size={18} className="mr-2" />
-                Logout
-              </button>
+             <div className="flex items-center space-x-3">
+               <span className="text-sm text-gray-600 dark:text-gray-400">
+                 {currentUser.email}
+               </span>
+               <button
+                 onClick={onLogout}
+                 className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors duration-200 flex items-center text-sm"
+               >
+                 <LogOut size={18} className="mr-2" />
+                 Logout
+               </button>
+             </div>
             )}
           </div>
           
