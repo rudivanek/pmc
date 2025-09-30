@@ -71,3 +71,14 @@ export async function adminGetUsers() {
     return { data: [], error: error };
   }
 }
+
+export async function adminGetBetaRegistrationsCount() {
+  const { data, error } = await supabase.functions.invoke('admin-get-beta-registrations-count');
+
+  if (error) {
+    console.error('Error calling admin-get-beta-registrations-count edge function:', error);
+    throw new Error(error.message || 'Failed to get beta registrations count');
+  }
+
+  return data;
+}
