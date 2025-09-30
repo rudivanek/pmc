@@ -253,15 +253,17 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         {/* Industry/Niche - Enhanced field with categories */}
         <div className={displayMode === 'populated' && !isFieldPopulated(formData.industryNiche) ? 'hidden' : ''}>
           <div className="flex justify-between items-center mb-1">
-            <label htmlFor="industryNiche" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Industry/Niche
-            </label>
-            <div className="flex items-center">
+            <div className="flex items-center mb-1">
+              <label htmlFor="industryNiche" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Industry/Niche
+              </label>
               <Tooltip content="Select your industry or add a custom one to ensure the AI uses appropriate terminology, industry-specific language, and relevant examples. This helps generate copy that resonates with your specific market and demonstrates industry expertise.">
                 <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                   <InfoIcon size={14} />
                 </button>
               </Tooltip>
+            </div>
+            <div className="flex items-center">
             <SuggestionButton
               fieldType="industryNiche"
               businessDescription={formData.tab === 'create' ? formData.businessDescription || '' : formData.originalCopy || ''}
@@ -286,15 +288,17 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         {/* Target Audience - Moved from CreateCopyForm/ImproveCopyForm */}
         <div className={displayMode === 'populated' && !isFieldPopulated(formData.targetAudience) ? 'hidden' : ''}>
           <div className="flex justify-between items-center mb-1">
-            <label htmlFor="targetAudience" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Target Audience
-            </label>
-            <div className="flex items-center">
+            <div className="flex items-center mb-1">
+              <label htmlFor="targetAudience" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Target Audience
+              </label>
               <Tooltip content="Define your ideal readers with specific demographics, psychographics, and pain points. Include age ranges, job titles, company size, challenges they face, and what motivates them. The more specific this is, the more targeted and compelling your copy will be.">
                 <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                   <InfoIcon size={14} />
                 </button>
               </Tooltip>
+            </div>
+            <div className="flex items-center">
             <SuggestionButton
               fieldType="targetAudience"
               businessDescription={formData.tab === 'create' ? formData.businessDescription || '' : formData.originalCopy || ''}
@@ -319,15 +323,17 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         {/* Reader's Stage in Funnel */}
         <div className={displayMode === 'populated' && !isFieldPopulated(formData.readerFunnelStage) ? 'hidden' : ''}>
           <div className="flex justify-between items-center mb-1">
-            <label htmlFor="readerFunnelStage" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Reader's Stage in Funnel
-            </label>
-            <div className="flex items-center">
+            <div className="flex items-center mb-1">
+              <label htmlFor="readerFunnelStage" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Reader's Stage in Funnel
+              </label>
               <Tooltip content="Where your audience is in their buyer's journey affects messaging approach and urgency. Awareness stage needs educational content, Consideration requires comparison and benefits, Decision needs urgency and clear CTAs, Retention focuses on value reinforcement.">
                 <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                   <InfoIcon size={14} />
                 </button>
               </Tooltip>
+            </div>
+            <div className="flex items-center">
             <SuggestionButton
               fieldType="readerFunnelStage"
               businessDescription={formData.tab === 'create' ? formData.businessDescription || '' : formData.originalCopy || ''}
@@ -347,14 +353,16 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         
         {/* Competitor URLs */}
         <div className={displayMode === 'populated' && !hasPopulatedCompetitorUrls(formData.competitorUrls) ? 'hidden' : ''}>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Competitor URLs (Optional)
-          </label>
-          <Tooltip content="Up to 3 competitor website URLs for the AI to analyze for differentiation opportunities. The AI will consider their messaging approach and create copy that stands out while addressing similar audience needs.">
-            <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-              <InfoIcon size={14} />
-            </button>
-          </Tooltip>
+          <div className="flex items-center mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Competitor URLs (Optional)
+            </label>
+            <Tooltip content="Up to 3 competitor website URLs for the AI to analyze for differentiation opportunities. The AI will consider their messaging approach and create copy that stands out while addressing similar audience needs.">
+              <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                <InfoIcon size={14} />
+              </button>
+            </Tooltip>
+          </div>
           <div className="space-y-2">
             <input
               id="competitorUrl1"
@@ -389,15 +397,17 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         {/* Target Audience Pain Points - With suggestion button */}
         <div className={displayMode === 'populated' && !isFieldPopulated(formData.targetAudiencePainPoints) ? 'hidden' : ''}>
           <div className="flex justify-between items-center mb-1">
-            <label htmlFor="targetAudiencePainPoints" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Target Audience Pain Points
-            </label>
-            <div className="flex items-center">
+            <div className="flex items-center mb-1">
+              <label htmlFor="targetAudiencePainPoints" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Target Audience Pain Points
+              </label>
               <Tooltip content="Specific problems or challenges your audience faces that your solution addresses. This helps the AI create empathetic, problem-focused copy that connects emotionally and positions your solution as the answer to their struggles.">
                 <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                   <InfoIcon size={14} />
                 </button>
               </Tooltip>
+            </div>
+            <div className="flex items-center">
             <SuggestionButton
               fieldType="targetAudiencePainPoints"
               businessDescription={formData.tab === 'create' ? formData.businessDescription || '' : formData.originalCopy || ''}
@@ -422,15 +432,17 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         <div className={`${isSmartMode ? 'hidden' : ''} ${displayMode === 'populated' && !isFieldPopulated(formData.competitorCopyText) ? 'hidden' : ''}`}>
           <div>
             <div className="flex justify-between items-center mb-1">
-              <label htmlFor="competitorCopyText" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Competitor Copy (Text)
-              </label>
-              <div className="flex items-center">
+              <div className="flex items-center mb-1">
+                <label htmlFor="competitorCopyText" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Competitor Copy (Text)
+                </label>
                 <Tooltip content="Paste competitor copy text that you want to outperform or differentiate from. The AI will analyze their approach and create superior copy that addresses the same audience needs but with better messaging, stronger benefits, and more compelling calls to action.">
                   <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                     <InfoIcon size={14} />
                   </button>
                 </Tooltip>
+              </div>
+              <div className="flex items-center">
               <SuggestionButton
                 fieldType="competitorCopyText"
                 businessDescription={formData.tab === 'create' ? formData.businessDescription || '' : formData.originalCopy || ''}
@@ -466,14 +478,16 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
           {/* Language Dropdown */}
           <div className={displayMode === 'populated' && !isFieldUserModified('language', formData.language) ? 'hidden' : ''}>
-            <label htmlFor="language" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Language
-            </label>
-            <Tooltip content="Choose from 6 supported languages for content generation. The AI will generate copy in the selected language with appropriate cultural nuances, idioms, and communication styles that resonate with native speakers.">
-              <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                <InfoIcon size={14} />
-              </button>
-            </Tooltip>
+            <div className="flex items-center mb-1">
+              <label htmlFor="language" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Language
+              </label>
+              <Tooltip content="Choose from 6 supported languages for content generation. The AI will generate copy in the selected language with appropriate cultural nuances, idioms, and communication styles that resonate with native speakers.">
+                <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                  <InfoIcon size={14} />
+                </button>
+              </Tooltip>
+            </div>
             <select
               id="language"
               name="language"
@@ -491,14 +505,16 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
 
           {/* Tone Dropdown */}
           <div className={displayMode === 'populated' && !isFieldUserModified('tone', formData.tone) ? 'hidden' : ''}>
-            <label htmlFor="tone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Tone
-            </label>
-            <Tooltip content="Overall writing style that influences vocabulary choice, sentence structure, and communication approach. Professional uses formal language, Friendly is approachable and warm, Bold is confident and direct, Minimalist is clean and essential.">
-              <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                <InfoIcon size={14} />
-              </button>
-            </Tooltip>
+            <div className="flex items-center mb-1">
+              <label htmlFor="tone" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Tone
+              </label>
+              <Tooltip content="Overall writing style that influences vocabulary choice, sentence structure, and communication approach. Professional uses formal language, Friendly is approachable and warm, Bold is confident and direct, Minimalist is clean and essential.">
+                <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                  <InfoIcon size={14} />
+                </button>
+              </Tooltip>
+            </div>
             <select
               id="tone"
               name="tone"
@@ -516,14 +532,16 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
 
           {/* Word Count Dropdown */}
           <div className={displayMode === 'populated' && !isFieldUserModified('wordCount', formData.wordCount) ? 'hidden' : ''}>
-            <label htmlFor="wordCount" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Target Word Count
-            </label>
-            <Tooltip content="Specify desired content length. Short (50-100) for headlines and CTAs, Medium (100-200) for product descriptions, Long (200-400) for detailed sections, Custom allows precise targeting. Affects content depth and detail level.">
-              <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                <InfoIcon size={14} />
-              </button>
-            </Tooltip>
+            <div className="flex items-center mb-1">
+              <label htmlFor="wordCount" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Target Word Count
+              </label>
+              <Tooltip content="Specify desired content length. Short (50-100) for headlines and CTAs, Medium (100-200) for product descriptions, Long (200-400) for detailed sections, Custom allows precise targeting. Affects content depth and detail level.">
+                <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                  <InfoIcon size={14} />
+                </button>
+              </Tooltip>
+            </div>
             <select
               id="wordCount"
               name="wordCount"
@@ -544,14 +562,16 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         {formData.wordCount === 'Custom' && (displayMode === 'all' || isFieldPopulated(formData.customWordCount)) && (
           <div className="mb-6">
             <div className="flex justify-between items-center">
-              <label htmlFor="customWordCount" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Custom Word Count
-              </label>
-              <Tooltip content="Specify exact word count target (50-2000 words). The AI will generate content to match this length. Enable 'Strictly adhere to target word count' in Optional Features for precise adherence through multiple AI revisions if needed.">
-                <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                  <InfoIcon size={14} />
-                </button>
-              </Tooltip>
+              <div className="flex items-center mb-1">
+                <label htmlFor="customWordCount" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Custom Word Count
+                </label>
+                <Tooltip content="Specify exact word count target (50-2000 words). The AI will generate content to match this length. Enable 'Strictly adhere to target word count' in Optional Features for precise adherence through multiple AI revisions if needed.">
+                  <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                    <InfoIcon size={14} />
+                  </button>
+                </Tooltip>
+              </div>
               
               {/* Word count info display */}
               {!isSmartMode && totalStructureWordCount > 0 && (
@@ -617,7 +637,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         {/* Tone Level Slider - HIDE in Smart Mode */}
         <div className={`${isSmartMode ? 'hidden' : ''} ${displayMode === 'populated' && !isFieldUserModified('toneLevel', formData.toneLevel) ? 'hidden' : ''}`}>
           <div className="mb-6">
-            <div className="flex justify-between items-center mb-1">
+            <div className="flex items-center mb-1">
               <label htmlFor="toneLevel" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Tone Level
               </label>
@@ -650,15 +670,17 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         <div className={`${isSmartMode ? 'hidden' : ''} ${displayMode === 'populated' && !isFieldPopulated(formData.preferredWritingStyle) ? 'hidden' : ''}`}>
           <div className="mb-6">
             <div className="flex justify-between items-center mb-1">
-              <label htmlFor="preferredWritingStyle" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Preferred Writing Style
-              </label>
-              <div className="flex items-center">
+              <div className="flex items-center mb-1">
+                <label htmlFor="preferredWritingStyle" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Preferred Writing Style
+                </label>
                 <Tooltip content="Specific writing approach that guides information presentation. Persuasive focuses on conversion, Conversational is friendly and approachable, Informative is educational and factual, Storytelling uses narrative elements to engage emotions.">
                   <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                     <InfoIcon size={14} />
                   </button>
                 </Tooltip>
+              </div>
+              <div className="flex items-center">
               <SuggestionButton
                 fieldType="preferredWritingStyle"
                 businessDescription={formData.tab === 'create' ? formData.businessDescription || '' : formData.originalCopy || ''}
@@ -680,14 +702,16 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         {/* Language Style Constraints - HIDE in Smart Mode */}
         <div className={`${isSmartMode ? 'hidden' : ''} ${displayMode === 'populated' && !isFieldPopulated(formData.languageStyleConstraints) ? 'hidden' : ''}`}>
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-              Language Style Constraints
-            </label>
-            <Tooltip content="Specific writing rules to follow for brand consistency and compliance. These constraints ensure the AI follows your organization's style guidelines and avoids language patterns that don't align with your brand voice.">
-              <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                <InfoIcon size={14} />
-              </button>
-            </Tooltip>
+            <div className="flex items-center mb-1">
+              <label htmlFor="languageStyleConstraints" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Language Style Constraints
+              </label>
+              <Tooltip content="Specific writing rules to follow for brand consistency and compliance. These constraints ensure the AI follows your organization's style guidelines and avoids language patterns that don't align with your brand voice.">
+                <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                  <InfoIcon size={14} />
+                </button>
+              </Tooltip>
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {LANGUAGE_STYLE_CONSTRAINTS.map((constraint) => (
                 <div key={constraint} className="flex items-center space-x-2">
@@ -711,14 +735,16 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         {/* Output Structure - HIDE in Smart Mode */}
         <div className={`${isSmartMode ? 'hidden' : ''} ${displayMode === 'populated' && !isFieldPopulated(formData.outputStructure) ? 'hidden' : ''}`}>
           <div>
-            <label htmlFor="outputStructure" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Output Structure
-            </label>
-            <Tooltip content="Define exactly how your content should be organized with draggable elements and individual word count allocation. Select structure elements like Header 1, Problem, Solution, Benefits, then assign specific word counts to each. The AI will create content following this exact structure and word distribution.">
-              <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                <InfoIcon size={14} />
-              </button>
-            </Tooltip>
+            <div className="flex items-center mb-1">
+              <label htmlFor="outputStructure" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Output Structure
+              </label>
+              <Tooltip content="Define exactly how your content should be organized with draggable elements and individual word count allocation. Select structure elements like Header 1, Problem, Solution, Benefits, then assign specific word counts to each. The AI will create content following this exact structure and word distribution.">
+                <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                  <InfoIcon size={14} />
+                </button>
+              </Tooltip>
+            </div>
             <DraggableStructuredInput
               value={formData.outputStructure || []}
               onChange={handleStructureChange}
@@ -764,15 +790,17 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         {/* Key Message - Moved from CreateCopyForm/ImproveCopyForm */}
         <div className={displayMode === 'populated' && !isFieldPopulated(formData.keyMessage) ? 'hidden' : ''}>
           <div className="flex justify-between items-center mb-1">
-            <label htmlFor="keyMessage" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Key Message
-            </label>
-            <div className="flex items-center">
+            <div className="flex items-center mb-1">
+              <label htmlFor="keyMessage" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Key Message
+              </label>
               <Tooltip content="The main point or value proposition you want to communicate throughout the content. This becomes the central theme that ties all copy elements together and ensures consistent messaging across all sections and paragraphs.">
                 <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                   <InfoIcon size={14} />
                 </button>
               </Tooltip>
+            </div>
+            <div className="flex items-center">
             <SuggestionButton
               fieldType="keyMessage"
               businessDescription={formData.tab === 'create' ? formData.businessDescription || '' : formData.originalCopy || ''}
@@ -799,15 +827,17 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
           <div className={`${isSmartMode ? 'hidden' : ''} ${displayMode === 'populated' && !isFieldPopulated(formData.desiredEmotion) ? 'hidden' : ''}`}>
             <div>
               <div className="flex justify-between items-center mb-1">
-                <label htmlFor="desiredEmotion" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Desired Emotion
-                </label>
-                <div className="flex items-center">
+                <div className="flex items-center mb-1">
+                  <label htmlFor="desiredEmotion" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Desired Emotion
+                  </label>
                   <Tooltip content="The emotional response you want to evoke in your readers, influencing tone and approach. Trust builds credibility and safety, Excitement creates enthusiasm and urgency, Relief addresses pain resolution, Confidence instills belief in success.">
                     <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                       <InfoIcon size={14} />
                     </button>
                   </Tooltip>
+                </div>
+                <div className="flex items-center">
                 <SuggestionButton
                   fieldType="desiredEmotion"
                   businessDescription={formData.tab === 'create' ? formData.businessDescription || '' : formData.originalCopy || ''}
@@ -829,15 +859,17 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
           {/* Call to Action */}
           <div className={`${isSmartMode ? 'col-span-full' : ''} ${displayMode === 'populated' && !isFieldPopulated(formData.callToAction) ? 'hidden' : ''}`}>
             <div className="flex justify-between items-center mb-1">
-              <label htmlFor="callToAction" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Call to Action
-              </label>
-              <div className="flex items-center">
+              <div className="flex items-center mb-1">
+                <label htmlFor="callToAction" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Call to Action
+                </label>
                 <Tooltip content="The specific action you want readers to take after reading your content. Be specific and action-oriented: 'Start your free trial' is better than 'Learn more'. This directly impacts conversion rates and reader engagement.">
                   <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                     <InfoIcon size={14} />
                   </button>
                 </Tooltip>
+              </div>
+              <div className="flex items-center">
               <SuggestionButton
                 fieldType="callToAction"
                 businessDescription={formData.tab === 'create' ? formData.businessDescription || '' : formData.originalCopy || ''}
@@ -863,15 +895,17 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         <div className={`${isSmartMode ? 'hidden' : ''} ${displayMode === 'populated' && !isFieldPopulated(formData.brandValues) ? 'hidden' : ''}`}>
           <div className="mb-6">
             <div className="flex justify-between items-center mb-1">
-              <label htmlFor="brandValues" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Brand Values
-              </label>
-              <div className="flex items-center">
+              <div className="flex items-center mb-1">
+                <label htmlFor="brandValues" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Brand Values
+                </label>
                 <Tooltip content="Core values that represent your brand and should be reflected in messaging. These guide tone and messaging consistency across all copy. Examples: Innovation, Reliability, Transparency, Customer-first, Sustainability. Helps create authentic, aligned brand voice.">
                   <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                     <InfoIcon size={14} />
                   </button>
                 </Tooltip>
+              </div>
+              <div className="flex items-center">
               <SuggestionButton
                 fieldType="brandValues"
                 businessDescription={formData.tab === 'create' ? formData.businessDescription || '' : formData.originalCopy || ''}
@@ -894,15 +928,17 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         <div className={`${isSmartMode ? 'hidden' : ''} ${displayMode === 'populated' && !isFieldPopulated(formData.keywords) ? 'hidden' : ''}`}>
           <div className="mb-6">
             <div className="flex justify-between items-center mb-1">
-              <label htmlFor="keywords" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Keywords
-              </label>
-              <div className="flex items-center">
+              <div className="flex items-center mb-1">
+                <label htmlFor="keywords" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Keywords
+                </label>
                 <Tooltip content="SEO keywords and key phrases that should be naturally integrated throughout the content. These help improve search engine visibility and ensure the copy includes terms your audience searches for. Enable 'Force SEO keyword integration' for guaranteed inclusion.">
                   <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                     <InfoIcon size={14} />
                   </button>
                 </Tooltip>
+              </div>
+              <div className="flex items-center">
               <SuggestionButton
                 fieldType="keywords"
                 businessDescription={formData.tab === 'create' ? formData.businessDescription || '' : formData.originalCopy || ''}
@@ -925,7 +961,7 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         <div className={`${isSmartMode ? 'hidden' : ''} ${displayMode === 'populated' && !isFieldPopulated(formData.context) ? 'hidden' : ''}`}>
           <div className="mb-6">
             <div className="flex justify-between items-center mb-1">
-              <div className="flex items-center">
+              <div className="flex items-center mb-1">
                 <label htmlFor="context" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Context
                 </label>
