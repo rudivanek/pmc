@@ -988,10 +988,6 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
                   <p className="text-gray-600 dark:text-gray-400 mt-1">
                     {isAdmin ? 'Monitor API token consumption across all users' : 'Monitor your API token consumption'}
                   </p>
-                  </h2>
-                  <p className="text-gray-600 dark:text-gray-400 mt-1">
-                    {isAdmin ? 'Monitor API token consumption across all users' : 'Monitor your API token consumption'}
-                  </p>
                 </div>
                 <div className="flex items-center space-x-3">
                   <button
@@ -1128,7 +1124,8 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Operation</th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Model</th>
                       <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Tokens</th>
-                )}
+                      <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Cost</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
@@ -1144,7 +1141,6 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
                             </div>
                           </td>
                         )}
-                        )}
                         <td className="px-4 py-3">
                           <div className="text-sm text-gray-900 dark:text-white capitalize">
                             {usage.operation_type.replace(/_/g, ' ')}
@@ -1157,12 +1153,7 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
                         </td>
                         <td className="px-4 py-3 text-right">
                           <div className="text-sm font-medium text-gray-900 dark:text-white">
-                          </div>
-                          )}
-                        </td>
-                        <td className="px-4 py-3 text-right">
-                          <div className="text-sm font-medium text-gray-900 dark:text-white">
-                            {formatCurrency(usage.cost_usd)}
+                            {usage.tokens_used.toLocaleString()}
                           </div>
                           <div className="text-xs text-gray-500 dark:text-gray-400">
                             {formatCurrency((usage.cost_usd / usage.tokens_used) * 1000)}/1K
@@ -1174,7 +1165,10 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
                           </div>
                         </td>
                         <td className="px-4 py-3">
-                          <div className="text-xs text-gray-400 dark:text-gray-500">
+                          <div className="text-sm text-gray-900 dark:text-white">
+                            {formatDate(usage.created_at)}
+                          </div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">
                             {new Date(usage.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                           </div>
                         </td>
