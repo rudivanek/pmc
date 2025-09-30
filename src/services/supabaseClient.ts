@@ -1026,6 +1026,33 @@ export async function getPrefill(prefillId: string): Promise<{ data: Prefill | n
       .select('*')
       .eq('id', prefillId)
       .single();
+/**
+ * Admin function to get all token usage data
+ * Only accessible by admin users
+ */
+export async function adminGetTokenUsage() {
+  try {
+    const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-get-token-usage`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${await getSessionToken()}`,
+        'Content-Type': 'application/json',
+      }
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || `HTTP ${response.status}`);
+    }
+
+    const result = await response.json();
+    return { data: result.data, error: null };
+  } catch (error: any) {
+    console.error('Error getting token usage:', error);
+    return { data: null, error };
+  }
+}
+
     
     return { data, error };
   } catch (error) {
