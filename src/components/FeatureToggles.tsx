@@ -94,12 +94,15 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
   
   return (
     <div className="space-y-3 py-4 border-t border-gray-300 dark:border-gray-800">
-      <Tooltip content="Enhance your output with alternative versions, humanized styles, scoring, and voice emulation options." delayDuration={300}>
-        <div className="flex items-center">
-          <div className="w-1 h-5 bg-primary-500 mr-2"></div>
-          <div className="font-medium text-base text-gray-700 dark:text-gray-300">Optional Features</div>
-        </div>
-      </Tooltip>
+      <div className="flex items-center">
+        <div className="w-1 h-5 bg-primary-500 mr-2"></div>
+        <div className="font-medium text-base text-gray-700 dark:text-gray-300">Optional Features</div>
+        <Tooltip content="Enhance your output with alternative versions, humanized styles, scoring, and voice emulation options." delayDuration={300}>
+          <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+            <InfoIcon size={14} />
+          </button>
+        </Tooltip>
+      </div>
       
       <div className="flex items-start">
         <div className={displayMode === 'populated' && !isFieldPopulated(formData.generateSeoMetadata) ? 'hidden' : ''}>
