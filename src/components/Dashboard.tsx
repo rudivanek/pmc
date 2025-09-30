@@ -979,13 +979,15 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
           </div>
         )}
 
-        {activeTab === 'tokenUsage' && isAdmin && (
+        {activeTab === 'tokenUsage' && (
           <div className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-800 rounded-lg">
             <div className="p-6 border-b border-gray-300 dark:border-gray-800">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                    Token Usage {isAdmin ? 'Analytics' : ''}
+                  <p className="text-gray-600 dark:text-gray-400 mt-1">
+                    {isAdmin ? 'Monitor API token consumption across all users' : 'Monitor your API token consumption'}
+                  </p>
                   </h2>
                   <p className="text-gray-600 dark:text-gray-400 mt-1">
                     {isAdmin ? 'Monitor API token consumption across all users' : 'Monitor your API token consumption'}
