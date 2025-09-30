@@ -152,7 +152,7 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
     isLoadingTemplates,
     templateLoadError,
     handleTemplateSelection
-  } = useTemplates(currentUser, loadFormStateFromTemplate, setLoadedTemplateId, setLoadedTemplateName, onClearAll);
+  } = useTemplates(currentUser, loadFormStateFromTemplate, setLoadedTemplateId, setLoadedTemplateName, onClearAll, setDisplayMode);
 
   const {
     handleGenerate,

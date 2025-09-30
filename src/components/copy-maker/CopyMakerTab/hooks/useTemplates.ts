@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { toast } from 'react-hot-toast';
 import { getUserTemplates } from '../../../../services/supabaseClient';
 import { Template, User, FormState } from '../../../../types';
+import { getAutoDisplayMode } from '../../../../utils/formUtils';
 
 interface UseTemplatesReturn {
   fetchedTemplates: Template[];
@@ -20,7 +21,8 @@ export function useTemplates(
   loadFormStateFromTemplate?: (template: Template) => void,
   setLoadedTemplateId?: (id: string | null) => void,
   setLoadedTemplateName?: (name: string) => void,
-  onClearAll?: () => void
+  onClearAll?: () => void,
+  setDisplayMode?: (mode: 'all' | 'populated') => void
 ): UseTemplatesReturn {
   const [fetchedTemplates, setFetchedTemplates] = useState<Template[]>([]);
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>('');
@@ -89,6 +91,47 @@ export function useTemplates(
         loadFormStateFromTemplate(template);
         if (setLoadedTemplateId) setLoadedTemplateId(template.id || null);
         if (setLoadedTemplateName) setLoadedTemplateName(template.template_name || '');
+        
+        // Auto-determine display mode based on populated fields (same as quick start templates)
+        if (setDisplayMode) {
+          // We need to simulate the loaded form state to determine display mode
+          // Create a temporary form state with the template data to check populated fields
+          const tempFormState = {
+            ...template,
+            // Convert template fields back to FormState structure
+            businessDescription: template.business_description,
+            originalCopy: template.original_copy,
+            targetAudience: template.target_audience,
+            keyMessage: template.key_message,
+            callToAction: template.call_to_action,
+            desiredEmotion: template.desired_emotion,
+            brandValues: template.brand_values,
+            keywords: template.keywords,
+            context: template.context,
+            briefDescription: template.brief_description,
+            productServiceName: template.product_service_name,
+            industryNiche: template.industry_niche,
+            readerFunnelStage: template.reader_funnel_stage,
+            targetAudiencePainPoints: template.target_audience_pain_points,
+            competitorCopyText: template.competitor_copy_text,
+            preferredWritingStyle: template.preferred_writing_style,
+            languageStyleConstraints: template.language_style_constraints,
+            excludedTerms: template.excluded_terms,
+            geoRegions: template.geoRegions,
+            generateSeoMetadata: template.generateSeoMetadata,
+            generateScores: template.generateScores,
+            generateGeoScore: template.generateGeoScore,
+            prioritizeWordCount: template.prioritizeWordCount,
+            forceKeywordIntegration: template.forceKeywordIntegration,
+            forceElaborationsExamples: template.forceElaborationsExamples,
+            enhanceForGEO: template.enhanceForGEO,
+            addTldrSummary: template.addTldrSummary
+          } as any;
+          
+          const autoMode = getAutoDisplayMode(tempFormState);
+          setDisplayMode(autoMode);
+        }
+        
         toast.success(`Template "${template.template_name}" loaded successfully!`);
       }
     } else {
