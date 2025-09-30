@@ -3,6 +3,7 @@
  */
 import { FormState, PromptEvaluation, User, Model } from '../../types';
 import { calculateTargetWordCount, getApiConfig, storePrompts, handleApiResponse } from './utils';
+import { trackTokenUsage } from './tokenTracking';
 
 /**
  * Evaluate the quality of a prompt
@@ -177,6 +178,16 @@ The JSON should follow this structure:
     // Extract token usage from the response for tracking
     const tokenUsage = data.usage?.total_tokens || 0;
     
+    // MANDATORY TOKEN TRACKING - API call fails if tracking fails
+    if (currentUser && tokenUsage > 0) {
+      await trackTokenUsage(
+        currentUser,
+        tokenUsage,
+        formData.model,
+        'evaluate_prompt'
+      );
+    }
+    
     // Parse the JSON content
     const parsedContent = JSON.parse(content);
     
@@ -287,6 +298,16 @@ The JSON should follow this structure:
     
     // Extract token usage
     const tokenUsage = data.usage?.total_tokens || 0;
+    
+    // MANDATORY TOKEN TRACKING - API call fails if tracking fails
+    if (currentUser && tokenUsage > 0) {
+      await trackTokenUsage(
+        currentUser,
+        tokenUsage,
+        model,
+        'evaluate_content_quality'
+      );
+    }
     
     // Extract the content from the response
     const responseContent = data.choices[0]?.message?.content;

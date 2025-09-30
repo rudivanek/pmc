@@ -3,6 +3,7 @@
  */
 import { FormState } from '../../types';
 import { getApiConfig, handleApiResponse, storePrompts, calculateTargetWordCount, extractWordCount } from './utils';
+import { trackTokenUsage } from './tokenTracking';
 import { reviseContentForWordCount } from './contentRefinement';
 import { calculateGeoScore } from './geoScoring';
 
@@ -304,6 +305,16 @@ Use alternative terminology only if it doesn't interfere with the exact word cou
     
     // Extract token usage
     const tokenUsage = data.usage?.total_tokens || 0;
+    
+    // MANDATORY TOKEN TRACKING - API call fails if tracking fails
+    if (currentUser && tokenUsage > 0) {
+      await trackTokenUsage(
+        currentUser,
+        tokenUsage,
+        formState.model,
+        'generate_humanized'
+      );
+    }
     
     // Extract the content from the response
     let humanizedCopy = data.choices[0]?.message?.content;

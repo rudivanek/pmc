@@ -3,6 +3,7 @@
  */
 import { FormState, User, CopyResult } from '../../types';
 import { getApiConfig, handleApiResponse, storePrompts, calculateTargetWordCount, extractWordCount, getWordCountTolerance } from './utils';
+import { trackTokenUsage } from './tokenTracking';
 import { saveCopySession, getSupabaseClient } from '../supabaseClient';
 import { reviseContentForWordCount } from './contentRefinement';
 import { generateSeoMetadata } from './seoGeneration';
@@ -110,6 +111,16 @@ export async function generateCopy(
     
     // Extract token usage
     const tokenUsage = data.usage?.total_tokens || 0;
+    
+    // MANDATORY TOKEN TRACKING - API call fails if tracking fails
+    if (currentUser && tokenUsage > 0) {
+      await trackTokenUsage(
+        currentUser,
+        tokenUsage,
+        formState.model,
+        'generate_copy'
+      );
+    }
     
     // Extract the content from the response
     const content = data.choices[0]?.message?.content;

@@ -3,6 +3,7 @@
  */
 import { Model, ScoreData } from '../../types';
 import { getApiConfig, handleApiResponse, calculateTargetWordCount } from './utils';
+import { trackTokenUsage } from './tokenTracking';
 
 /**
  * Generate scores for content
@@ -132,6 +133,16 @@ The JSON should follow this structure:
     
     // Extract token usage
     const tokenUsage = data.usage?.total_tokens || 0;
+    
+    // MANDATORY TOKEN TRACKING - API call fails if tracking fails
+    if (currentUser && tokenUsage > 0) {
+      await trackTokenUsage(
+        currentUser,
+        tokenUsage,
+        model,
+        'generate_content_score'
+      );
+    }
     
     // Extract the content from the response
     const responseContent = data.choices[0]?.message?.content;

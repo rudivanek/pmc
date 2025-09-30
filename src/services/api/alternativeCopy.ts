@@ -3,6 +3,7 @@
  */
 import { FormState } from '../../types';
 import { getApiConfig, handleApiResponse, storePrompts, calculateTargetWordCount, extractWordCount } from './utils';
+import { trackTokenUsage } from './tokenTracking';
 import { generateSeoMetadata } from './seoGeneration';
 import { saveCopySession } from '../supabaseClient';
 import { reviseContentForWordCount } from './contentRefinement';
@@ -315,6 +316,16 @@ ${formState.geoRegions && formState.geoRegions.trim()
     
     // Extract token usage
     const tokenUsage = data.usage?.total_tokens || 0;
+    
+    // MANDATORY TOKEN TRACKING - API call fails if tracking fails
+    if (currentUser && tokenUsage > 0) {
+      await trackTokenUsage(
+        currentUser,
+        tokenUsage,
+        formState.model,
+        'generate_alternative'
+      );
+    }
     
     // Extract the content from the response
     let alternativeCopy = data.choices[0]?.message?.content;

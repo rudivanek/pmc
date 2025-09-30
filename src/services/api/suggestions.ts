@@ -3,6 +3,7 @@
  */
 import { Model, User } from '../../types';
 import { getApiConfig, handleApiResponse } from './utils';
+import { trackTokenUsage } from './tokenTracking';
 
 /**
  * Get AI-generated suggestions for a specific field
@@ -165,6 +166,16 @@ Keep suggestions concise and practical.`;
     
     // Extract token usage
     const tokenUsage = data.usage?.total_tokens || 0;
+    
+    // MANDATORY TOKEN TRACKING - API call fails if tracking fails
+    if (currentUser && tokenUsage > 0) {
+      await trackTokenUsage(
+        currentUser,
+        tokenUsage,
+        model,
+        'get_suggestions'
+      );
+    }
     
     // Extract the content from the response
     let content = data.choices[0]?.message?.content;
