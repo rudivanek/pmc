@@ -1566,30 +1566,16 @@ export const checkUserAccess = async (userId: string, userEmail: string): Promis
       };
     }
     
-    // Get user's subscription details from pmc_users table with error handling
-    let userData, userError;
-    try {
-      const result = await supabase
-        .from('pmc_users')
-        .select('start_date, until_date, tokens_allowed')
-        .eq('id', userId)
-        .single();
-      userData = result.data;
-      userError = result.error;
-    } catch (fetchError) {
-      console.error('❌ Network error fetching user subscription data:', fetchError);
-      // If Supabase is not accessible, allow access to prevent app from breaking
-      console.log('🚨 Supabase not accessible, allowing access as fallback');
-      return {
-        hasAccess: true,
-        message: "Proceeding with limited connectivity. Some features may be unavailable."
-      };
-    }
+    // Get user's subscription details from pmc_users table
+    const { data: userData, error: userError } = await supabase
+      .from('pmc_users')
+      .select('start_date, until_date, tokens_allowed')
+      .eq('id', userId)
+      .single();
     
     if (userError) {
       console.error('❌ Error fetching user subscription data:', userError);
-      // SECURITY: If we can't fetch user data, DENY access
-      console.log('🚫 Unable to fetch subscription data, DENYING access for security');
+      // If we can't fetch user data, DENY access for security
       return {
         hasAccess: false,
         message: "Access denied: your subscription has expired or you have consumed all your available tokens. Please update your plan."
@@ -1598,8 +1584,7 @@ export const checkUserAccess = async (userId: string, userEmail: string): Promis
     
     if (!userData) {
       console.error('❌ No user subscription data found');
-      // SECURITY: If no user data found, DENY access
-      console.log('🚫 No subscription data found, DENYING access for security');
+      // If no user data found, DENY access
       return {
         hasAccess: false,
         message: "Access denied: your subscription has expired or you have consumed all your available tokens. Please update your plan."
@@ -1608,7 +1593,7 @@ export const checkUserAccess = async (userId: string, userEmail: string): Promis
     
     console.log('📊 User subscription data:', userData);
     
-    // Check subscription validity
+    // 1. Check subscription date validity
     const now = new Date();
     const startDate = userData.start_date ? new Date(userData.start_date) : null;
     const untilDate = userData.until_date ? new Date(userData.until_date) : null;
@@ -1633,7 +1618,6 @@ export const checkUserAccess = async (userId: string, userEmail: string): Promis
         valid: isSubscriptionValid 
       });
     }
-    // If no dates are set, subscription is considered valid
     
     if (!isSubscriptionValid) {
       console.log('❌ Subscription has expired');
@@ -1650,9 +1634,71 @@ export const checkUserAccess = async (userId: string, userEmail: string): Promis
       };
     }
     
-    // Check token usage within subscription period
+    // 2. Check token usage limits
     let tokensUsed = 0;
     let isWithinTokenLimit = true;
+    
+    // Get total token usage for the user within subscription period
+    try {
+      let tokenQuery = supabase
+        .from('pmc_user_tokens_used')
+        .select('tokens_used')
+        .eq('user_id', userId);
+      
+      // Filter by date range if subscription dates are set
+      if (startDate && untilDate) {
+        tokenQuery = tokenQuery
+          .gte('created_at', startDate.toISOString())
+          .lte('created_at', untilDate.toISOString());
+      } else if (startDate) {
+        // Only start date is set
+        tokenQuery = tokenQuery.gte('created_at', startDate.toISOString());
+      } else if (untilDate) {
+        // Only until date is set
+        tokenQuery = tokenQuery.lte('created_at', untilDate.toISOString());
+      }
+      
+      const { data: tokenData, error: tokenError } = await tokenQuery;
+      
+      if (tokenError) {
+        console.error('❌ Error fetching token usage data:', tokenError);
+        // If we can't fetch token data, allow access but log the issue
+        console.log('⚠️ Unable to verify token usage, allowing access');
+      } else if (tokenData) {
+        // Calculate total tokens used
+        tokensUsed = tokenData.reduce((sum, record) => sum + (record.tokens_used || 0), 0);
+        
+        // Check if within token limit
+        const tokensAllowed = userData.tokens_allowed || 999999; // Default to high limit if not set
+        isWithinTokenLimit = tokensUsed <= tokensAllowed;
+        
+        console.log('🪙 Token usage check:', { 
+          tokensUsed,
+          tokensAllowed,
+          isWithinTokenLimit,
+          percentage: (tokensUsed / tokensAllowed * 100).toFixed(1) + '%'
+        });
+        
+        if (!isWithinTokenLimit) {
+          console.log('❌ Token limit exceeded');
+          return {
+            hasAccess: false,
+            message: "Access denied: your subscription has expired or you have consumed all your available tokens. Please update your plan.",
+            details: {
+              isSubscriptionValid: true,
+              isWithinTokenLimit: false,
+              tokensUsed,
+              tokensAllowed,
+              untilDate: userData.until_date
+            }
+          };
+        }
+      }
+    } catch (tokenFetchError) {
+      console.error('❌ Exception fetching token usage:', tokenFetchError);
+      // If token usage can't be verified, allow access but log the issue
+      console.log('⚠️ Token usage verification failed, allowing access');
+    }
     
     try {
       console.log('🔢 Checking token usage for period...');
@@ -1717,13 +1763,13 @@ export const checkUserAccess = async (userId: string, userEmail: string): Promis
       };
     }
     
-    console.log('✅ Access granted - subscription is valid and within token limits');
+    console.log('✅ Access granted - subscription valid and within token limits');
     return {
       hasAccess: true,
       message: "Access granted.",
       details: {
         isSubscriptionValid: true,
-        isWithinTokenLimit: true,
+        isWithinTokenLimit,
         tokensUsed,
         tokensAllowed: userData.tokens_allowed || 999999,
         untilDate: userData.until_date

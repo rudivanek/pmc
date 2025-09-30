@@ -196,6 +196,9 @@ export function useAuth() {
             console.error('Error signing out user after access denial:', signOutError);
           }
         }
+        // Clear user state to prevent app from opening
+        setCurrentUser(null);
+        setUser(null);
         // Show error message and prevent login
         toast.error(accessResult.message);
         return;
@@ -218,6 +221,9 @@ export function useAuth() {
           console.error('Error signing out user after access check failure:', signOutError);
         }
       }
+      // Clear user state to prevent app from opening
+      setCurrentUser(null);
+      setUser(null);
       toast.error('Unable to verify account access. Please try again or contact support.');
     }
   }, []);
