@@ -284,8 +284,8 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
 
   // Calculate stats
   useEffect(() => {
-    const totalTokensUsed = tokenUsage.reduce((sum, usage) => sum + usage.token_usage, 0);
-    const totalCost = tokenUsage.reduce((sum, usage) => sum + usage.token_cost, 0);
+    const totalTokensUsed = tokenUsage.reduce((sum, usage) => sum + usage.tokens_used, 0);
+    const totalCost = tokenUsage.reduce((sum, usage) => sum + usage.cost_usd, 0);
     const userTokensUsed = isAdmin ? filteredStats.totalTokensUsed : totalTokensUsed;
     const userCost = isAdmin ? filteredStats.totalCost : totalCost;
     
