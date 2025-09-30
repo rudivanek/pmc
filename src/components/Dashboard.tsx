@@ -405,8 +405,8 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
       }
     }
   }
-  )
-} templateId 
+        setTemplates(templates.map(template =>
+          template.id === templateId
             ? { ...template, template_name: editingTemplateName }
             : template
         ));
