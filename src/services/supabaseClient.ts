@@ -1115,6 +1115,68 @@ export async function adminGetUsers() {
   }
 }
 
+/**
+ * Admin function to update an existing user
+ * Only accessible by admin users
+ */
+export async function adminUpdateUser(updateData: {
+  userId: string;
+  password?: string;
+  startDate: string | null;
+  untilDate: string | null;
+  tokensAllowed: number;
+}) {
+  try {
+    const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-update-user`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${await getSessionToken()}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updateData)
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || 'Failed to update user')
+    }
+
+    const result = await response.json()
+    return { data: result, error: null }
+  } catch (error: any) {
+    console.error('Error updating user:', error)
+    return { data: null, error }
+  }
+}
+
+/**
+ * Admin function to delete a user
+ * Only accessible by admin users
+ */
+export async function adminDeleteUser(userId: string) {
+  try {
+    const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-delete-user`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${await getSessionToken()}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userId })
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || 'Failed to delete user')
+    }
+
+    const result = await response.json()
+    return { data: result, error: null }
+  } catch (error: any) {
+    console.error('Error deleting user:', error)
+    return { data: null, error }
+  }
+}
+
 // Get prefills from database
 export async function getPrefills(userId: string): Promise<{ data: Prefill[] | null; error: any }> {
   const supabase = getSupabaseClient();
