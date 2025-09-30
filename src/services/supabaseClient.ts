@@ -1485,5 +1485,4 @@ export const checkUserAccess = async (userId: string, userEmail: string): Promis
       message: "Access denied: your subscription has expired or you have consumed all your available tokens. Please update your plan."
     };
   }
-  }
 }
