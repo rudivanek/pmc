@@ -2,4 +2,3 @@
 export * from './supabase';
 
 // Also export the main client function for direct access
-export { getSupabaseClient } from './supabase/client';
