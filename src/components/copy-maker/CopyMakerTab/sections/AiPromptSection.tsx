@@ -32,5 +32,3 @@ const AiPromptSection: React.FC<AiPromptSectionProps> = ({
 };
 
 export default AiPromptSection;
-
-export default AiPromptSection
