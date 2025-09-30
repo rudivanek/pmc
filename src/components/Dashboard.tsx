@@ -1169,8 +1169,11 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
                           </div>
                         </td>
                         <td className="px-4 py-3">
-                        )}
+                          <div className="text-sm font-medium text-gray-900 dark:text-white">
+                            {formatCurrency(usage.cost_usd)}
                           </div>
+                        </td>
+                        <td className="px-4 py-3">
                           <div className="text-xs text-gray-400 dark:text-gray-500">
                             {new Date(usage.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                           </div>
