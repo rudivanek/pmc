@@ -389,9 +389,16 @@ const SharedInputs: React.FC<SharedInputsProps> = ({
         <div className={`${isSmartMode ? 'hidden' : ''} ${displayMode === 'populated' && !isFieldPopulated(formData.competitorCopyText) ? 'hidden' : ''}`}>
           <div>
             <div className="flex justify-between items-center mb-1">
-              <label htmlFor="competitorCopyText" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Competitor Copy (Text)
-              </label>
+              <div className="flex items-center">
+                <label htmlFor="competitorCopyText" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Competitor Copy (Text)
+                </label>
+                <Tooltip content="Paste competitor copy text that you want to outperform or differentiate from. The AI will analyze their approach and create copy that highlights your unique advantages while avoiding similar language and positioning.">
+                  <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                    <InfoIcon size={14} />
+                  </button>
+                </Tooltip>
+              </div>
               <SuggestionButton
                 fieldType="competitorCopyText"
                 businessDescription={formData.tab === 'create' ? formData.businessDescription || '' : formData.originalCopy || ''}

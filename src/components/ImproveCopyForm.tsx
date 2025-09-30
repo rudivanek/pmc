@@ -3,7 +3,7 @@ import { FormData, SectionType, ContentQualityScore, User } from '../types';
 import { useInputField } from '../hooks/useInputField';
 import { SECTION_TYPES } from '../constants';
 import ContentQualityIndicator from './ui/ContentQualityIndicator';
-import { Zap, Info as InfoIcon } from 'lucide-react';
+import { Zap } from 'lucide-react';
 import { evaluateContentQuality } from '../services/apiService';
 import { Tooltip } from './ui/Tooltip';
 import { isFieldPopulated } from '../utils/formUtils';
@@ -155,9 +155,16 @@ const ImproveCopyForm: React.FC<ImproveCopyFormProps> = ({
       {/* Exclude Specific Terms */}
       <div className={displayMode === 'populated' && !isFieldPopulated(formData.excludedTerms) ? 'hidden' : ''}>
         <div>
-          <label htmlFor="excludedTerms" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Exclude specific terms from output
-          </label>
+          <div className="flex items-center mb-1">
+            <label htmlFor="excludedTerms" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Exclude specific terms from output
+            </label>
+            <Tooltip content="List words, phrases, competitor names, or any terms you don't want the AI to include in the generated copy. The AI will use alternative terminology or avoid these topics entirely while maintaining the message effectiveness.">
+              <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                <InfoIcon size={14} />
+              </button>
+            </Tooltip>
+          </div>
           <textarea
             id="excludedTerms"
             name="excludedTerms"
