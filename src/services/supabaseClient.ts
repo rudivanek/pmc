@@ -1061,6 +1061,33 @@ export async function adminGetTokenUsage() {
   }
 }
 
+/**
+ * Admin function to get beta registrations count
+ * Only accessible by admin users
+ */
+export async function adminGetBetaRegistrationsCount() {
+  try {
+    const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-get-beta-registrations-count`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${await getSessionToken()}`,
+        'Content-Type': 'application/json',
+      }
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || 'Failed to fetch beta registrations count')
+    }
+
+    const result = await response.json()
+    return { data: result.count, error: null }
+  } catch (error: any) {
+    console.error('Error fetching beta registrations count:', error)
+    return { data: null, error }
+  }
+}
+
 // Get prefills from database
 export async function getPrefills(userId: string): Promise<{ data: Prefill[] | null; error: any }> {
   const supabase = getSupabaseClient();
