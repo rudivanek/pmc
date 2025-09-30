@@ -1481,7 +1481,7 @@ export const getMockSavedOutputs = (): SavedOutput[] => {
       input_snapshot: {
         tab: 'create',
         language: 'Spanish',
-        tone: 'Friendly',
+        tone: 'Professional',
         wordCount: 'Short: 50-100',
         competitorUrls: [],
         businessDescription: 'Mock Spanish business description for saved output',
@@ -1489,11 +1489,9 @@ export const getMockSavedOutputs = (): SavedOutput[] => {
         model: 'deepseek-chat'
       } as FormData,
       output_content: {
-        improvedCopy: 'Mock Spanish improved copy',
-        alternativeCopy: 'Mock Spanish alternative copy',
-        headlines: ['Spanish Headline 1', 'Spanish Headline 2', 'Spanish Headline 3']
-      },
-      saved_at: '2023-06-02T15:45:00Z'
+        improvedCopy: 'This is a sample saved output for demo purposes.',
+        generatedVersions: []
+      }
     }
   ];
 };
