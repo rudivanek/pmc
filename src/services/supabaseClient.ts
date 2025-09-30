@@ -1650,18 +1650,81 @@ export const checkUserAccess = async (userId: string, userEmail: string): Promis
       };
     }
     
-    // For now, we don't have an easy way to check token usage vs limit
-    // since that would require another query to sum up token usage
-    // TODO: Implement token usage checking if needed
+    // Check token usage within subscription period
+    let tokensUsed = 0;
+    let isWithinTokenLimit = true;
     
-    console.log('✅ Access granted - subscription is valid');
+    try {
+      console.log('🔢 Checking token usage for period...');
+      
+      // Build the query to sum tokens used within subscription period
+      let tokenQuery = supabase
+        .from('pmc_user_tokens_used')
+        .select('tokens_used')
+        .eq('user_id', userId);
+      
+      // Add date filters if subscription period is defined
+      if (startDate) {
+        tokenQuery = tokenQuery.gte('created_at', startDate.toISOString());
+        console.log('🗓️ Filtering tokens from start date:', startDate.toISOString());
+      }
+      if (untilDate) {
+        tokenQuery = tokenQuery.lte('created_at', untilDate.toISOString());
+        console.log('🗓️ Filtering tokens until date:', untilDate.toISOString());
+      }
+      
+      const { data: tokenUsageData, error: tokenError } = await tokenQuery;
+      
+      if (tokenError) {
+        console.error('❌ Error fetching token usage:', tokenError);
+        // If we can't check token usage, allow access but log the issue
+        console.log('⚠️ Cannot verify token usage, allowing access');
+      } else if (tokenUsageData) {
+        // Sum up all token usage within the period
+        tokensUsed = tokenUsageData.reduce((sum, usage) => sum + (usage.tokens_used || 0), 0);
+        console.log('🔢 Total tokens used in period:', tokensUsed);
+        console.log('🎫 Tokens allowed:', userData.tokens_allowed);
+        
+        // Check if user has exceeded token limit
+        const tokensAllowed = userData.tokens_allowed || 999999; // Default to high limit if not set
+        isWithinTokenLimit = tokensUsed <= tokensAllowed;
+        
+        console.log('🚦 Token limit check:', { 
+          tokensUsed, 
+          tokensAllowed, 
+          isWithinTokenLimit 
+        });
+      }
+    } catch (tokenCheckError) {
+      console.error('❌ Exception during token usage check:', tokenCheckError);
+      // If token check fails, allow access but log the issue
+      console.log('⚠️ Token check failed, allowing access as fallback');
+    }
+    
+    // If user has exceeded token limit, deny access
+    if (!isWithinTokenLimit) {
+      console.log('❌ User has exceeded token limit');
+      return {
+        hasAccess: false,
+        message: "Access denied: your subscription has expired or you have consumed all your available tokens. Please update your plan.",
+        details: {
+          isSubscriptionValid: true,
+          isWithinTokenLimit: false,
+          tokensUsed,
+          tokensAllowed: userData.tokens_allowed || 0,
+          untilDate: userData.until_date
+        }
+      };
+    }
+    
+    console.log('✅ Access granted - subscription is valid and within token limits');
     return {
       hasAccess: true,
       message: "Access granted.",
       details: {
         isSubscriptionValid: true,
         isWithinTokenLimit: true,
-        tokensUsed: 0, // TODO: Calculate actual token usage
+        tokensUsed,
         tokensAllowed: userData.tokens_allowed || 999999,
         untilDate: userData.until_date
       }

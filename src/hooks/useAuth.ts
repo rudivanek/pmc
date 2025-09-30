@@ -183,6 +183,25 @@ export function useAuth() {
     console.log('User logged in:', user.email);
     
     try {
+      // Check user access before allowing login to complete
+      const accessResult = await checkUserAccess(user.id, user.email || '');
+      
+      if (!accessResult.hasAccess) {
+        console.log('❌ User access denied during login:', accessResult.message);
+        // Sign out the user immediately
+        if (isSupabaseEnabled) {
+          try {
+            await supabase.auth.signOut();
+          } catch (signOutError) {
+            console.error('Error signing out user after access denial:', signOutError);
+          }
+        }
+        // Show error message and prevent login
+        toast.error(accessResult.message);
+        return;
+      }
+      
+      console.log('✅ User access granted during login');
       setCurrentUser(user);
       setUser(user);
       console.log('User login completed successfully');
@@ -190,10 +209,16 @@ export function useAuth() {
     } catch (error) {
       console.error('Error checking user access during login:', error);
       
-      // If there's a complete failure, still allow login but warn
-      setCurrentUser(user);
-      setUser(user);
-      toast.error('Unable to verify access due to technical issues. Some features may not work properly.');
+      // If access check fails due to technical issues, deny login for security
+      console.log('❌ Access check failed during login, denying access for security');
+      if (isSupabaseEnabled) {
+        try {
+          await supabase.auth.signOut();
+        } catch (signOutError) {
+          console.error('Error signing out user after access check failure:', signOutError);
+        }
+      }
+      toast.error('Unable to verify account access. Please try again or contact support.');
     }
   }, []);
 
