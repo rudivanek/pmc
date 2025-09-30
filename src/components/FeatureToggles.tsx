@@ -1,7 +1,7 @@
 import React from 'react';
 import { FormData } from '../types';
 import { Tooltip } from './ui/Tooltip';
-import { InfoIcon } from 'lucide-react';
+import { Info as InfoIcon } from 'lucide-react';
 import { Checkbox } from './ui/checkbox';
 import { Label } from './ui/label';
 import { useMemo } from 'react';
