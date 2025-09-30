@@ -1136,7 +1136,6 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
                     {(isAdmin ? filteredTokenUsage : tokenUsage).map((usage) => (
                       <tr key={usage.id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
                         {isAdmin && (
-                        {isAdmin && (
                           <td className="px-4 py-3">
                             <div className="text-sm font-medium text-gray-900 dark:text-white">
                               {usage.user_name}
