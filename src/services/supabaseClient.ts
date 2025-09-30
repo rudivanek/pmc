@@ -1593,6 +1593,10 @@ export const checkUserAccess = async (userId: string, userEmail: string): Promis
     
     console.log('📊 User subscription data:', userData);
     
+    // Ensure tokens_allowed has a reasonable default if null/undefined
+    const tokensAllowed = userData.tokens_allowed || 999999;
+    console.log('💳 Tokens allowed (with default):', tokensAllowed);
+    
     // 1. Check subscription date validity
     const now = new Date();
     const startDate = userData.start_date ? new Date(userData.start_date) : null;
@@ -1731,7 +1735,7 @@ export const checkUserAccess = async (userId: string, userEmail: string): Promis
         console.log('🔢 Total tokens used in period:', tokensUsed);
         console.log('🎫 Tokens allowed:', userData.tokens_allowed);
         
-        // Check if user has exceeded token limit
+            tokensAllowed: tokensAllowed,
         const tokensAllowed = userData.tokens_allowed || 999999; // Default to high limit if not set
         isWithinTokenLimit = tokensUsed <= tokensAllowed;
         
@@ -1763,13 +1767,13 @@ export const checkUserAccess = async (userId: string, userEmail: string): Promis
       };
     }
     
-    console.log('✅ Access granted - subscription valid and within token limits');
+      const tokenLimit = tokensAllowed;
     return {
       hasAccess: true,
       message: "Access granted.",
       details: {
         isSubscriptionValid: true,
-        isWithinTokenLimit,
+            tokensAllowed: tokensAllowed,
         tokensUsed,
         tokensAllowed: userData.tokens_allowed || 999999,
         untilDate: userData.until_date
@@ -1784,3 +1788,4 @@ export const checkUserAccess = async (userId: string, userEmail: string): Promis
     };
   }
 };
+        tokensAllowed: tokensAllowed,
