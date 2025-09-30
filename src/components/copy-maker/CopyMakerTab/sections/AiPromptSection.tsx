@@ -25,7 +25,7 @@ const AiPromptSection: React.FC<AiPromptSectionProps> = ({
         title="Generate template AI Prompts from natural language"
       >
         <Lightbulb size={16} className="mr-2" />
-        <span>AI Prompts</span>
+        <span></span>
       </button>
     </div>
   );
