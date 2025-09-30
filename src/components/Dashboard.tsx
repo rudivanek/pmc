@@ -1008,7 +1008,6 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
               
               {/* User Filter and Stats - Only show for admin */}
               {isAdmin && (
-              {isAdmin && (
                 <div className="mt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-3 sm:space-y-0">
                   <div className="flex items-center space-x-3">
                     <div className="flex items-center">
