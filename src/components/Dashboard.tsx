@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { BarChart3, FileText, Settings, DollarSign, Users, RefreshCw, Calendar, Zap, Eye, Trash2, CreditCard as Edit, ArrowRight, User, AlertCircle, Filter, Download, List } from 'lucide-react';
+import { retryFailedTracking, getTrackingQueueStatus } from '../services/api/tokenTracking';
 import { useAuth } from '../hooks/useAuth';
 import LoadingSpinner from './ui/LoadingSpinner';
 import { 
@@ -255,6 +256,13 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
   // Load data on component mount
   useEffect(() => {
     loadUserData();
+    
+    // Start background retry of failed token tracking
+    const retryInterval = setInterval(() => {
+      retryFailedTracking().catch(console.error);
+    }, 5 * 60 * 1000); // Every 5 minutes
+    
+    return () => clearInterval(retryInterval);
   }, [userId, currentUser?.email, isAdmin]);
 
   // Set active tab from URL parameter
