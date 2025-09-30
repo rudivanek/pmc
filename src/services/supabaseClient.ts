@@ -1644,12 +1644,12 @@ export const checkUserAccess = async (userId: string, userEmail: string): Promis
     console.log('📊 Token usage data:', { tokensUsed, tokensAllowed: userData.tokens_allowed });
     
     // Calculate token limit (default to high limit if not set)
-    const tokensAllowed = userData.tokens_allowed || 999999;
+    const userTokensAllowed = userData.tokens_allowed || 999999;
     let isWithinTokenLimit = true;
     
     // Check token usage if we have token data
     if (tokensUsed > 0) {
-      isWithinTokenLimit = tokensUsed <= tokensAllowed;
+      isWithinTokenLimit = tokensUsed <= userTokensAllowed;
       console.log('🎯 Token limit check:', { 
         tokensUsed, 
         tokensAllowed,
@@ -1689,7 +1689,7 @@ export const checkUserAccess = async (userId: string, userEmail: string): Promis
         tokensUsed = tokenData.reduce((sum, record) => sum + (record.tokens_used || 0), 0);
         
         // Check if within token limit
-        isWithinTokenLimit = tokensUsed <= tokensAllowed;
+        isWithinTokenLimit = tokensUsed <= userTokensAllowed;
         
         console.log('🪙 Token usage check:', { 
           tokensUsed,
@@ -1707,7 +1707,7 @@ export const checkUserAccess = async (userId: string, userEmail: string): Promis
               isSubscriptionValid: true,
               isWithinTokenLimit: false,
               tokensUsed,
-              tokensAllowed: tokensAllowed,
+              tokensAllowed: userTokensAllowed,
               untilDate: userData.until_date
             }
           };
@@ -1750,7 +1750,7 @@ export const checkUserAccess = async (userId: string, userEmail: string): Promis
         console.log('🔢 Total tokens used in period:', tokensUsed);
         console.log('🎫 Tokens allowed:', userData.tokens_allowed);
         
-        isWithinTokenLimit = tokensUsed <= tokensAllowed;
+        isWithinTokenLimit = tokensUsed <= userTokensAllowed;
         
         console.log('🚦 Token limit check:', { 
           tokensUsed, 
@@ -1774,7 +1774,7 @@ export const checkUserAccess = async (userId: string, userEmail: string): Promis
           isSubscriptionValid: true,
           isWithinTokenLimit: false,
           tokensUsed,
-          tokensAllowed: tokensAllowed,
+          tokensAllowed: userTokensAllowed,
           untilDate: userData.until_date
         }
       };
@@ -1787,7 +1787,7 @@ export const checkUserAccess = async (userId: string, userEmail: string): Promis
         isSubscriptionValid: true,
         isWithinTokenLimit: true,
         tokensUsed,
-        tokensAllowed: tokensAllowed,
+        tokensAllowed: userTokensAllowed,
         untilDate: userData.until_date
       }
     };
