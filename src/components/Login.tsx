@@ -451,6 +451,12 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
               <ArrowLeft size={16} className="mr-1" />
               Back to Sign In
             </button>
+          
+          <div className="text-center">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              Beta users: your initial password is "letmein"
+            </p>
+          </div>
           </div>
         </div>
       </div>
@@ -599,7 +605,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
               setMessage('');
               setLoginAttempts(0);
             }}
-            className="hidden text-primary-600 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-300 font-medium"
+            className="text-primary-600 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-300 font-medium"
           >
             {isSignUp ? 'Already have an account? Sign In' : 'Need an account? Sign Up'}
           </button>
