@@ -399,7 +399,14 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
       if (!SUPABASE_ENABLED) {
         // Update mock data
         setTemplates(templates.map(template => 
-          template.id === templateId 
+          template.id ===
+        )
+        )
+      }
+    }
+  }
+  )
+} templateId 
             ? { ...template, template_name: editingTemplateName }
             : template
         ));
