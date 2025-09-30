@@ -11,9 +11,9 @@ import UrlParamLoader from '../../UrlParamLoader';
 import HeaderBar from './sections/HeaderBar';
 import TemplateLoader from './sections/TemplateLoader';
 import QuickStartPicker from './sections/QuickStartPicker';
-import AiPromptSection from './sections/AiPromptSection';
 import ResultsPanel from './sections/ResultsPanel';
 import EmptyState from './sections/EmptyState';
+import AiPromptSection from './sections/AiPromptSection';
 
 // Modal components
 import PrefillSaveDialog from './modals/PrefillSaveDialog';
@@ -231,13 +231,17 @@ const CopyMakerTab: React.FC<CopyMakerTabProps> = ({
               filteredAndGroupedTemplates={filteredAndGroupedTemplates}
               selectedTemplateId={selectedTemplateId}
               onSelectTemplate={handleTemplateSelection}
-              onOpenTemplateSuggestion={onOpenTemplateSuggestion}
               currentUser={currentUser}
             />
 
             <QuickStartPicker
               formState={formState}
               onApplyPrefill={handleApplyPrefill}
+            />
+
+            <AiPromptSection
+              onOpenTemplateSuggestion={onOpenTemplateSuggestion}
+              currentUser={currentUser}
             />
           </div>
         </div>
