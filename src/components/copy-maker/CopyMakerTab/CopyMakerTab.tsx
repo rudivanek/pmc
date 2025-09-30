@@ -31,6 +31,7 @@ import { mapPrefillToFormState } from './utils/mapPrefillToFormState';
 // Types
 import { FormState, User } from '../../../types';
 import { calculateTargetWordCount } from '../../../services/api/utils';
+import { hasAnyPopulatedFields } from '../../../utils/formUtils';
 
 interface CopyMakerTabProps {
   currentUser?: User;
