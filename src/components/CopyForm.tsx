@@ -19,6 +19,7 @@ import SuggestionModal from './SuggestionModal';
 import LoadingSpinner from './ui/LoadingSpinner';
 import { Tooltip } from './ui/Tooltip';
 import { Download, Upload, User as UserIcon, Plus, Zap, Save, Lightbulb, List, Filter } from 'lucide-react';
+import { Info as InfoIcon } from 'lucide-react';
 
 interface CopyFormProps {
   currentUser?: User;
@@ -407,9 +408,16 @@ const CopyForm: React.FC<CopyFormProps> = ({
 
           {/* Model Selection */}
           <div className="mb-6">
-            <label htmlFor="model" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              AI Model
-            </label>
+            <div className="flex items-center mb-1">
+              <label htmlFor="model" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                AI Model
+              </label>
+              <Tooltip content="Choose which AI model generates your copy. DeepSeek V3 is cost-effective, GPT-4o offers premium quality, GPT-4 Turbo provides high performance, GPT-3.5 Turbo is fast and economical, and Grok 4 offers unique perspectives. Different models have varying quality, speed, and cost profiles.">
+                <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                  <InfoIcon size={14} />
+                </button>
+              </Tooltip>
+            </div>
             <select
               id="model"
               name="model"

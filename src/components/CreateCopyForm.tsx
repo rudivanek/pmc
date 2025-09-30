@@ -468,9 +468,16 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
       {/* Target Countries or Regions - Only show when GEO is enabled */}
       {formData.enhanceForGEO && (displayMode === 'all' || isFieldPopulated(formData.geoRegions)) && (
         <div className="ml-6 mt-2">
-          <label htmlFor="geoRegions" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Target Countries or Regions
-          </label>
+          <div className="flex items-center mb-1">
+            <label htmlFor="pageType" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Page Type
+            </label>
+            <Tooltip content="Specifies the type of page or content format you're creating, which influences the AI's approach to structure and messaging. Different page types have different conventions and reader expectations.">
+              <button type="button" className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                <InfoIcon size={14} />
+              </button>
+            </Tooltip>
+          </div>
           <input
             type="text"
             id="geoRegions"
