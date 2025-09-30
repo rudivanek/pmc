@@ -1603,7 +1603,70 @@ export const checkUserAccess = async (userId: string, userEmail: string): Promis
       return {
         hasAccess: false,
         message: "Access denied: your subscription has expired or you have consumed all your available tokens. Please update your plan."
+      };
+    }
+    
+    console.log('📊 User subscription data:', userData);
+    
+    // Check subscription validity
+    const now = new Date();
+    const startDate = userData.start_date ? new Date(userData.start_date) : null;
+    const untilDate = userData.until_date ? new Date(userData.until_date) : null;
+    
+    let isSubscriptionValid = true;
+    
+    // If dates are set, check if current date is within subscription period
+    if (startDate && untilDate) {
+      isSubscriptionValid = now >= startDate && now <= untilDate;
+      console.log('🗓️ Subscription date check:', { 
+        now: now.toISOString(), 
+        start: startDate.toISOString(), 
+        until: untilDate.toISOString(),
+        valid: isSubscriptionValid 
+      });
+    } else if (untilDate) {
+      // Only until date is set, check if not expired
+      isSubscriptionValid = now <= untilDate;
+      console.log('🗓️ Until date check:', { 
+        now: now.toISOString(), 
+        until: untilDate.toISOString(),
+        valid: isSubscriptionValid 
+      });
+    }
+    // If no dates are set, subscription is considered valid
+    
+    if (!isSubscriptionValid) {
+      console.log('❌ Subscription has expired');
+      return {
+        hasAccess: false,
+        message: "Access denied: your subscription has expired or you have consumed all your available tokens. Please update your plan.",
+        details: {
+          isSubscriptionValid: false,
+          isWithinTokenLimit: true,
+          tokensUsed: 0,
+          tokensAllowed: userData.tokens_allowed || 0,
+          untilDate: userData.until_date
+        }
+      };
+    }
+    
+    // For now, we don't have an easy way to check token usage vs limit
+    // since that would require another query to sum up token usage
+    // TODO: Implement token usage checking if needed
+    
+    console.log('✅ Access granted - subscription is valid');
+    return {
+      hasAccess: true,
+      message: "Access granted.",
+      details: {
+        isSubscriptionValid: true,
+        isWithinTokenLimit: true,
+        tokensUsed: 0, // TODO: Calculate actual token usage
+        tokensAllowed: userData.tokens_allowed || 999999,
+        untilDate: userData.until_date
       }
+    };
+    
     }
   } catch (error) {
     console.error('❌ Error in checkUserAccess:', error);
