@@ -1057,18 +1057,18 @@ export async function adminGetTokenUsage() {
         'Authorization': `Bearer ${await getSessionToken()}`,
         'Content-Type': 'application/json',
       }
-    })
+    });
 
     if (!response.ok) {
-      const errorData = await response.json()
-      throw new Error(errorData.error || 'Failed to fetch token usage')
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Failed to fetch token usage');
     }
 
-    const result = await response.json()
-    return { data: result.data, error: null }
+    const result = await response.json();
+    return { data: result.data, error: null };
   } catch (error: any) {
-    console.error('Error fetching token usage:', error)
-    return { data: null, error }
+    console.error('Error fetching token usage:', error);
+    return { data: null, error };
   }
 }
 
@@ -1084,18 +1084,18 @@ export async function adminGetBetaRegistrationsCount() {
         'Authorization': `Bearer ${await getSessionToken()}`,
         'Content-Type': 'application/json',
       }
-    })
+    });
 
     if (!response.ok) {
-      const errorData = await response.json()
-      throw new Error(errorData.error || 'Failed to fetch beta registrations count')
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Failed to fetch beta registrations count');
     }
 
-    const result = await response.json()
-    return { data: result.count, error: null }
+    const result = await response.json();
+    return { data: result.count, error: null };
   } catch (error: any) {
-    console.error('Error fetching beta registrations count:', error)
-    return { data: null, error }
+    console.error('Error fetching beta registrations count:', error);
+    return { data: null, error };
   }
 }
 
@@ -1111,18 +1111,18 @@ export async function adminGetUsers() {
         'Authorization': `Bearer ${await getSessionToken()}`,
         'Content-Type': 'application/json',
       }
-    })
+    });
 
     if (!response.ok) {
-      const errorData = await response.json()
-      throw new Error(errorData.error || 'Failed to fetch users')
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Failed to fetch users');
     }
 
-    const result = await response.json()
-    return { data: result.users, error: null }
+    const result = await response.json();
+    return { data: result.users, error: null };
   } catch (error: any) {
-    console.error('Error fetching users:', error)
-    return { data: null, error }
+    console.error('Error fetching users:', error);
+    return { data: null, error };
   }
 }
 
@@ -1145,18 +1145,18 @@ export async function adminUpdateUser(updateData: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(updateData)
-    })
+    });
 
     if (!response.ok) {
-      const errorData = await response.json()
-      throw new Error(errorData.error || 'Failed to update user')
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Failed to update user');
     }
 
-    const result = await response.json()
-    return { data: result, error: null }
+    const result = await response.json();
+    return { data: result, error: null };
   } catch (error: any) {
-    console.error('Error updating user:', error)
-    return { data: null, error }
+    console.error('Error updating user:', error);
+    return { data: null, error };
   }
 }
 
@@ -1173,18 +1173,18 @@ export async function adminDeleteUser(userId: string) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ userId })
-    })
+    });
 
     if (!response.ok) {
-      const errorData = await response.json()
-      throw new Error(errorData.error || 'Failed to delete user')
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Failed to delete user');
     }
 
-    const result = await response.json()
-    return { data: result, error: null }
+    const result = await response.json();
+    return { data: result, error: null };
   } catch (error: any) {
-    console.error('Error deleting user:', error)
-    return { data: null, error }
+    console.error('Error deleting user:', error);
+    return { data: null, error };
   }
 }
 
@@ -1667,7 +1667,6 @@ export const checkUserAccess = async (userId: string, userEmail: string): Promis
       }
     };
     
-    }
   } catch (error) {
     console.error('❌ Error in checkUserAccess:', error);
     return {
@@ -1675,4 +1674,4 @@ export const checkUserAccess = async (userId: string, userEmail: string): Promis
       message: "Access denied: your subscription has expired or you have consumed all your available tokens. Please update your plan."
     };
   }
-}
+};
