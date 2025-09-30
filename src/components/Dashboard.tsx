@@ -1123,9 +1123,7 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
                   <thead className="bg-gray-50 dark:bg-gray-800">
                     <tr>
                       {isAdmin && (
-                      {isAdmin && (
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">User</th>
-                      )}
                       )}
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Operation</th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Model</th>
