@@ -3,7 +3,7 @@ import { FormData, SectionType, ContentQualityScore, User } from '../types';
 import { useInputField } from '../hooks/useInputField';
 import { SECTION_TYPES } from '../constants';
 import ContentQualityIndicator from './ui/ContentQualityIndicator';
-import { Zap, InfoIcon } from 'lucide-react';
+import { Zap, Info as InfoIcon } from 'lucide-react';
 import { evaluateContentQuality } from '../services/apiService';
 import { Tooltip } from './ui/Tooltip';
 import { isFieldPopulated } from '../utils/formUtils';
