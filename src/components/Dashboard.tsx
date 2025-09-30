@@ -399,13 +399,6 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
       if (!SUPABASE_ENABLED) {
         // Update mock data
         setTemplates(templates.map(template => 
-          template.id ===
-        )
-        )
-      }
-    }
-  }
-        setTemplates(templates.map(template =>
           template.id === templateId
             ? { ...template, template_name: editingTemplateName }
             : template
@@ -991,7 +984,7 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
             <div className="p-6 border-b border-gray-300 dark:border-gray-800">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                  <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Token Usage</h2>
                   <p className="text-gray-600 dark:text-gray-400 mt-1">
                     {isAdmin ? 'Monitor API token consumption across all users' : 'Monitor your API token consumption'}
                   </p>
@@ -1077,7 +1070,6 @@ const Dashboard: React.FC<{ userId: string; onLogout: () => void }> = ({ userId,
                     </div>
                   </div>
                 </div>
-              )}
               )}
               
               {/* Stats for non-admin users */}
