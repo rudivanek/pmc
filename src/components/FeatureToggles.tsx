@@ -370,6 +370,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
               step="0.5"
               className="w-16 bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 p-1.5"
               value={formData.wordCountTolerancePercentage || 2}
+              value={formData.wordCountTolerancePercentage || 20}
               onChange={handleChangeEvent}
             />
             <span className="text-xs text-gray-500 dark:text-gray-400">%</span>

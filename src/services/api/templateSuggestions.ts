@@ -150,6 +150,7 @@ EXAMPLE TEMPLATE STRUCTURE:
   "generateScores": true,
   "forceElaborationsExamples": true,
   "prioritizeWordCount": true,
+  "wordCountTolerancePercentage": 20,
   "numH2Variants": 3,
   "numH3Variants": 5
 }
