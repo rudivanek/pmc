@@ -101,6 +101,17 @@ export const getSession = async () => {
   return supabase.auth.getSession();
 };
 
+// Function to get the current session token
+export const getSessionToken = async () => {
+  const { data: { session }, error } = await supabase.auth.getSession();
+  
+  if (error || !session?.access_token) {
+    throw new Error('No active session found. Please log in and try again.');
+  }
+  
+  return session.access_token;
+};
+
 // Function to get a specific copy session by ID with abort support
 export const getCopySession = async (sessionId: string, signal?: AbortSignal) => {
   // Create custom fetch function with abort signal
