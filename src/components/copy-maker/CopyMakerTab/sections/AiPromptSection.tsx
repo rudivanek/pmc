@@ -12,7 +12,10 @@ const AiPromptSection: React.FC<AiPromptSectionProps> = ({
   currentUser
 }) => {
   return (
-    <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg">
+   <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/20 
+  border border-gray-200 dark:border-gray-800 rounded-lg 
+  max-w-lg">
+
       <label htmlFor="aiPromptButton" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
         AI Prompts
       </label>
