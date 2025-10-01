@@ -197,7 +197,6 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
             </Tooltip>
           </Label>
         </div>
-      </div>
           
           {formData.generateSeoMetadata && (displayMode === 'all' || formData.numUrlSlugs !== 3 || formData.numMetaDescriptions !== 3) && (
             <div className="mt-3 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
@@ -336,6 +335,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
               <p className="mt-3 text-xs text-gray-500 dark:text-gray-400">
                 All SEO elements will be generated for each content variation and voice style. Character counters will show live feedback in the output.
               </p>
+            </div>
           )}
       
       {/* Word Count Tolerance Percentage - Only show when prioritizeWordCount is enabled */}
@@ -354,7 +354,6 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
               step="0.5"
               className="w-16 bg-white dark:bg-black border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-xs rounded-lg focus:ring-primary-500 focus:border-primary-500 p-1.5"
               value={formData.wordCountTolerancePercentage || 2}
-              value={formData.wordCountTolerancePercentage || 20}
               onChange={handleChangeEvent}
             />
             <span className="text-xs text-gray-500 dark:text-gray-400">%</span>
@@ -432,7 +431,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
                   name: 'forceKeywordIntegration', 
                   checked: checked === true 
                 }
-              } as React.ChangeEvent<HTMLInputElement>);
+              } as React.ChangeChange<HTMLInputElement>);
             }}
           />
           <Label htmlFor="forceKeywordIntegration" className="ml-2 cursor-pointer flex items-center">
