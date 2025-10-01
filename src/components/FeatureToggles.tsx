@@ -104,8 +104,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
         </Tooltip>
       </div>
       
-      <div className="flex items-start">
-        <div className={`flex items-center ${displayMode === 'populated' && !isFieldPopulated(formData.generateSeoMetadata) ? 'hidden' : ''}`}>
+      <div className={`flex items-center ${displayMode === 'populated' && !isFieldPopulated(formData.generateSeoMetadata) ? 'hidden' : ''}`}>
           <Checkbox
             id="generateSeoMetadata"
             checked={formData.generateSeoMetadata || false}
@@ -118,23 +117,17 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
               } as React.ChangeEvent<HTMLInputElement>);
             }}
           />
-          <div className="ml-2 flex-1">
-            <Label htmlFor="generateSeoMetadata" className="cursor-pointer">
-              <span className="text-sm">
-              Generate SEO Metadata and Structural Elements Automatically
+          <Label htmlFor="generateSeoMetadata" className="ml-2 cursor-pointer flex items-center">
+            <span className="text-sm">Generate SEO Metadata and Structural Elements Automatically</span>
+            <Tooltip content="Generate URL slugs, meta descriptions, H1/H2/H3 headings, and Open Graph tags for your content">
+              <span className="ml-1 text-gray-500 cursor-help">
+                <InfoIcon size={14} />
               </span>
-              <Tooltip content="Generate URL slugs, meta descriptions, H1/H2/H3 headings, and Open Graph tags for your content">
-                <span className="ml-1 text-gray-500 cursor-help">
-                  <InfoIcon size={14} />
-                </span>
-              </Tooltip>
-            </Label>
-          </div>
-        </div>
+            </Tooltip>
+          </Label>
       </div>
       
-      <div className={displayMode === 'populated' && !isFieldPopulated(formData.generateScores) ? 'hidden' : ''}>
-        <div className="flex items-center">
+      <div className={`flex items-center ${displayMode === 'populated' && !isFieldPopulated(formData.generateScores) ? 'hidden' : ''}`}>
           <Checkbox
             id="generateScores"
             checked={formData.generateScores || false}
@@ -147,22 +140,18 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
               } as React.ChangeEvent<HTMLInputElement>);
             }}
           />
-          <Label htmlFor="generateScores" className="ml-2 cursor-pointer">
-            <span className="text-sm">
-            Generate content scores
-            </span>
+          <Label htmlFor="generateScores" className="ml-2 cursor-pointer flex items-center">
+            <span className="text-sm">Generate content scores</span>
             <Tooltip content="Automatically evaluates the quality of each generated version and provides improvement explanations">
               <span className="ml-1 text-gray-500 cursor-help">
                 <InfoIcon size={14} />
               </span>
             </Tooltip>
           </Label>
-        </div>
       </div>
       
       {/* GEO Score Generation Toggle */}
-      <div className={displayMode === 'populated' && !isFieldPopulated(formData.generateGeoScore) ? 'hidden' : ''}>
-        <div className="flex items-center">
+      <div className={`flex items-center ${displayMode === 'populated' && !isFieldPopulated(formData.generateGeoScore) ? 'hidden' : ''}`}>
           <Checkbox
             id="generateGeoScore"
             checked={formData.generateGeoScore || false}
@@ -175,22 +164,18 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
               } as React.ChangeEvent<HTMLInputElement>);
             }}
           />
-          <Label htmlFor="generateGeoScore" className="ml-2 cursor-pointer">
-            <span className="text-sm">
-            Generate GEO scores
-            </span>
+          <Label htmlFor="generateGeoScore" className="ml-2 cursor-pointer flex items-center">
+            <span className="text-sm">Generate GEO scores</span>
             <Tooltip content="Evaluates how well content is optimized for AI assistants and geographical visibility (Generative Engine Optimization)">
               <span className="ml-1 text-gray-500 cursor-help">
                 <InfoIcon size={14} />
               </span>
             </Tooltip>
           </Label>
-        </div>
       </div>
       
       {/* Strict Word Count Adherence Toggle */}
-      <div className={displayMode === 'populated' && !isFieldPopulated(formData.prioritizeWordCount) ? 'hidden' : ''}>
-        <div className="flex items-center">
+      <div className={`flex items-center ${displayMode === 'populated' && !isFieldPopulated(formData.prioritizeWordCount) ? 'hidden' : ''}`}>
           <Checkbox
             id="prioritizeWordCount"
             checked={formData.prioritizeWordCount || false}
@@ -203,10 +188,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
               } as React.ChangeEvent<HTMLInputElement>);
             }}
           />
-          <Label 
-            htmlFor="prioritizeWordCount"
-            className="ml-2 cursor-pointer"
-          >
+          <Label htmlFor="prioritizeWordCount" className="ml-2 cursor-pointer flex items-center">
             <span className="text-sm">Strictly adhere to target word count</span>
             <Tooltip content="When enabled, the AI will perform multiple passes if necessary to achieve the exact word count.">
               <span className="ml-1 inline-block text-gray-500">
@@ -354,7 +336,6 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
               <p className="mt-3 text-xs text-gray-500 dark:text-gray-400">
                 All SEO elements will be generated for each content variation and voice style. Character counters will show live feedback in the output.
               </p>
-            </div>
           )}
       
       {/* Word Count Tolerance Percentage - Only show when prioritizeWordCount is enabled */}
@@ -441,8 +422,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
       )}
       
       {/* SEO keyword integration */}
-      <div className={displayMode === 'populated' && !isFieldPopulated(formData.forceKeywordIntegration) ? 'hidden' : ''}>
-        <div className="flex items-center">
+      <div className={`flex items-center ${displayMode === 'populated' && !isFieldPopulated(formData.forceKeywordIntegration) ? 'hidden' : ''}`}>
           <Checkbox
             id="forceKeywordIntegration"
             checked={formData.forceKeywordIntegration || false}
@@ -455,22 +435,18 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
               } as React.ChangeEvent<HTMLInputElement>);
             }}
           />
-          <Label htmlFor="forceKeywordIntegration" className="ml-2 cursor-pointer">
-            <span className="text-sm">
-            Force SEO keyword integration
-            </span>
+          <Label htmlFor="forceKeywordIntegration" className="ml-2 cursor-pointer flex items-center">
+            <span className="text-sm">Force SEO keyword integration</span>
             <Tooltip content="Ensures all keywords appear naturally throughout the copy for better SEO">
               <span className="ml-1 text-gray-500 cursor-help">
                 <InfoIcon size={14} />
               </span>
             </Tooltip>
           </Label>
-        </div>
       </div>
 
       {/* Force detailed elaborations and examples */}
-      <div className={displayMode === 'populated' && !isFieldPopulated(formData.forceElaborationsExamples) ? 'hidden' : ''}>
-        <div className="flex items-center">
+      <div className={`flex items-center ${displayMode === 'populated' && !isFieldPopulated(formData.forceElaborationsExamples) ? 'hidden' : ''}`}>
           <Checkbox
             id="forceElaborationsExamples"
             checked={formData.forceElaborationsExamples || false}
@@ -483,22 +459,18 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
               } as React.ChangeEvent<HTMLInputElement>);
             }}
           />
-          <Label htmlFor="forceElaborationsExamples" className="ml-2 cursor-pointer">
-            <span className="text-sm">
-            Force detailed elaborations and examples
-            </span>
+          <Label htmlFor="forceElaborationsExamples" className="ml-2 cursor-pointer flex items-center">
+            <span className="text-sm">Force detailed elaborations and examples</span>
             <Tooltip content="Forces AI to provide detailed explanations, examples, and case studies to expand content">
               <span className="ml-1 text-gray-500 cursor-help">
                 <InfoIcon size={14} />
               </span>
             </Tooltip>
           </Label>
-        </div>
       </div>
 
       {/* GEO enhancement */}
-      <div className={displayMode === 'populated' && !isFieldPopulated(formData.enhanceForGEO) ? 'hidden' : ''}>
-        <div className="flex items-center">
+      <div className={`flex items-center ${displayMode === 'populated' && !isFieldPopulated(formData.enhanceForGEO) ? 'hidden' : ''}`}>
           <Checkbox
             id="enhanceForGEO"
             checked={formData.enhanceForGEO || false}
@@ -511,17 +483,14 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
               } as React.ChangeEvent<HTMLInputElement>);
             }}
           />
-          <Label htmlFor="enhanceForGEO" className="ml-2 cursor-pointer">
-            <span className="text-sm">
-            Enhance for GEO
-            </span>
+          <Label htmlFor="enhanceForGEO" className="ml-2 cursor-pointer flex items-center">
+            <span className="text-sm">Enhance for GEO</span>
             <Tooltip content="Optimizes content to be more quotable, summarizable, and recommendable by AI assistants like ChatGPT, Claude, and Gemini.">
               <span className="ml-1 text-gray-500 cursor-help">
                 <InfoIcon size={14} />
               </span>
             </Tooltip>
           </Label>
-        </div>
       </div>
 
       {/* TL;DR Summary Toggle - Only show when GEO is enabled */}
