@@ -105,7 +105,7 @@ const FeatureToggles: React.FC<FeatureTogglesProps> = ({
       </div>
       
       <div className="flex items-start">
-        <div className={displayMode === 'populated' && !isFieldPopulated(formData.generateSeoMetadata) ? 'hidden' : ''}>
+        <div className={`flex items-center ${displayMode === 'populated' && !isFieldPopulated(formData.generateSeoMetadata) ? 'hidden' : ''}`}>
           <Checkbox
             id="generateSeoMetadata"
             checked={formData.generateSeoMetadata || false}
